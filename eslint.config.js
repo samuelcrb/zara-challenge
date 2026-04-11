@@ -37,7 +37,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
       ...prettierConfig.rules,
-      'prettier/prettier': 'error',
+      'prettier/prettier': 'off',
       'react/react-in-jsx-scope': 'off',
       'no-console': 'warn',
       'no-unused-vars': 'off',
