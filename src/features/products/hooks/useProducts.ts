@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Product } from '@/features/products/types/product.types'
 import useDebounce from '@/hooks/useDebounce'
 import preloadImages from '@/utils/image.utils'
-import { getProducts } from '../product.api'
+import { getProducts } from '../products.api'
 
 interface UseProductsReturn {
   products: Product[]
