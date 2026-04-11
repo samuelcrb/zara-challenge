@@ -1,0 +1,81 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 12px 16px;
+  gap: 12px;
+  width: 100%;
+  background: $color-white;
+
+  @include respond-to(md) {
+    padding: 12px 40px;
+  }
+
+  @include respond-to(lg) {
+    padding: 12px 60px;
+  }
+
+  @include respond-to(xl) {
+    padding: 12px 100px;
+  }
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 0 8px;
+  gap: 12px;
+  width: 100%;
+  border-bottom: 0.5px solid $color-primary;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  color: $color-text;
+  background: transparent;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  // Remove default search input styles
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    display: none;
+  }
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  color: $color-text;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: none;
+  line-height: 1;
+  transition: opacity 200ms ease;
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+.results {
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  color: $color-text;
+}

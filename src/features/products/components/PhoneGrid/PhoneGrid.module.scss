@@ -1,0 +1,129 @@
+@use 'sass:math';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToBottom {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100vh);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(120px);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+$max-items: 20;
+
+@mixin row-delays($cols) {
+  @for $i from 1 through $max-items {
+    $row: math.ceil(math.div($i, $cols)) - 1;
+
+    &:nth-child(#{$i}) {
+      animation-delay: #{$row * $animation-row-delay};
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  padding: 0 16px;
+  width: 100%;
+  list-style: none;
+
+  & > li {
+    min-width: 0;
+  }
+
+  &.exiting {
+    animation: fadeOut $animation-duration-exit ease forwards;
+    pointer-events: none;
+  }
+
+  &.slidingOut {
+    animation: slideOutToBottom $animation-duration-exit ease forwards;
+    pointer-events: none;
+
+    @include respond-to(md) {
+      animation-name: fadeOut;
+    }
+  }
+
+  &.fadeEntering {
+    animation: fadeIn $animation-duration-enter ease forwards;
+  }
+
+  &.animated > li {
+    animation: slideInFromBottom $animation-duration-enter ease both;
+
+    @include row-delays(1);
+
+    @include respond-to(md) {
+      animation-name: slideInFromRight;
+      @include row-delays(2);
+    }
+
+    @include respond-to(lg) {
+      @include row-delays(3);
+    }
+
+    @include respond-to(xl) {
+      @include row-delays(5);
+    }
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 40px;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0 60px;
+  }
+
+  @include respond-to(xl) {
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0 100px;
+  }
+}

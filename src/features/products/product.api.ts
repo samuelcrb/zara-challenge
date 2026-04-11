@@ -10,8 +10,11 @@ import type {
  * @param params - Optional search, limit and offset params
  * @returns Promise resolving to an array of products
  */
-export const getProducts = (params?: GetProductsParams): Promise<Product[]> => {
-  return http<Product[]>('/products', { params })
+export const getProducts = (
+  params?: GetProductsParams,
+  signal?: AbortSignal
+): Promise<Product[]> => {
+  return http<Product[]>('/products', { params, signal })
 }
 
 /**

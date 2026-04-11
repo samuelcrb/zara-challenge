@@ -1,16 +1,25 @@
+import { useCallback, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { CartProvider } from '@/features/cart/CartContext'
 import Navbar from '@/components/Navbar/Navbar'
+import styles from './App.module.scss'
+import PhoneList from '@/features/products/page/PhoneList/PhoneList'
 
 const App = () => {
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const handleInitialLoadComplete = useCallback(() => setIsInitialLoading(false), [])
+
   return (
     <CartProvider>
       <BrowserRouter>
-        <Navbar />
-        <main className="main-content">
+        <Navbar isLoading={isInitialLoading} />
+        <main className={styles.main}>
           <Routes>
-            <Route path="/" element={<div>Phone List</div>} />
-            <Route path="/product/:id" element={<div>Phone Detail</div>} />
+            <Route
+              path="/"
+              element={<PhoneList onInitialLoadComplete={handleInitialLoadComplete} />}
+            />
+            <Route path="/product/:id" element={<div>Product Detail</div>} />
             <Route path="/cart" element={<div>Cart</div>} />
           </Routes>
         </main>

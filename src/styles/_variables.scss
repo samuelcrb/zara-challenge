@@ -31,5 +31,8 @@ $breakpoint-xl: 1280px;
 $max-width: 1280px;
 $navbar-height: 56px;
 
-$transition-fast: 150ms ease;
-$transition-base: 250ms ease;
+$transition-base: 500ms ease;
+
+$animation-duration-enter: 600ms;
+$animation-duration-exit: 350ms; // must match GRID_EXIT_DURATION in animation.ts
+$animation-row-delay: 80ms;
