@@ -7,20 +7,20 @@ import PhoneList from '@/features/products/page/PhoneList/PhoneList'
 import PhoneDetail from '@/features/products/page/PhoneDetail/PhoneDetail'
 
 const App = () => {
-  const [isInitialLoading, setIsInitialLoading] = useState(true)
-  const handleInitialLoadComplete = useCallback(() => setIsInitialLoading(false), [])
+  const [isLoading, setIsLoading] = useState(true)
+  const handleLoadingChange = useCallback((loading: boolean) => setIsLoading(loading), [])
 
   return (
     <CartProvider>
       <BrowserRouter>
-        <Navbar isLoading={isInitialLoading} />
+        <Navbar isLoading={isLoading} />
         <main className={styles.main}>
           <Routes>
             <Route
               path="/"
-              element={<PhoneList onInitialLoadComplete={handleInitialLoadComplete} />}
+              element={<PhoneList onLoadingChange={handleLoadingChange} />}
             />
-            <Route path="/product/:id" element={<PhoneDetail />} />
+            <Route path="/product/:id" element={<PhoneDetail onLoadingChange={handleLoadingChange} />} />
             <Route path="/cart" element={<div>Cart</div>} />
           </Routes>
         </main>

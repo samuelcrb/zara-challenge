@@ -1,6 +1,11 @@
+import { useEffect } from 'react'
 import useProductDetail from '@/features/products/hooks/useProductDetail'
 
-const PhoneDetail = () => {
+interface PhoneDetailProps {
+  onLoadingChange: (loading: boolean) => void
+}
+
+const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const {
     product,
     isLoading,
@@ -13,6 +18,10 @@ const PhoneDetail = () => {
     handleColorSelect,
     handleStorageSelect,
   } = useProductDetail()
+
+  useEffect(() => {
+    onLoadingChange(isLoading)
+  }, [isLoading, onLoadingChange])
 
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error: {error}</p>

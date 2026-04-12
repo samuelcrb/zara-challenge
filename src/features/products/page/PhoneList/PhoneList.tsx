@@ -11,10 +11,10 @@ type GridTransition =
   | { status: 'exiting' | 'entering'; variant: 'fade' | 'slide-down' }
 
 interface PhoneListProps {
-  onInitialLoadComplete: () => void
+  onLoadingChange: (loading: boolean) => void
 }
 
-const PhoneList = ({ onInitialLoadComplete }: PhoneListProps) => {
+const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   const { products, isLoading, error, search, setSearch, fetchId } = useProducts()
   const [showContent, setShowContent] = useState(false)
   const [displayedGrid, setDisplayedGrid] = useState<{ products: Product[]; key: number }>({
@@ -28,13 +28,14 @@ const PhoneList = ({ onInitialLoadComplete }: PhoneListProps) => {
   latestProducts.current = products
 
   useEffect(() => {
+    onLoadingChange(isLoading)
+  }, [isLoading, onLoadingChange])
+
+  useEffect(() => {
     if (isLoading || showContent) return
-    const timer = setTimeout(() => {
-      setShowContent(true)
-      onInitialLoadComplete()
-    }, CONTENT_REVEAL_DELAY)
+    const timer = setTimeout(() => setShowContent(true), CONTENT_REVEAL_DELAY)
     return () => clearTimeout(timer)
-  }, [isLoading, showContent, onInitialLoadComplete])
+  }, [isLoading, showContent])
 
   useEffect(() => {
     if (fetchId === 0) return
