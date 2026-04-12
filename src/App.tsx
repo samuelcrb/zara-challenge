@@ -4,6 +4,7 @@ import { CartProvider } from '@/features/cart/CartContext'
 import Navbar from '@/components/Navbar/Navbar'
 import styles from './App.module.scss'
 import PhoneList from '@/features/products/page/PhoneList/PhoneList'
+import PhoneDetail from '@/features/products/page/PhoneDetail/PhoneDetail'
 
 const App = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true)
@@ -19,7 +20,7 @@ const App = () => {
               path="/"
               element={<PhoneList onInitialLoadComplete={handleInitialLoadComplete} />}
             />
-            <Route path="/product/:id" element={<div>Product Detail</div>} />
+            <Route path="/product/:id" element={<PhoneDetail />} />
             <Route path="/cart" element={<div>Cart</div>} />
           </Routes>
         </main>
