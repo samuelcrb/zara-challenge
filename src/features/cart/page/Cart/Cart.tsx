@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useCartContext } from '@/features/cart/CartContext'
+import { getImageUrl } from '@/utils/image.utils'
 import styles from './Cart.module.scss'
 
 const Cart = () => {
@@ -16,7 +17,7 @@ const Cart = () => {
             <li key={item.cartItemId} className={styles.item}>
               <div className={styles.itemImageWrapper}>
                 <img
-                  src={item.imageUrl}
+                  src={getImageUrl(item.imageUrl)}
                   alt={`${item.brand} ${item.name}`}
                   className={styles.itemImage}
                 />
