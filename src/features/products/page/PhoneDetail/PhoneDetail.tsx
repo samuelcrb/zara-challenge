@@ -36,20 +36,35 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   } = useProductDetail()
 
   const [hoveredColor, setHoveredColor] = useState<ColorOption | null>(null)
+  const activeColor = hoveredColor ?? selectedColor
+
   const scrollRef = useRef<HTMLDivElement>(null)
   const [thumbLeft, setThumbLeft] = useState(0)
-
   const handleScroll = () => {
     const el = scrollRef.current
     if (!el) return
     const maxScroll = el.scrollWidth - el.clientWidth
     const ratio = maxScroll > 0 ? el.scrollLeft / maxScroll : 0
-    const trackWidth = el.clientWidth
-    const thumbWidth = 150
-    setThumbLeft(ratio * (trackWidth - thumbWidth))
+    setThumbLeft(ratio * (el.clientWidth - 150))
   }
-  const activeColor = hoveredColor ?? selectedColor
-  const displayImageUrl = hoveredColor?.imageUrl ?? currentImageUrl
+
+  const [displayedColorName, setDisplayedColorName] = useState('\u00A0')
+  const [colorNameVisible, setColorNameVisible] = useState(true)
+  const isFirstColorRender = useRef(true)
+
+  useEffect(() => {
+    if (isFirstColorRender.current) {
+      isFirstColorRender.current = false
+      setDisplayedColorName(activeColor?.name ?? '\u00A0')
+      return
+    }
+    setColorNameVisible(false)
+    const timer = setTimeout(() => {
+      setDisplayedColorName(activeColor?.name ?? '\u00A0')
+      setColorNameVisible(true)
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [activeColor?.name])
 
   useEffect(() => {
     onLoadingChange(isLoading)
@@ -74,7 +89,8 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
       <section className={styles.hero}>
         <div className={styles.imageCol}>
           <img
-            src={displayImageUrl}
+            key={currentImageUrl}
+            src={currentImageUrl}
             alt={`${product.brand} ${product.name}`}
             className={styles.productImage}
           />
@@ -120,7 +136,12 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
                 />
               ))}
             </div>
-            <p className={styles.colorName}>{activeColor?.name ?? '\u00A0'}</p>
+            <p
+              className={styles.colorName}
+              style={{ opacity: colorNameVisible ? 1 : 0 }}
+            >
+              {displayedColorName}
+            </p>
           </div>
 
           <button
