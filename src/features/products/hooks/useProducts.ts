@@ -30,9 +30,7 @@ const useProducts = (): UseProductsReturn => {
       try {
         setIsLoading(true)
         setError(null)
-        const raw = await getProducts({ search: debouncedSearch, limit: 20 }, controller.signal)
-        // TODO: Remove this filter when api is fixed
-        const data = raw.filter((p: Product) => p.id !== 'XMI-RN13P5G')
+        const data = await getProducts({ search: debouncedSearch, limit: 20 }, controller.signal)
 
         await preloadImages(data.map((p: Product) => getImageUrl(p.imageUrl)))
 

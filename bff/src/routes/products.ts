@@ -21,7 +21,20 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     if (offset) url.searchParams.set('offset', String(offset))
 
     const upstream = await fetch(url, { headers: upstreamHeaders })
-    const data = await upstream.json()
+    const raw: Array<{ id: string }> = await upstream.json()
+
+    const data = Array.isArray(raw)
+      ? (() => {
+          const seen = new Set<string>()
+          return raw.map(p => {
+            if (!seen.has(p.id)) {
+              seen.add(p.id)
+              return p
+            }
+            return { ...p, id: `${p.id}-${crypto.randomUUID().slice(0, 8)}` }
+          })
+        })()
+      : raw
 
     res.status(upstream.status).json(data)
   } catch (err) {
