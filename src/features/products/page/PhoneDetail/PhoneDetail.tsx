@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useProductDetail from '@/features/products/hooks/useProductDetail'
 import type { ColorOption } from '@/features/products/types/product.types'
 import PhoneCard from '@/features/products/components/PhoneCard/PhoneCard'
+import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
 import styles from './PhoneDetail.module.scss'
 
@@ -23,6 +24,7 @@ const SPEC_ROWS = [
 
 const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const navigate = useNavigate()
+  const { addToCart } = useCartContext()
   const {
     product,
     isLoading,
@@ -78,6 +80,20 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const priceLabel = selectedStorage
     ? `${currentPrice} EUR`
     : `From ${currentPrice} EUR`
+
+  const handleAddToCart = () => {
+    if (!canAddToCart || !product || !selectedColor || !selectedStorage) return
+    addToCart({
+      productId: product.id,
+      name: product.name,
+      brand: product.brand,
+      imageUrl: currentImageUrl,
+      color: selectedColor.name,
+      storage: selectedStorage.capacity,
+      price: currentPrice,
+    })
+    navigate('/cart')
+  }
 
   return (
     <div className={styles.page}>
@@ -148,6 +164,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
           <button
             className={`${styles.addBtn}${canAddToCart ? ` ${styles.active}` : ''}`}
             disabled={!canAddToCart}
+            onClick={handleAddToCart}
           >
             ADD TO CART
           </button>
