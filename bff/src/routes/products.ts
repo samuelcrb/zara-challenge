@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from 'express'
 import config from '../config.js'
+import { preloadImages } from '../imageProcessor.js'
 
 const router = Router()
 
@@ -21,7 +22,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     if (offset) url.searchParams.set('offset', String(offset))
 
     const upstream = await fetch(url, { headers: upstreamHeaders })
-    const raw: Array<{ id: string }> = await upstream.json()
+    const raw: Array<{ id: string; imageUrl: string }> = await upstream.json()
 
     const data = Array.isArray(raw)
       ? (() => {
@@ -37,6 +38,11 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       : raw
 
     res.status(upstream.status).json(data)
+
+    // Preload images in background so they're ready when the browser requests them
+    if (Array.isArray(data)) {
+      preloadImages(data.map((p: { imageUrl: string }) => p.imageUrl))
+    }
   } catch (err) {
     next(err)
   }
