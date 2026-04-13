@@ -58,18 +58,33 @@
 }
 
 .imageCol {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  aspect-ratio: 1 / 1;
   width: 100%;
+  height: 320px;
+
+  @include respond-to(md) {
+    height: 440px;
+  }
 }
 
 .productImage {
-  width: 100%;
+  position: absolute;
   height: 100%;
-  object-fit: contain;
-  animation: fadeIn 400ms ease both;
+  width: auto;
+  max-width: 100%;
+  display: block;
+}
+
+@keyframes imageReveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.productImageTop {
+  animation: imageReveal 300ms ease both;
 }
 
 // ─── Info panel ──────────────────────────────────────────────────────────────

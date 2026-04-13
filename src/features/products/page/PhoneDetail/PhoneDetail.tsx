@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useProductDetail from '@/features/products/hooks/useProductDetail'
 import type { ColorOption } from '@/features/products/types/product.types'
 import PhoneCard from '@/features/products/components/PhoneCard/PhoneCard'
+import { getImageUrl } from '@/utils/image.utils'
 import styles from './PhoneDetail.module.scss'
 
 interface PhoneDetailProps {
@@ -90,7 +91,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
         <div className={styles.imageCol}>
           <img
             key={currentImageUrl}
-            src={currentImageUrl}
+            src={getImageUrl(currentImageUrl)}
             alt={`${product.brand} ${product.name}`}
             className={styles.productImage}
           />

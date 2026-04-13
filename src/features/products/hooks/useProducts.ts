@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { Product } from '@/features/products/types/product.types'
 import useDebounce from '@/hooks/useDebounce'
-import preloadImages from '@/utils/image.utils'
+import preloadImages, { getImageUrl } from '@/utils/image.utils'
 import { getProducts } from '../products.api'
 
 interface UseProductsReturn {
@@ -34,7 +34,7 @@ const useProducts = (): UseProductsReturn => {
         // TODO: Remove this filter when api is fixed
         const data = raw.filter((p: Product) => p.id !== 'XMI-RN13P5G')
 
-        await preloadImages(data.map((p: Product) => p.imageUrl))
+        await preloadImages(data.map((p: Product) => getImageUrl(p.imageUrl)))
 
         if (cancelled) return
         setProducts(data)
