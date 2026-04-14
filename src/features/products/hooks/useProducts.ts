@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Product } from '@/features/products/types/product.types'
 import useDebounce from '@/hooks/useDebounce'
 import preloadImages, { getImageUrl } from '@/utils/image.utils'
@@ -25,14 +25,24 @@ const useProducts = (): UseProductsReturn => {
   const [products, setProducts] = useState<Product[]>(cached ?? [])
   const [isLoading, setIsLoading] = useState(!cached)
   const [error, setError] = useState<string | null>(null)
+  // Monotonically incrementing counter — PhoneList watches it to trigger grid transitions
   const [fetchId, setFetchId] = useState(cached ? 1 : 0)
+  // Prevents a spurious fetchId increment on the first cache hit (e.g. navigating back from cart)
+  const isInitialized = useRef(false)
 
   useEffect(() => {
     if (productCache.has(debouncedSearch)) {
       const hit = productCache.get(debouncedSearch)!
       setProducts(hit)
       setIsLoading(false)
-      setFetchId(id => (id === 0 ? 1 : id))
+      if (isInitialized.current) {
+        // Real search change resolved from cache: increment to trigger grid transition
+        setFetchId(id => id + 1)
+      } else {
+        // First render with cached data: just ensure fetchId is non-zero
+        setFetchId(id => (id === 0 ? 1 : id))
+        isInitialized.current = true
+      }
       return
     }
 
@@ -50,6 +60,7 @@ const useProducts = (): UseProductsReturn => {
         if (cancelled) return
         productCache.set(debouncedSearch, data)
         setProducts(data)
+        isInitialized.current = true
         setFetchId(id => id + 1)
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') return
