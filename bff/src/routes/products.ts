@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express'
 import config from '../config.js'
 import { preloadImages } from '../imageProcessor.js'
+import { getCachedProducts, setCachedProducts } from '../productsCache.js'
 
 const router = Router()
 
@@ -14,9 +15,16 @@ const upstreamHeaders: HeadersInit = {
 /** GET /api/products */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const url = new URL(upstreamUrl('/products'))
     const { search, limit, offset } = req.query
+    const cacheKey = JSON.stringify({ search, limit, offset })
 
+    const cached = getCachedProducts(cacheKey)
+    if (cached !== undefined) {
+      res.json(cached)
+      return
+    }
+
+    const url = new URL(upstreamUrl('/products'))
     if (search) url.searchParams.set('search', String(search))
     if (limit) url.searchParams.set('limit', String(limit))
     if (offset) url.searchParams.set('offset', String(offset))
@@ -36,6 +44,10 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
           })
         })()
       : raw
+
+    if (upstream.ok && Array.isArray(data)) {
+      setCachedProducts(cacheKey, data)
+    }
 
     res.status(upstream.status).json(data)
 

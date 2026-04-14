@@ -13,16 +13,29 @@ interface UseProductsReturn {
   fetchId: number
 }
 
-const useProducts = (): UseProductsReturn => {
-  const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
-  const [fetchId, setFetchId] = useState(0)
+// Module-level cache — persists across PhoneList remounts within the same session
+const productCache = new Map<string, Product[]>()
 
+const useProducts = (): UseProductsReturn => {
+  const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 300)
 
+  const cached = productCache.get(debouncedSearch)
+
+  const [products, setProducts] = useState<Product[]>(cached ?? [])
+  const [isLoading, setIsLoading] = useState(!cached)
+  const [error, setError] = useState<string | null>(null)
+  const [fetchId, setFetchId] = useState(cached ? 1 : 0)
+
   useEffect(() => {
+    if (productCache.has(debouncedSearch)) {
+      const hit = productCache.get(debouncedSearch)!
+      setProducts(hit)
+      setIsLoading(false)
+      setFetchId(id => (id === 0 ? 1 : id))
+      return
+    }
+
     const controller = new AbortController()
     let cancelled = false
 
@@ -35,6 +48,7 @@ const useProducts = (): UseProductsReturn => {
         await preloadImages(data.map((p: Product) => getImageUrl(p.imageUrl)))
 
         if (cancelled) return
+        productCache.set(debouncedSearch, data)
         setProducts(data)
         setFetchId(id => id + 1)
       } catch (err) {
