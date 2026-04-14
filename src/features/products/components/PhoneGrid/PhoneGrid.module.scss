@@ -12,16 +12,6 @@
   }
 }
 
-@keyframes slideOutToBottom {
-  from {
-    transform: translateY(0);
-  }
-
-  to {
-    transform: translateY(100vh);
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -66,13 +56,6 @@ $max-items: 20;
 
 $col-width: 344px;
 
-// Horizontal padding mirrors SearchBar at each breakpoint.
-// Column breakpoints: N × $col-width + 2 × padding ≤ viewport
-//   2 cols: 2×344 + 2×40  =  768px  (md)
-//   3 cols: 3×344 + 2×100 = 1232px  (xl padding kicks in at 1280, fits at 1232)
-//   4 cols: 4×344 + 2×100 = 1576px
-//   5 cols: 5×344 + 2×100 = 1920px
-
 .grid {
   display: grid;
   grid-template-columns: repeat(1, $col-width);
@@ -86,21 +69,11 @@ $col-width: 344px;
     pointer-events: none;
   }
 
-  &.slidingOut {
-    animation: slideOutToBottom $animation-duration-exit ease forwards;
-    pointer-events: none;
-
-    @include respond-to(md) {
-      animation-name: fadeOut;
-      animation-duration: $animation-duration-fade;
-    }
-  }
-
   &.fadeEntering {
     animation: fadeIn $animation-duration-fade ease forwards;
   }
 
-  &.animated > li {
+  &.animated>li {
     animation: slideInFromBottom $animation-duration-enter ease both;
 
     @include row-delays(1);
@@ -123,7 +96,6 @@ $col-width: 344px;
     }
   }
 
-  // 2 cols: 2×344 + 2×40 = 768px
   @include respond-to(md) {
     grid-template-columns: repeat(2, $col-width);
     padding: 0 40px;
@@ -133,7 +105,6 @@ $col-width: 344px;
     padding: 0 60px;
   }
 
-  // 3 cols: 3×344 + 2×100 = 1232px (use xl padding from 1280 onward)
   @include respond-to(xl) {
     padding: 0 100px;
   }
@@ -142,12 +113,10 @@ $col-width: 344px;
     grid-template-columns: repeat(3, $col-width);
   }
 
-  // 4 cols: 4×344 + 2×100 = 1576px
   @media (min-width: 1576px) {
     grid-template-columns: repeat(4, $col-width);
   }
 
-  // 5 cols: 5×344 + 2×100 = 1920px
   @media (min-width: 1920px) {
     grid-template-columns: repeat(5, $col-width);
   }

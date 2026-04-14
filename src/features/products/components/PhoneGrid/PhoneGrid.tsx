@@ -6,21 +6,20 @@ interface PhoneGridProps {
   products: Product[]
   animate?: boolean
   fadeEnter?: boolean
-  exitVariant?: 'fade' | 'slide-down'
+  exiting?: boolean
 }
 
 const PhoneGrid = ({
   products,
   animate = false,
   fadeEnter = false,
-  exitVariant,
+  exiting = false,
 }: PhoneGridProps) => {
   const classList = [
     styles.grid,
     animate && styles.animated,
     fadeEnter && styles.fadeEntering,
-    exitVariant === 'fade' && styles.exiting,
-    exitVariant === 'slide-down' && styles.slidingOut,
+    exiting && styles.exiting,
   ]
     .filter(Boolean)
     .join(' ')
