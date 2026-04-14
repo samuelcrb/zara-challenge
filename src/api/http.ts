@@ -1,5 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
-const API_KEY = import.meta.env.VITE_API_KEY
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number>
@@ -27,7 +26,7 @@ const buildUrl = (
 }
 
 /**
- * Generic HTTP client with automatic API key injection
+ * Generic HTTP client that talks to the API
  * @param endpoint - API endpoint path (e.g. '/products')
  * @param options - Optional fetch options and query params
  * @returns Parsed JSON response typed as T
@@ -42,7 +41,6 @@ const http = async <T>(endpoint: string, options: RequestOptions = {}): Promise<
     ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
       ...fetchOptions.headers,
     },
   })

@@ -1,26 +1,34 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { CartProvider } from '@/features/cart/CartContext'
 import Navbar from '@/components/Navbar/Navbar'
 import styles from './App.module.scss'
 import PhoneList from '@/features/products/page/PhoneList/PhoneList'
+import PhoneDetail from '@/features/products/page/PhoneDetail/PhoneDetail'
+import Cart from '@/features/cart/page/Cart/Cart'
 
 const App = () => {
-  const [isInitialLoading, setIsInitialLoading] = useState(true)
-  const handleInitialLoadComplete = useCallback(() => setIsInitialLoading(false), [])
+  const [isLoading, setIsLoading] = useState(true)
+  const initialLoadDone = useRef(false)
+
+  const handleLoadingChange = useCallback((loading: boolean) => {
+    if (initialLoadDone.current) return
+    setIsLoading(loading)
+    if (!loading) initialLoadDone.current = true
+  }, [])
 
   return (
     <CartProvider>
       <BrowserRouter>
-        <Navbar isLoading={isInitialLoading} />
+        <Navbar isLoading={isLoading} />
         <main className={styles.main}>
           <Routes>
             <Route
               path="/"
-              element={<PhoneList onInitialLoadComplete={handleInitialLoadComplete} />}
+              element={<PhoneList onLoadingChange={handleLoadingChange} />}
             />
-            <Route path="/product/:id" element={<div>Product Detail</div>} />
-            <Route path="/cart" element={<div>Cart</div>} />
+            <Route path="/product/:id" element={<PhoneDetail onLoadingChange={handleLoadingChange} />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </main>
       </BrowserRouter>

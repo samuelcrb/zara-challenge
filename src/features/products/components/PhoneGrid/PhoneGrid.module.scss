@@ -76,7 +76,7 @@ $max-items: 20;
   }
 
   &.exiting {
-    animation: fadeOut $animation-duration-exit ease forwards;
+    animation: fadeOut $animation-duration-fade ease forwards;
     pointer-events: none;
   }
 
@@ -86,11 +86,12 @@ $max-items: 20;
 
     @include respond-to(md) {
       animation-name: fadeOut;
+      animation-duration: $animation-duration-fade;
     }
   }
 
   &.fadeEntering {
-    animation: fadeIn $animation-duration-enter ease forwards;
+    animation: fadeIn $animation-duration-fade ease forwards;
   }
 
   &.animated > li {

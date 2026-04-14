@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '@/features/products/types/product.types'
+import { getImageUrl } from '@/utils/image.utils'
 import styles from './PhoneCard.module.scss'
 
 interface PhoneCardProps {
@@ -15,7 +16,7 @@ const PhoneCard = ({ product }: PhoneCardProps) => {
     >
       <div className={styles.imageWrapper}>
         <img
-          src={product.imageUrl}
+          src={getImageUrl(product.imageUrl)}
           alt={`${product.brand} ${product.name}`}
           className={styles.image}
         />

@@ -12,6 +12,7 @@ coverage
 .env
 .env.local
 .env.*.local
+bff/.env
 
 # Editor
 .vscode/*

@@ -1,0 +1,318 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.page {
+  padding: 0 16px $spacing-xxl;
+  animation: fadeIn $animation-duration-fade ease both;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @include respond-to(md) {
+    padding: 0 40px $spacing-xxl;
+  }
+
+  @include respond-to(lg) {
+    padding: 0 60px $spacing-xxl;
+  }
+
+  @include respond-to(xl) {
+    padding: 0 100px $spacing-xxl;
+  }
+}
+
+// ─── Back button ─────────────────────────────────────────────────────────────
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-text;
+  padding: $spacing-md 0;
+}
+
+.backArrow {
+  display: block;
+  width: 6px;
+  height: 9px;
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 80px;
+  padding: $spacing-xl 0;
+  align-items: center;
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-xxl;
+    padding: $spacing-xxl 0;
+  }
+}
+
+.imageCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 215px;
+
+  @include respond-to(md) {
+    height: 400px;
+  }
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+@keyframes imageReveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.productImageTop {
+  animation: imageReveal 300ms ease both;
+}
+
+// ─── Info panel ──────────────────────────────────────────────────────────────
+
+.infoCol {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 440px;
+}
+
+.productName {
+  font-size: $font-size-xl;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.productPrice {
+  font-size: $font-size-sm;
+  margin: $spacing-sm 0 0;
+}
+
+// ─── Storage & color sections ─────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.sectionLabel {
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-primary;
+  margin: 0;
+}
+
+.storageOptions {
+  display: flex;
+}
+
+.storageBtn {
+  flex: 1;
+  max-width: 95px;
+  padding: 18px $spacing-md;
+  border: 0.5px solid $color-border;
+  margin-left: -0.5px;
+  background: $color-background;
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  color: $color-text;
+  position: relative;
+  z-index: 0;
+  transition: border-color 150ms ease;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:hover {
+    border-color: $color-text-light;
+    z-index: 1;
+  }
+
+  &.selected {
+    border: 1px solid $color-primary;
+    z-index: 2;
+  }
+}
+
+.colorOptions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.colorSwatch {
+  width: 20px;
+  height: 20px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 1px solid transparent;
+    transition: border-color 150ms ease;
+  }
+
+  &.selected::after {
+    border-color: $color-primary;
+  }
+}
+
+.colorName {
+  font-size: $font-size-xs;
+  letter-spacing: 0.06em;
+  margin: 0;
+  color: $color-text;
+  transition: opacity 150ms ease;
+}
+
+// ─── Add to cart button ───────────────────────────────────────────────────────
+
+.addBtn {
+  width: 100%;
+  padding: $spacing-md;
+  border: none;
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: default;
+  background: $color-background-alt;
+  color: $color-text-muted;
+  transition: background 200ms ease, color 200ms ease;
+
+  &.active {
+    background: $color-primary;
+    color: $color-white;
+    cursor: pointer;
+  }
+}
+
+// ─── Specifications ───────────────────────────────────────────────────────────
+
+.specs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xxl 0;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 $spacing-lg;
+}
+
+.specsTable {
+  max-width: 1250px;
+  width: 100%;
+}
+
+.specRow {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  padding: $spacing-md 0;
+  border-bottom: 0.5px solid $color-primary;
+
+  &:first-child {
+    border-top: 0.5px solid $color-primary;
+  }
+}
+
+.specLabel {
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $color-primary;
+}
+
+.specValue {
+  font-size: $font-size-xs;
+  color: $color-primary;
+}
+
+// ─── Similar items ────────────────────────────────────────────────────────────
+
+.similar {
+  padding-top: $spacing-xxl;
+}
+
+.similarScroll {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-right: -16px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include respond-to(md) {
+    margin-right: -40px;
+  }
+
+  @include respond-to(lg) {
+    margin-right: -60px;
+  }
+
+  @include respond-to(xl) {
+    margin-right: -100px;
+  }
+}
+
+.scrollTrack {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: #cccccc;
+  margin-top: $spacing-md;
+}
+
+.scrollThumb {
+  position: absolute;
+  top: 0;
+  width: 150px;
+  height: 1px;
+  background: $color-primary;
+}
+
+.similarCard {
+  flex: 0 0 344px;
+  height: 344px;
+}
