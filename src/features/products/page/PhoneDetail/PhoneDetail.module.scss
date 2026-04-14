@@ -3,7 +3,7 @@
 
 .page {
   padding: 0 16px $spacing-xxl;
-  animation: fadeIn $animation-duration-enter ease both;
+  animation: fadeIn $animation-duration-fade ease both;
 
   @include respond-to(md) {
     padding: 0 40px $spacing-xxl;

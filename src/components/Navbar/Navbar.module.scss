@@ -55,22 +55,13 @@
 .logo {
   display: flex;
   align-items: center;
-
-  img {
-    height: 20px;
-    width: auto;
-  }
 }
 
 .cart {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $spacing-xs;
 
-  img {
-    width: 24px;
-    height: 24px;
-  }
 }
 
 .cartCount {
