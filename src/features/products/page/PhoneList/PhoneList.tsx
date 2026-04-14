@@ -23,9 +23,11 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   })
   const [transition, setTransition] = useState<GridTransition>({ status: 'idle' })
   const isClearAction = useRef(false)
-  const isFirstFetch = useRef(true)
   const latestProducts = useRef<Product[]>(products)
   latestProducts.current = products
+  // Synced from state every render so it resets correctly on remount (survives StrictMode double-invoke)
+  const latestDisplayedGridKey = useRef(displayedGrid.key)
+  latestDisplayedGridKey.current = displayedGrid.key
 
   useEffect(() => {
     onLoadingChange(isLoading)
@@ -40,8 +42,8 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   useEffect(() => {
     if (fetchId === 0) return
 
-    if (isFirstFetch.current) {
-      isFirstFetch.current = false
+    if (latestDisplayedGridKey.current === 0) {
+      // First render after mount: show products without any transition
       setDisplayedGrid({ products: latestProducts.current, key: fetchId })
       return
     }
