@@ -12,6 +12,31 @@ const upstreamHeaders: HeadersInit = {
   'x-api-key': config.apiKey,
 }
 
+interface StorageOption {
+  capacity: string
+  price: number
+}
+
+interface RawProduct {
+  id: string
+  imageUrl: string
+  basePrice?: number
+  [key: string]: unknown
+}
+
+/** Fetch storageOptions for a product and return the minimum price, or undefined on failure */
+const fetchMinStoragePrice = async (id: string): Promise<number | undefined> => {
+  try {
+    const res = await fetch(upstreamUrl(`/products/${id}`), { headers: upstreamHeaders })
+    if (!res.ok) return undefined
+    const detail = await res.json()
+    if (!Array.isArray(detail.storageOptions) || detail.storageOptions.length === 0) return undefined
+    return Math.min(...detail.storageOptions.map((s: StorageOption) => s.price))
+  } catch {
+    return undefined
+  }
+}
+
 /** GET /api/products */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -32,7 +57,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const upstream = await fetch(url, { headers: upstreamHeaders })
     const raw: Array<{ id: string; imageUrl: string }> = await upstream.json()
 
-    const data = Array.isArray(raw)
+    const deduped: RawProduct[] = Array.isArray(raw)
       ? (() => {
           const seen = new Set<string>()
           return raw.map(p => {
@@ -44,6 +69,19 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
           })
         })()
       : raw
+
+    // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum
+    const data: RawProduct[] = upstream.ok && Array.isArray(deduped)
+      ? await Promise.all(
+          deduped.map(async p => {
+            const minPrice = await fetchMinStoragePrice(p.id)
+            if (minPrice !== undefined && minPrice !== p.basePrice) {
+              return { ...p, basePrice: minPrice }
+            }
+            return p
+          }),
+        )
+      : deduped
 
     if (upstream.ok && Array.isArray(data)) {
       setCachedProducts(cacheKey, data)
@@ -67,6 +105,14 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
       headers: upstreamHeaders,
     })
     const data = await upstream.json()
+
+    if (upstream.ok && Array.isArray(data.storageOptions) && data.storageOptions.length > 0) {
+      const minPrice = Math.min(...data.storageOptions.map((s: StorageOption) => s.price))
+      if (minPrice !== data.basePrice) {
+        res.status(upstream.status).json({ ...data, basePrice: minPrice })
+        return
+      }
+    }
 
     res.status(upstream.status).json(data)
   } catch (err) {

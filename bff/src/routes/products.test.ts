@@ -33,6 +33,28 @@ beforeEach(() => {
   vi.mocked(cache.setCachedProducts).mockReset()
 })
 
+/** Stubs fetch so that the list call returns `listBody` and any detail call returns `detailBody` */
+const mockUpstreamWithDetail = (
+  listBody: unknown,
+  detailBody: unknown,
+  listStatus = 200,
+) => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockImplementation((url: URL | string) => {
+      const href = url.toString()
+      const isDetail = /\/products\/[^/]+$/.test(href) && !/\?/.test(href.split('/products/')[1] ?? '')
+      const body = isDetail ? detailBody : listBody
+      const status = isDetail ? 200 : listStatus
+      return Promise.resolve({
+        ok: status >= 200 && status < 300,
+        status,
+        json: () => Promise.resolve(body),
+      })
+    }),
+  )
+}
+
 describe('GET /', () => {
   it('returns cached data without calling upstream', async () => {
     const cached = [{ id: '1', imageUrl: 'u' }]
@@ -48,22 +70,58 @@ describe('GET /', () => {
   })
 
   it('fetches upstream on cache miss, caches and returns result', async () => {
-    const products = [{ id: '1', imageUrl: 'u' }]
-    mockUpstream(products)
+    const products = [{ id: '1', imageUrl: 'u', basePrice: 100 }]
+    const detail = { id: '1', storageOptions: [{ capacity: '128 GB', price: 100 }] }
+    mockUpstreamWithDetail(products, detail)
 
     const res = await supertest(app).get('/')
 
     expect(res.status).toBe(200)
-    expect(res.body).toEqual(products)
+    expect(res.body[0].basePrice).toBe(100)
     expect(cache.setCachedProducts).toHaveBeenCalledOnce()
+  })
+
+  it('corrects basePrice to the minimum storageOptions price', async () => {
+    const products = [{ id: 'p1', imageUrl: 'u', basePrice: 500 }]
+    const detail = {
+      id: 'p1',
+      storageOptions: [
+        { capacity: '128 GB', price: 399 },
+        { capacity: '256 GB', price: 500 },
+        { capacity: '512 GB', price: 649 },
+      ],
+    }
+    mockUpstreamWithDetail(products, detail)
+
+    const res = await supertest(app).get('/')
+
+    expect(res.status).toBe(200)
+    expect(res.body[0].basePrice).toBe(399)
+  })
+
+  it('keeps basePrice unchanged when it is already the minimum', async () => {
+    const products = [{ id: 'p1', imageUrl: 'u', basePrice: 299 }]
+    const detail = {
+      id: 'p1',
+      storageOptions: [
+        { capacity: '64 GB', price: 299 },
+        { capacity: '128 GB', price: 399 },
+      ],
+    }
+    mockUpstreamWithDetail(products, detail)
+
+    const res = await supertest(app).get('/')
+
+    expect(res.body[0].basePrice).toBe(299)
   })
 
   it('deduplicates products with repeated ids', async () => {
     const raw = [
-      { id: 'abc', imageUrl: 'u1' },
-      { id: 'abc', imageUrl: 'u2' },
+      { id: 'abc', imageUrl: 'u1', basePrice: 100 },
+      { id: 'abc', imageUrl: 'u2', basePrice: 100 },
     ]
-    mockUpstream(raw)
+    const detail = { id: 'abc', storageOptions: [{ capacity: '128 GB', price: 100 }] }
+    mockUpstreamWithDetail(raw, detail)
 
     const res = await supertest(app).get('/')
 
@@ -82,10 +140,10 @@ describe('GET /', () => {
 
     await supertest(app).get('/').query({ search: 'samsung', limit: '10', offset: '5' })
 
-    const calledUrl: URL = fetchSpy.mock.calls[0][0]
-    expect(calledUrl.searchParams.get('search')).toBe('samsung')
-    expect(calledUrl.searchParams.get('limit')).toBe('10')
-    expect(calledUrl.searchParams.get('offset')).toBe('5')
+    const listCall: URL = fetchSpy.mock.calls[0][0]
+    expect(listCall.searchParams.get('search')).toBe('samsung')
+    expect(listCall.searchParams.get('limit')).toBe('10')
+    expect(listCall.searchParams.get('offset')).toBe('5')
   })
 
   it('does not cache when upstream returns a non-ok status', async () => {
@@ -95,5 +153,54 @@ describe('GET /', () => {
 
     expect(res.status).toBe(502)
     expect(cache.setCachedProducts).not.toHaveBeenCalled()
+  })
+})
+
+describe('GET /:id', () => {
+  it('corrects basePrice to the minimum storageOptions price', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            id: 'p1',
+            basePrice: 500,
+            storageOptions: [
+              { capacity: '128 GB', price: 399 },
+              { capacity: '256 GB', price: 500 },
+            ],
+          }),
+      }),
+    )
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.status).toBe(200)
+    expect(res.body.basePrice).toBe(399)
+  })
+
+  it('keeps basePrice when it is already the minimum', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            id: 'p1',
+            basePrice: 299,
+            storageOptions: [
+              { capacity: '64 GB', price: 299 },
+              { capacity: '128 GB', price: 399 },
+            ],
+          }),
+      }),
+    )
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.body.basePrice).toBe(299)
   })
 })
