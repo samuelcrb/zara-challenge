@@ -46,8 +46,9 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const [isFading, setIsFading] = useState(false)
   const prevImageUrlRef = useRef(currentImageUrl)
 
-  // Crossfade: back image updates immediately with the new color;
-  // front image fades out over 320ms, then syncs to avoid a flash on reset.
+  // Crossfade: preload the incoming image first so the back layer is always
+  // fully visible before the front starts fading. Avoids a blank flash on the
+  // first few color changes when images aren't yet cached.
   useEffect(() => {
     const prevUrl = prevImageUrlRef.current
     prevImageUrlRef.current = currentImageUrl
@@ -66,15 +67,36 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
       return
     }
 
+    let cancelled = false
+    let fadeTimer: ReturnType<typeof setTimeout> | null = null
+
+    const startFade = () => {
+      if (cancelled) return
+      setIsFading(true)
+      fadeTimer = setTimeout(() => {
+        setFrontImageUrl(currentImageUrl)
+        setIsFading(false)
+      }, 320)
+    }
+
     setBackImageUrl(currentImageUrl)
-    setIsFading(true)
 
-    const timer = setTimeout(() => {
-      setFrontImageUrl(currentImageUrl)
-      setIsFading(false)
-    }, 320)
+    const img = new Image()
+    img.src = getImageUrl(currentImageUrl)
 
-    return () => clearTimeout(timer)
+    if (img.complete) {
+      startFade()
+    } else {
+      img.onload = startFade
+      img.onerror = startFade
+    }
+
+    return () => {
+      cancelled = true
+      img.onload = null
+      img.onerror = null
+      if (fadeTimer) clearTimeout(fadeTimer)
+    }
   }, [currentImageUrl])
 
   const scrollRef = useRef<HTMLDivElement>(null)

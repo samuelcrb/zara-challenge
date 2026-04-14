@@ -46,7 +46,7 @@ export interface ProductDetail extends Product {
 export type GetProductsParams = {
   search?: string
   limit?: number
-  offset?: number
+  offsPet?: number
 }
 
 // API error response shape
