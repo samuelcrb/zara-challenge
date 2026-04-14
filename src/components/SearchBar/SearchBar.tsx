@@ -1,6 +1,21 @@
 import { useRef } from 'react'
 import styles from './SearchBar.module.scss'
 
+const MAX_SEARCH_LENGTH = 50
+
+/**
+ * Whitelist-based sanitization for the search input.
+ * Allows letters (including accented/unicode), digits, spaces, hyphens, plus and dots —
+ * the only characters that can legitimately appear in a phone brand or model name.
+ * Collapses consecutive spaces and enforces a max length.
+ */
+export const sanitizeSearch = (raw: string): string =>
+  raw
+    .replace(/[^\p{L}\p{N}\s\-+.]/gu, '') // whitelist: letters, digits, spaces, - + .
+    .replace(/^\s/, '')                    // no leading space
+    .replace(/\s{2,}/g, ' ')              // no consecutive spaces
+    .slice(0, MAX_SEARCH_LENGTH)
+
 interface SearchBarProps {
   value: string
   onChange: (value: string) => void
@@ -26,7 +41,7 @@ const SearchBar = ({ value, onChange, onClear, resultsCount }: SearchBarProps) =
           className={styles.input}
           placeholder="Search for a smartphone..."
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={e => onChange(sanitizeSearch(e.target.value))}
           aria-label="Search for a smartphone"
         />
         {value && (
