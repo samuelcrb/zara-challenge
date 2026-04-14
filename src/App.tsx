@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { CartProvider } from '@/features/cart/CartContext'
 import Navbar from '@/components/Navbar/Navbar'
@@ -9,7 +9,13 @@ import Cart from '@/features/cart/page/Cart/Cart'
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true)
-  const handleLoadingChange = useCallback((loading: boolean) => setIsLoading(loading), [])
+  const initialLoadDone = useRef(false)
+
+  const handleLoadingChange = useCallback((loading: boolean) => {
+    if (initialLoadDone.current) return
+    setIsLoading(loading)
+    if (!loading) initialLoadDone.current = true
+  }, [])
 
   return (
     <CartProvider>
