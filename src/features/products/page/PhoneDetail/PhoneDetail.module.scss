@@ -60,9 +60,7 @@
 }
 
 .imageCol {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   width: 100%;
   height: 215px;
 
@@ -71,25 +69,25 @@
   }
 }
 
-.productImage {
+%productImage {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: block;
 }
 
-@keyframes imageReveal {
-  from {
+.productImageBack {
+  @extend %productImage;
+}
+
+.productImageFront {
+  @extend %productImage;
+  transition: opacity 320ms ease;
+
+  &.fading {
     opacity: 0;
   }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.productImageTop {
-  animation: imageReveal 300ms ease both;
 }
 
 // ─── Info panel ──────────────────────────────────────────────────────────────
