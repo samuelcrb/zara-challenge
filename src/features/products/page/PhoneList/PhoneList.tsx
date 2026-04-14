@@ -29,6 +29,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   latestSearch.current = search
   const isFirstFetch = useRef(true)
 
+  // Reset isFirstFetch on unmount so StrictMode's simulated remount starts clean
   useEffect(() => {
     return () => {
       isFirstFetch.current = true
@@ -54,12 +55,11 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
       return
     }
 
-    const variant = latestSearch.current !== '' ? 'filter' : 'fade'
     setTransition({ status: 'exiting' })
 
     const timer = setTimeout(() => {
       setDisplayedGrid(g => ({ products: latestProducts.current, key: g.key + 1 }))
-      setTransition({ status: 'entering', variant })
+      setTransition({ status: 'entering' })
     }, GRID_EXIT_DURATION)
 
     return () => clearTimeout(timer)
@@ -73,8 +73,8 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     )
   }
 
+  const isEntering = transition.status === 'entering'
   const isExiting = transition.status === 'exiting'
-  const enterVariant = transition.status === 'entering' ? transition.variant : null
 
   return (
     <div className={styles.container}>
@@ -88,8 +88,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
           <PhoneGrid
             key={displayedGrid.key}
             products={displayedGrid.products}
-            animate={enterVariant === 'filter'}
-            fadeEnter={enterVariant === 'fade'}
+            animate={isEntering}
             exiting={isExiting}
           />
         </div>
