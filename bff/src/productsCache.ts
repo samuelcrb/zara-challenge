@@ -25,3 +25,7 @@ export const getCachedProducts = (key: string): unknown | undefined => {
 export const setCachedProducts = (key: string, data: unknown): void => {
   cache.set(key, { data, expiresAt: Date.now() + TTL_MS })
 }
+
+export const clearProductsCache = (): void => {
+  cache.clear()
+}
