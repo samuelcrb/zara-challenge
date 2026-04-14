@@ -41,6 +41,42 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const [hoveredColor, setHoveredColor] = useState<ColorOption | null>(null)
   const activeColor = hoveredColor ?? selectedColor
 
+  const [frontImageUrl, setFrontImageUrl] = useState(currentImageUrl)
+  const [backImageUrl, setBackImageUrl] = useState(currentImageUrl)
+  const [isFading, setIsFading] = useState(false)
+  const prevImageUrlRef = useRef(currentImageUrl)
+
+  // Crossfade: back image updates immediately with the new color;
+  // front image fades out over 320ms, then syncs to avoid a flash on reset.
+  useEffect(() => {
+    const prevUrl = prevImageUrlRef.current
+    prevImageUrlRef.current = currentImageUrl
+
+    if (!currentImageUrl || currentImageUrl === prevUrl) {
+      if (currentImageUrl && !prevUrl) {
+        setFrontImageUrl(currentImageUrl)
+        setBackImageUrl(currentImageUrl)
+      }
+      return
+    }
+
+    if (!prevUrl) {
+      setFrontImageUrl(currentImageUrl)
+      setBackImageUrl(currentImageUrl)
+      return
+    }
+
+    setBackImageUrl(currentImageUrl)
+    setIsFading(true)
+
+    const timer = setTimeout(() => {
+      setFrontImageUrl(currentImageUrl)
+      setIsFading(false)
+    }, 320)
+
+    return () => clearTimeout(timer)
+  }, [currentImageUrl])
+
   const scrollRef = useRef<HTMLDivElement>(null)
   const [thumbLeft, setThumbLeft] = useState(0)
   const handleScroll = () => {
@@ -106,10 +142,15 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
       <section className={styles.hero}>
         <div className={styles.imageCol}>
           <img
-            key={currentImageUrl}
-            src={getImageUrl(currentImageUrl)}
+            src={getImageUrl(backImageUrl)}
+            alt=""
+            aria-hidden="true"
+            className={styles.productImageBack}
+          />
+          <img
+            src={getImageUrl(frontImageUrl)}
             alt={`${product.brand} ${product.name}`}
-            className={styles.productImage}
+            className={`${styles.productImageFront}${isFading ? ` ${styles.fading}` : ''}`}
           />
         </div>
 
