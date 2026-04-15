@@ -15,7 +15,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Define absolute path to the Vite production build folder
-const frontendPath = path.join(__dirname, '../frontend/dist')
+const frontendPath = path.join(__dirname, '../../frontend/dist')
 
 // Enable CORS for configured frontend origin
 app.use(cors({ origin: config.corsOrigin }))
