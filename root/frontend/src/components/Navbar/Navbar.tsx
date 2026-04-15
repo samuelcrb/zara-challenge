@@ -17,7 +17,7 @@ const Navbar = ({ isLoading, showBorder = false, onCartClick }: NavbarProps) => 
 
   return (
     <header
-      className={`${styles.header}${showBorder ? ` ${styles.bordered}` : ''}`}
+      className={`${styles.header}${showBorder || isCartPage ? ` ${styles.bordered}` : ''}`}
       role="banner"
     >
       <nav className={styles.nav} aria-label="Main navigation">
