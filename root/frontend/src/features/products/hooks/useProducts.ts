@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { Product } from '@/features/products/types/product.types'
 import useDebounce from '@/hooks/useDebounce'
-import preloadImages, { getImageUrl } from '@/utils/image.utils'
+import preloadImages from '@/utils/image.utils'
 import { getProducts } from '../products.api'
 
 interface UseProductsReturn {
@@ -15,6 +15,8 @@ interface UseProductsReturn {
 
 // Module-level cache — persists across PhoneList remounts within the same session
 const productCache = new Map<string, Product[]>()
+
+export const clearProductCache = () => productCache.clear()
 
 const useProducts = (): UseProductsReturn => {
   const [search, setSearch] = useState('')
@@ -62,7 +64,7 @@ const useProducts = (): UseProductsReturn => {
         setError(null)
         const data = await getProducts({ search: debouncedSearch, limit: 20 }, controller.signal)
 
-        await preloadImages(data.map((p: Product) => getImageUrl(p.imageUrl)))
+        await preloadImages(data.map((p: Product) => p.imageUrl))
 
         if (cancelled) return
         productCache.set(debouncedSearch, data)
