@@ -57,17 +57,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const upstream = await fetch(url, { headers: upstreamHeaders })
     const raw: Array<{ id: string; imageUrl: string }> = await upstream.json()
 
+    // Assign a stable renderKey per item — id is preserved for navigation/API calls
     const deduped: RawProduct[] = Array.isArray(raw)
-      ? (() => {
-          const seen = new Set<string>()
-          return raw.map(p => {
-            if (!seen.has(p.id)) {
-              seen.add(p.id)
-              return p
-            }
-            return { ...p, id: `${p.id}-${crypto.randomUUID().slice(0, 8)}` }
-          })
-        })()
+      ? raw.map((p, index) => ({ ...p, renderKey: `${p.id}-${index}` }))
       : raw
 
     // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum

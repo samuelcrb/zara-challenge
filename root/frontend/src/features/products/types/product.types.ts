@@ -30,6 +30,7 @@ export interface Product {
   name: string
   basePrice: number
   imageUrl: string
+  renderKey: string
 }
 
 // Product as returned by GET /products/:id (detail)
