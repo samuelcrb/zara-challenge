@@ -1,12 +1,29 @@
-import { defineConfig } from 'vitest/config'
+/// <reference types="vitest" />
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    // Production: minify and concatenate assets
+    // Development: skip minification for readable output
+    minify: mode === 'production',
+    sourcemap: mode !== 'production',
+    rollupOptions: {
+      output: mode === 'production'
+        ? {
+            // Concatenate vendor libs into a single chunk in production
+            manualChunks: (id) => {
+              if (id.includes('node_modules')) return 'vendor'
+            },
+          }
+        : {},
     },
   },
   test: {
@@ -21,4 +38,4 @@ export default defineConfig({
       exclude: ['node_modules/', 'src/tests/setup.ts'],
     },
   },
-})
+}))
