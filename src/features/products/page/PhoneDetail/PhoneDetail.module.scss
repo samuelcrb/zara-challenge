@@ -2,21 +2,21 @@
 @use '@/styles/mixins' as *;
 
 .page {
-  padding: 0 16px $spacing-xxl;
+  padding: 0 16px;
   animation: fadeIn $animation-duration-fade ease both;
   max-width: 1200px;
   margin: 0 auto;
 
   @include respond-to(md) {
-    padding: 0 40px $spacing-xxl;
+    padding: 0 40px;
   }
 
   @include respond-to(lg) {
-    padding: 0 60px $spacing-xxl;
+    padding: 0 60px;
   }
 
   @include respond-to(xl) {
-    padding: 0 100px $spacing-xxl;
+    padding: 0 100px;
   }
 }
 
@@ -270,31 +270,35 @@
 }
 
 // ─── Similar items ────────────────────────────────────────────────────────────
-
 .similar {
-  padding-top: $spacing-xxl;
+  padding-bottom: $spacing-xxl;
+}
+
+.similarAlign {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @include respond-to(md) {
+    padding: 0 40px;
+  }
+
+  @include respond-to(lg) {
+    padding: 0 60px;
+  }
+
+  @include respond-to(xl) {
+    padding: 0 100px;
+  }
 }
 
 .similarScroll {
   display: flex;
   overflow-x: auto;
   scrollbar-width: none;
-  margin-right: -16px;
 
   &::-webkit-scrollbar {
     display: none;
-  }
-
-  @include respond-to(md) {
-    margin-right: -40px;
-  }
-
-  @include respond-to(lg) {
-    margin-right: -60px;
-  }
-
-  @include respond-to(xl) {
-    margin-right: -100px;
   }
 }
 
@@ -317,4 +321,38 @@
 .similarCard {
   flex: 0 0 344px;
   height: 344px;
+
+  // Align the first card's left edge with the page content edge.
+  // max() ensures alignment is preserved when .page auto-centers on wide viewports.
+  &:first-child {
+    margin-left: 16px;
+
+    @include respond-to(md) {
+      margin-left: 40px;
+    }
+
+    @include respond-to(lg) {
+      margin-left: 60px;
+    }
+
+    @include respond-to(xl) {
+      margin-left: max(100px, calc((min(100vw, 1920px) - 1200px) / 2 + 100px));
+    }
+  }
+
+  &:last-child {
+    margin-right: 16px;
+
+    @include respond-to(md) {
+      margin-right: 40px;
+    }
+
+    @include respond-to(lg) {
+      margin-right: 60px;
+    }
+
+    @include respond-to(xl) {
+      margin-right: max(100px, calc((min(100vw, 1920px) - 1200px) / 2 + 100px));
+    }
+  }
 }
