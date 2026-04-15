@@ -31,15 +31,22 @@ describe('CartContext', () => {
     expect(result.current.cart).toHaveLength(1)
   })
 
-  it('increments quantity when adding the same configuration', () => {
+  it('adds a new row when adding the same product again', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart(mockItem))
-    expect(result.current.cart).toHaveLength(1)
-    expect(result.current.cart[0].quantity).toBe(2)
+    expect(result.current.cart).toHaveLength(2)
   })
 
-  it('adds a new line for different configuration', () => {
+  it('each cart entry gets a unique cartItemId', () => {
+    const { result } = renderHook(() => useCartContext(), { wrapper })
+    act(() => result.current.addToCart(mockItem))
+    act(() => result.current.addToCart(mockItem))
+    const [a, b] = result.current.cart
+    expect(a.cartItemId).not.toBe(b.cartItemId)
+  })
+
+  it('adds a new row for a different configuration', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart({ ...mockItem, storage: '256GB' }))
@@ -50,13 +57,6 @@ describe('CartContext', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.removeFromCart(result.current.cart[0].cartItemId))
-    expect(result.current.cart).toHaveLength(0)
-  })
-
-  it('decreases quantity and removes item when quantity reaches 0', () => {
-    const { result } = renderHook(() => useCartContext(), { wrapper })
-    act(() => result.current.addToCart(mockItem))
-    act(() => result.current.decreaseQuantity(result.current.cart[0].cartItemId))
     expect(result.current.cart).toHaveLength(0)
   })
 
@@ -82,29 +82,20 @@ describe('CartContext', () => {
   })
 
   it('loads persisted cart from localStorage on mount', () => {
-    // Pre-populate localStorage before mounting
-    const cartItemId = `${mockItem.productId}-${mockItem.color}-${mockItem.storage}`
+    const cartItemId = 'some-uuid'
     localStorage.setItem(
       'zara_cart',
-      JSON.stringify([{ ...mockItem, cartItemId, quantity: 3 }]),
+      JSON.stringify([{ ...mockItem, cartItemId }]),
     )
     const { result } = renderHook(() => useCartContext(), { wrapper })
     expect(result.current.cart).toHaveLength(1)
-    expect(result.current.cart[0].quantity).toBe(3)
+    expect(result.current.cart[0].cartItemId).toBe(cartItemId)
   })
 
   it('returns empty cart when localStorage contains invalid JSON', () => {
     localStorage.setItem('zara_cart', 'not-valid-json')
     const { result } = renderHook(() => useCartContext(), { wrapper })
     expect(result.current.cart).toHaveLength(0)
-  })
-
-  it('increaseQuantity adds one to an existing item', () => {
-    const { result } = renderHook(() => useCartContext(), { wrapper })
-    act(() => result.current.addToCart(mockItem))
-    const { cartItemId } = result.current.cart[0]
-    act(() => result.current.increaseQuantity(cartItemId))
-    expect(result.current.cart[0].quantity).toBe(2)
   })
 
   it('clearCart removes all items', () => {
