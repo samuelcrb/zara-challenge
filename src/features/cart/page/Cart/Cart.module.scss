@@ -6,24 +6,11 @@
   to   { opacity: 0; }
 }
 
-@keyframes slideDownFromNavbar {
-  from {
-    transform: translateY(-16px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 // ─── Page layout ─────────────────────────────────────────────────────────────
 
 .page {
   padding: 0 16px $spacing-xxl;
   padding-bottom: calc(#{$spacing-xxl} + 120px); // reserve space for 2-row mobile footer
-  animation: fadeIn $animation-duration-fade ease both;
 
   @include respond-to(md) {
     padding: 0 40px $spacing-xxl;
@@ -49,7 +36,6 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 12px 0 $spacing-xl;
-  animation: slideDownFromNavbar 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 // ─── Items list ──────────────────────────────────────────────────────────────
