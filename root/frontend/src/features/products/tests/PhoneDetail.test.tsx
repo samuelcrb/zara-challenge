@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import PhoneDetail from '@/features/products/page/PhoneDetail/PhoneDetail'
@@ -11,7 +11,6 @@ import type {
   ColorOption,
   StorageOption,
 } from '@/features/products/types/product.types'
-import type { ReactNode } from 'react'
 
 // ─── Mocks ─────────────────────────────────────────────────────────────────────
 

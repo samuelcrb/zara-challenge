@@ -123,7 +123,7 @@ describe('useProducts', () => {
 
     // First render: populates cache for ''
     const { unmount } = renderHook(() => useProducts())
-    await waitFor(() => expect(result => result.current.products).toBeTruthy)
+    await waitFor(() => expect(mockGetProducts).toHaveBeenCalled())
     // Wait for products to be cached
     await waitFor(() => {
       const hook = renderHook(() => useProducts())

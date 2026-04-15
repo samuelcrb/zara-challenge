@@ -57,9 +57,20 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const upstream = await fetch(url, { headers: upstreamHeaders })
     const raw: Array<{ id: string; imageUrl: string }> = await upstream.json()
 
-    // Assign a stable renderKey per item — id is preserved for navigation/API calls
+    // Deduplicate ids — when the same id appears more than once, rename subsequent
+    // occurrences to `${id}-1`, `${id}-2`, … and assign a stable renderKey per item
+    const seenIds = new Set<string>()
     const deduped: RawProduct[] = Array.isArray(raw)
-      ? raw.map((p, index) => ({ ...p, renderKey: `${p.id}-${index}` }))
+      ? raw.map((p, index) => {
+          let uniqueId = p.id
+          if (seenIds.has(uniqueId)) {
+            let counter = 1
+            while (seenIds.has(`${p.id}-${counter}`)) counter++
+            uniqueId = `${p.id}-${counter}`
+          }
+          seenIds.add(uniqueId)
+          return { ...p, id: uniqueId, renderKey: `${p.id}-${index}` }
+        })
       : raw
 
     // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum

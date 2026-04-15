@@ -39,6 +39,7 @@ const makeProductDetail = (overrides: Partial<ProductDetail> = {}): ProductDetai
   name: 'iPhone 15',
   basePrice: 999,
   imageUrl: 'https://example.com/iphone.jpg',
+  renderKey: 'APPLE-1-0',
   description: 'A great phone',
   rating: 4.5,
   specs: {
