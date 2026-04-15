@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
-import useProducts from '@/features/products/hooks/useProducts'
+import useProducts, { clearProductCache } from '@/features/products/hooks/useProducts'
 import { getProducts } from '@/features/products/products.api'
 import preloadImages from '@/utils/image.utils'
 import type { Product } from '@/features/products/types/product.types'
@@ -17,11 +17,13 @@ const makeProduct = (overrides: Partial<Product> = {}): Product => ({
   name: 'iPhone 15',
   basePrice: 999,
   imageUrl: 'https://example.com/iphone.jpg',
+  renderKey: 'APPLE-1',
   ...overrides,
 })
 
 describe('useProducts', () => {
   beforeEach(() => {
+    clearProductCache()
     mockGetProducts.mockResolvedValue([])
     mockPreloadImages.mockResolvedValue([])
   })
@@ -111,6 +113,31 @@ describe('useProducts', () => {
     })
 
     await waitFor(() => expect(result.current.products).toHaveLength(1))
+  })
+
+  // ─── Cache hit ────────────────────────────────────────────────────────────
+
+  it('returns cached products without calling getProducts again', async () => {
+    const products = [makeProduct()]
+    mockGetProducts.mockResolvedValue(products)
+
+    // First render: populates cache for ''
+    const { unmount } = renderHook(() => useProducts())
+    await waitFor(() => expect(result => result.current.products).toBeTruthy)
+    // Wait for products to be cached
+    await waitFor(() => {
+      const hook = renderHook(() => useProducts())
+      return hook.result.current.fetchId === 1
+    })
+    unmount()
+    vi.clearAllMocks()
+
+    // Second render: should hit cache, not call getProducts
+    const { result: result2 } = renderHook(() => useProducts())
+    await waitFor(() => expect(result2.current.isLoading).toBe(false))
+
+    expect(mockGetProducts).not.toHaveBeenCalled()
+    expect(result2.current.products).toEqual(products)
   })
 
   // ─── Error handling ────────────────────────────────────────────────────────
