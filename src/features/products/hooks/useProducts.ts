@@ -30,6 +30,13 @@ const useProducts = (): UseProductsReturn => {
   // Prevents a spurious fetchId increment on the first cache hit (e.g. navigating back from cart)
   const isInitialized = useRef(false)
 
+  // Reset isInitialized on unmount so StrictMode's simulated remount starts clean
+  useEffect(() => {
+    return () => {
+      isInitialized.current = false
+    }
+  }, [])
+
   useEffect(() => {
     if (productCache.has(debouncedSearch)) {
       const hit = productCache.get(debouncedSearch)!

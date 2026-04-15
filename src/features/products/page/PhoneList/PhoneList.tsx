@@ -52,6 +52,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     if (isFirstFetch.current) {
       isFirstFetch.current = false
       setDisplayedGrid({ products: latestProducts.current, key: fetchId })
+      setTransition({ status: 'entering', variant: 'fade' })
       return
     }
 
@@ -59,7 +60,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
 
     const timer = setTimeout(() => {
       setDisplayedGrid(g => ({ products: latestProducts.current, key: g.key + 1 }))
-      setTransition({ status: 'entering' })
+      setTransition({ status: 'entering', variant: 'filter' })
     }, GRID_EXIT_DURATION)
 
     return () => clearTimeout(timer)
@@ -73,7 +74,6 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     )
   }
 
-  const isEntering = transition.status === 'entering'
   const isExiting = transition.status === 'exiting'
 
   return (
@@ -88,7 +88,11 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
           <PhoneGrid
             key={displayedGrid.key}
             products={displayedGrid.products}
-            animate={isEntering}
+            animationType={
+              transition.status === 'entering'
+                ? transition.variant
+                : 'none'
+            }
             exiting={isExiting}
           />
         </div>

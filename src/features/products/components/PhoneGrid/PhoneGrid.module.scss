@@ -35,10 +35,12 @@
 @keyframes slideInFromRight {
   from {
     transform: translateX(120px);
+    opacity: 0;
   }
 
   to {
     transform: translateX(0);
+    opacity: 1;
   }
 }
 
@@ -69,11 +71,13 @@ $col-width: 344px;
     pointer-events: none;
   }
 
+  // Page entry: the whole grid fades in
   &.fadeEntering {
     animation: fadeIn $animation-duration-fade ease forwards;
   }
 
-  &.animated>li {
+  // Search filter: slide from bottom on mobile, slide from right on desktop
+  &.slideEntering > li {
     animation: slideInFromBottom $animation-duration-enter ease both;
 
     @include row-delays(1);
