@@ -7,8 +7,9 @@ import AnimatedRoutes from '@/components/AnimatedRoutes/AnimatedRoutes'
 import styles from './App.module.scss'
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true)
-  const initialLoadDone = useRef(false)
+  const startsWithLoading = window.location.pathname !== '/cart'
+  const [isLoading, setIsLoading] = useState(startsWithLoading)
+  const initialLoadDone = useRef(!startsWithLoading)
 
   const handleLoadingChange = useCallback((loading: boolean) => {
     if (initialLoadDone.current) return
