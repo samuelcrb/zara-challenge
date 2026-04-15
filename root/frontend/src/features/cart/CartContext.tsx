@@ -37,42 +37,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [cart])
 
   /**
-   * Adds a product to the cart.
-   * If the same productId + color + storage combination already exists,
-   * increments its quantity instead of adding a new line.
+   * Adds a product to the cart as a new row.
    */
-  const addToCart = (item: Omit<CartItem, 'cartItemId' | 'quantity'>): void => {
-    const cartItemId = `${item.productId}-${item.color}-${item.storage}`
-
-    setCart(prev => {
-      const existing = prev.find(i => i.cartItemId === cartItemId)
-      if (existing) {
-        return prev.map(i => (i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + 1 } : i))
-      }
-      return [...prev, { ...item, cartItemId, quantity: 1 }]
-    })
+  const addToCart = (item: Omit<CartItem, 'cartItemId'>): void => {
+    const cartItemId = crypto.randomUUID()
+    setCart(prev => [...prev, { ...item, cartItemId }])
   }
 
-  /** Increases quantity of a cart item by 1 */
-  const increaseQuantity = (cartItemId: string): void => {
-    setCart(prev =>
-      prev.map(i => (i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + 1 } : i))
-    )
-  }
-
-  /**
-   * Decreases quantity of a cart item by 1.
-   * Removes the item entirely if quantity reaches 0.
-   */
-  const decreaseQuantity = (cartItemId: string): void => {
-    setCart(prev =>
-      prev
-        .map(i => (i.cartItemId === cartItemId ? { ...i, quantity: i.quantity - 1 } : i))
-        .filter(i => i.quantity > 0)
-    )
-  }
-
-  /** Removes a cart item entirely regardless of quantity */
+  /** Removes a cart item entirely */
   const removeFromCart = (cartItemId: string): void => {
     setCart(prev => prev.filter(i => i.cartItemId !== cartItemId))
   }
@@ -82,11 +54,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCart([])
   }
 
-  /** Total number of units across all cart items */
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
+  /** Total number of items in the cart */
+  const totalItems = cart.length
 
-  /** Total price of all cart items (price × quantity per item) */
-  const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  /** Total price of all cart items */
+  const totalPrice = cart.reduce((acc, item) => acc + item.price, 0)
 
   return (
     <CartContext.Provider
@@ -94,8 +66,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         cart,
         addToCart,
         removeFromCart,
-        increaseQuantity,
-        decreaseQuantity,
         clearCart,
         totalItems,
         totalPrice,
