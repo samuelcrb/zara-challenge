@@ -270,8 +270,8 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
             <h2 className={styles.sectionTitle}>SIMILAR ITEMS</h2>
           </div>
           <div className={styles.similarScroll} ref={scrollRef} onScroll={handleScroll}>
-            {product.similarProducts.map(p => (
-              <div key={p.id} className={styles.similarCard}>
+            {product.similarProducts.map((p, i) => (
+              <div key={p.renderKey ?? `${p.id}-${i}`} className={styles.similarCard}>
                 <PhoneCard product={p} />
               </div>
             ))}
