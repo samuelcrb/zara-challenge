@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { CartProvider, useCartContext } from '@/features/cart/CartContext'
 import type { ReactNode } from 'react'
@@ -79,5 +79,51 @@ describe('CartContext', () => {
     act(() => result.current.addToCart(mockItem))
     const stored = JSON.parse(localStorage.getItem('zara_cart') ?? '[]')
     expect(stored).toHaveLength(1)
+  })
+
+  it('loads persisted cart from localStorage on mount', () => {
+    // Pre-populate localStorage before mounting
+    const cartItemId = `${mockItem.productId}-${mockItem.color}-${mockItem.storage}`
+    localStorage.setItem(
+      'zara_cart',
+      JSON.stringify([{ ...mockItem, cartItemId, quantity: 3 }]),
+    )
+    const { result } = renderHook(() => useCartContext(), { wrapper })
+    expect(result.current.cart).toHaveLength(1)
+    expect(result.current.cart[0].quantity).toBe(3)
+  })
+
+  it('returns empty cart when localStorage contains invalid JSON', () => {
+    localStorage.setItem('zara_cart', 'not-valid-json')
+    const { result } = renderHook(() => useCartContext(), { wrapper })
+    expect(result.current.cart).toHaveLength(0)
+  })
+
+  it('increaseQuantity adds one to an existing item', () => {
+    const { result } = renderHook(() => useCartContext(), { wrapper })
+    act(() => result.current.addToCart(mockItem))
+    const { cartItemId } = result.current.cart[0]
+    act(() => result.current.increaseQuantity(cartItemId))
+    expect(result.current.cart[0].quantity).toBe(2)
+  })
+
+  it('clearCart removes all items', () => {
+    const { result } = renderHook(() => useCartContext(), { wrapper })
+    act(() => {
+      result.current.addToCart(mockItem)
+      result.current.addToCart({ ...mockItem, storage: '256GB' })
+    })
+    expect(result.current.cart).toHaveLength(2)
+    act(() => result.current.clearCart())
+    expect(result.current.cart).toHaveLength(0)
+  })
+
+  it('throws when useCartContext is used outside CartProvider', () => {
+    // Suppress the expected React error boundary console output
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    expect(() => renderHook(() => useCartContext())).toThrow(
+      'useCartContext must be used within CartProvider',
+    )
+    spy.mockRestore()
   })
 })
