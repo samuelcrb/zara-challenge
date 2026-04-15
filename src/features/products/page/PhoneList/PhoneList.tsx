@@ -8,7 +8,8 @@ import styles from './PhoneList.module.scss'
 
 type GridTransition =
   | { status: 'idle' }
-  | { status: 'exiting' | 'entering'; variant: 'fade' | 'slide-down' }
+  | { status: 'exiting' }
+  | { status: 'entering'; variant: 'filter' | 'fade' }
 
 interface PhoneListProps {
   onLoadingChange: (loading: boolean) => void
@@ -22,12 +23,18 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     key: 0,
   })
   const [transition, setTransition] = useState<GridTransition>({ status: 'idle' })
-  const isClearAction = useRef(false)
   const latestProducts = useRef<Product[]>(products)
   latestProducts.current = products
-  // Synced from state every render so it resets correctly on remount (survives StrictMode double-invoke)
-  const latestDisplayedGridKey = useRef(displayedGrid.key)
-  latestDisplayedGridKey.current = displayedGrid.key
+  const latestSearch = useRef(search)
+  latestSearch.current = search
+  const isFirstFetch = useRef(true)
+
+  // Reset isFirstFetch on unmount so StrictMode's simulated remount starts clean
+  useEffect(() => {
+    return () => {
+      isFirstFetch.current = true
+    }
+  }, [])
 
   useEffect(() => {
     onLoadingChange(isLoading)
@@ -42,19 +49,18 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   useEffect(() => {
     if (fetchId === 0) return
 
-    if (latestDisplayedGridKey.current === 0) {
-      // First render after mount: show products without any transition
+    if (isFirstFetch.current) {
+      isFirstFetch.current = false
       setDisplayedGrid({ products: latestProducts.current, key: fetchId })
+      setTransition({ status: 'entering', variant: 'fade' })
       return
     }
 
-    const variant = isClearAction.current ? 'slide-down' : 'fade'
-    isClearAction.current = false
-    setTransition({ status: 'exiting', variant })
+    setTransition({ status: 'exiting' })
 
     const timer = setTimeout(() => {
       setDisplayedGrid(g => ({ products: latestProducts.current, key: g.key + 1 }))
-      setTransition({ status: 'entering', variant })
+      setTransition({ status: 'entering', variant: 'filter' })
     }, GRID_EXIT_DURATION)
 
     return () => clearTimeout(timer)
@@ -68,9 +74,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     )
   }
 
-  const isEntering = transition.status === 'entering'
   const isExiting = transition.status === 'exiting'
-  const transitionVariant = transition.status !== 'idle' ? transition.variant : undefined
 
   return (
     <div className={styles.container}>
@@ -79,17 +83,17 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
           <SearchBar
             value={search}
             onChange={setSearch}
-            onClear={() => {
-              isClearAction.current = true
-            }}
             resultsCount={products.length}
           />
           <PhoneGrid
             key={displayedGrid.key}
             products={displayedGrid.products}
-            animate={isEntering && transitionVariant === 'fade'}
-            fadeEnter={isEntering && transitionVariant === 'slide-down'}
-            exitVariant={isExiting ? transitionVariant : undefined}
+            animationType={
+              transition.status === 'entering'
+                ? transition.variant
+                : 'none'
+            }
+            exiting={isExiting}
           />
         </div>
       )}

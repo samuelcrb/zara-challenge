@@ -1,6 +1,23 @@
 @use '@/styles/variables' as *;
 @use '@/styles/mixins' as *;
 
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes slideDownFromNavbar {
+  from {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 // ─── Page layout ─────────────────────────────────────────────────────────────
 
 .page {

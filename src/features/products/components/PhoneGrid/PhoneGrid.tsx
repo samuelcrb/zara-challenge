@@ -4,23 +4,20 @@ import styles from './PhoneGrid.module.scss'
 
 interface PhoneGridProps {
   products: Product[]
-  animate?: boolean
-  fadeEnter?: boolean
-  exitVariant?: 'fade' | 'slide-down'
+  animationType?: 'fade' | 'filter' | 'none'
+  exiting?: boolean
 }
 
 const PhoneGrid = ({
   products,
-  animate = false,
-  fadeEnter = false,
-  exitVariant,
+  animationType = 'none',
+  exiting = false,
 }: PhoneGridProps) => {
   const classList = [
     styles.grid,
-    animate && styles.animated,
-    fadeEnter && styles.fadeEntering,
-    exitVariant === 'fade' && styles.exiting,
-    exitVariant === 'slide-down' && styles.slidingOut,
+    animationType === 'fade' && styles.fadeEntering,
+    animationType === 'filter' && styles.slideEntering,
+    exiting && styles.exiting,
   ]
     .filter(Boolean)
     .join(' ')
