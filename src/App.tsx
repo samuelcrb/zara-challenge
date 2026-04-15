@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { CartProvider } from '@/features/cart/CartContext'
 import Navbar from '@/components/Navbar/Navbar'
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop'
 import styles from './App.module.scss'
 import PhoneList from '@/features/products/page/PhoneList/PhoneList'
 import PhoneDetail from '@/features/products/page/PhoneDetail/PhoneDetail'
@@ -20,6 +21,7 @@ const App = () => {
   return (
     <CartProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Navbar isLoading={isLoading} />
         <main className={styles.main}>
           <Routes>
