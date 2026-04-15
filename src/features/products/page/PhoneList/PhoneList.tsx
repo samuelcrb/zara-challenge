@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import useProducts from '@/features/products/hooks/useProducts'
 import PhoneGrid from '@/features/products/components/PhoneGrid/PhoneGrid'
 import SearchBar from '@/components/SearchBar/SearchBar'
-import { CONTENT_REVEAL_DELAY, GRID_EXIT_DURATION } from '@/constants/animation'
+import PageTransition from '@/components/PageTransition/PageTransition'
+import { CONTENT_REVEAL_DELAY, GRID_EXIT_DURATION, HEADER_TRANSITION, PAGE_TRANSITION } from '@/constants/animation'
+import { useTransitionDirection } from '@/context/transitionContext'
 import type { Product } from '@/features/products/types/product.types'
 import styles from './PhoneList.module.scss'
 
@@ -16,8 +19,9 @@ interface PhoneListProps {
 }
 
 const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
+  const direction = useTransitionDirection()
   const { products, isLoading, error, search, setSearch, fetchId } = useProducts()
-  const [showContent, setShowContent] = useState(false)
+  const [showContent, setShowContent] = useState(() => direction === 'backward')
   const [displayedGrid, setDisplayedGrid] = useState<{ products: Product[]; key: number }>({
     products: [],
     key: 0,
@@ -76,28 +80,85 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
 
   const isExiting = transition.status === 'exiting'
 
+  // When coming back from cart, the SearchBar enters from below (slide up);
+  // when leaving to cart, the SearchBar slides down and fades out.
+  const searchBarVariants = {
+    initial: direction === 'backward'
+      ? { y: HEADER_TRANSITION.slideDistance, opacity: 0 }
+      : { y: 0, opacity: 1 },
+    animate: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: HEADER_TRANSITION.duration,
+        ease: HEADER_TRANSITION.ease,
+      },
+    },
+    exit: {
+      y: HEADER_TRANSITION.slideDistance,
+      opacity: 0,
+      transition: {
+        duration: HEADER_TRANSITION.duration,
+        ease: HEADER_TRANSITION.ease,
+      },
+    },
+  }
+
+  const contentVariants = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: {
+        duration: PAGE_TRANSITION.duration,
+        ease: PAGE_TRANSITION.ease,
+        delay: direction === 'backward' ? 0.08 : 0,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: PAGE_TRANSITION.duration,
+        ease: PAGE_TRANSITION.ease,
+      },
+    },
+  }
+
   return (
-    <div className={styles.container}>
+    <PageTransition className={styles.container}>
       {showContent && (
         <div className={styles.content}>
-          <SearchBar
-            value={search}
-            onChange={setSearch}
-            resultsCount={products.length}
-          />
-          <PhoneGrid
-            key={displayedGrid.key}
-            products={displayedGrid.products}
-            animationType={
-              transition.status === 'entering'
-                ? transition.variant
-                : 'none'
-            }
-            exiting={isExiting}
-          />
+          <motion.div
+            variants={searchBarVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+              resultsCount={products.length}
+            />
+          </motion.div>
+          <motion.div
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <PhoneGrid
+              key={displayedGrid.key}
+              products={displayedGrid.products}
+              animationType={
+                transition.status === 'entering'
+                  ? transition.variant
+                  : 'none'
+              }
+              exiting={isExiting}
+            />
+          </motion.div>
         </div>
       )}
-    </div>
+    </PageTransition>
   )
 }
 
