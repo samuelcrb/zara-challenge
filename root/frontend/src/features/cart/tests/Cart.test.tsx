@@ -91,6 +91,11 @@ describe('Cart page', () => {
     expect(within(listItem).getByText('999 EUR')).toBeInTheDocument()
   })
 
+  it('renders two rows when the same product is added twice', () => {
+    renderCart([mockItem, mockItem])
+    expect(screen.getAllByRole('listitem')).toHaveLength(2)
+  })
+
   it('shows the total price', () => {
     renderCart([mockItem, { ...mockItem, storage: '256GB', price: 1099 }])
     // Both items: 999 + 1099 = 2098
