@@ -1,3 +1,4 @@
+console.log('SERVER VERSION 2 - PING ADDED')
 import 'dotenv/config'
 import express from 'express'
 import path from 'path'
@@ -25,6 +26,7 @@ app.use(express.json())
 // -------------------- HEALTH CHECK --------------------
 
 app.get('/ping', (_req, res) => {
+  console.log('PING HIT')
   res.json({ ok: true })
 })
 
