@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_BASE_URL ?? ''
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number>
@@ -14,7 +14,7 @@ const buildUrl = (
   endpoint: string,
   params?: Record<string, string | number | undefined>
 ): string => {
-  const url = new URL(`${BASE_URL}${endpoint}`)
+  const url = new URL(`${BASE_URL}${endpoint}`, window.location.origin)
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== '') {
