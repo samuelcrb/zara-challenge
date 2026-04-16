@@ -4,7 +4,7 @@
   "description": "Backend for Frontend – proxies the mobile store API and keeps credentials server-side",
   "type": "module",
   "engines": {
-    "node": "18.x"
+    "node": ">=18"
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
