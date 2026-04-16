@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import useProducts from '@/features/products/hooks/useProducts'
 import PhoneGrid from '@/features/products/components/PhoneGrid/PhoneGrid'
@@ -28,9 +28,9 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   })
   const [transition, setTransition] = useState<GridTransition>({ status: 'idle' })
   const latestProducts = useRef<Product[]>(products)
-  latestProducts.current = products
-  const latestSearch = useRef(search)
-  latestSearch.current = search
+  useLayoutEffect(() => {
+    latestProducts.current = products
+  })
   const isFirstFetch = useRef(true)
 
   // Reset isFirstFetch on unmount so StrictMode's simulated remount starts clean

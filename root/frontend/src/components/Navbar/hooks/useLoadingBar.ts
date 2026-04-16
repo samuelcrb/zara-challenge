@@ -1,45 +1,40 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import { BAR_COMPLETE_DURATION } from '@/constants/animation'
-
-type BarPhase = 'idle' | 'loading' | 'completing'
+import { reducer, initialState } from './useLoadingBar.reducer'
+import type { BarPhase } from './useLoadingBar.reducer'
 
 /**
  * Controls the loading bar animation phase based on a loading state.
  * @param isLoading - Whether the app is currently loading
- * @returns barPhase and cycle count for animation key
+ * @returns barPhase and barWidth for animation
  */
 const useLoadingBar = (isLoading: boolean) => {
-  const [barPhase, setBarPhase] = useState<BarPhase>('idle')
-  const [barWidth, setBarWidth] = useState(0)
-  const [cycle, setCycle] = useState(0)
+  const [{ barPhase, barWidth, cycle }, dispatch] = useReducer(reducer, initialState)
   const phaseRef = useRef<BarPhase>('idle')
 
-  const setPhase = (phase: BarPhase) => {
-    phaseRef.current = phase
-    setBarPhase(phase)
-  }
-
-  // Single effect depending only on isLoading — cleanup never cancels the timer prematurely
   useEffect(() => {
     if (isLoading) {
-      setCycle(c => c + 1)
-      setPhase('loading')
-      setBarWidth(0)
+      phaseRef.current = 'loading'
+      dispatch({ type: 'start' })
       return
     }
 
     if (phaseRef.current !== 'loading') return
 
-    setPhase('completing')
-    setBarWidth(100)
-    const timer = setTimeout(() => setPhase('idle'), BAR_COMPLETE_DURATION)
+    phaseRef.current = 'completing'
+    dispatch({ type: 'complete' })
+    const timer = setTimeout(() => {
+      phaseRef.current = 'idle'
+      dispatch({ type: 'idle' })
+    }, BAR_COMPLETE_DURATION)
+
     return () => clearTimeout(timer)
   }, [isLoading])
 
   // Trigger the grow transition after the bar mounts at width 0
   useEffect(() => {
     if (barPhase !== 'loading') return
-    const frame = requestAnimationFrame(() => setBarWidth(85))
+    const frame = requestAnimationFrame(() => dispatch({ type: 'grow' }))
     return () => cancelAnimationFrame(frame)
   }, [barPhase, cycle])
 

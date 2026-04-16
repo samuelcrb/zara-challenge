@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useProductDetail from '@/features/products/hooks/useProductDetail'
 import type { ColorOption } from '@/features/products/types/product.types'
@@ -6,6 +6,7 @@ import PhoneCard from '@/features/products/components/PhoneCard/PhoneCard'
 import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
 import styles from './PhoneDetail.module.scss'
+import { imageReducer, colorNameReducer } from './PhoneDetail.reducer'
 
 interface PhoneDetailProps {
   onLoadingChange: (loading: boolean) => void
@@ -41,9 +42,11 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   const [hoveredColor, setHoveredColor] = useState<ColorOption | null>(null)
   const activeColor = hoveredColor ?? selectedColor
 
-  const [frontImageUrl, setFrontImageUrl] = useState(currentImageUrl)
-  const [backImageUrl, setBackImageUrl] = useState(currentImageUrl)
-  const [isFading, setIsFading] = useState(false)
+  const [image, dispatchImage] = useReducer(imageReducer, {
+    front: currentImageUrl,
+    back: currentImageUrl,
+    fading: false,
+  })
   const prevImageUrlRef = useRef(currentImageUrl)
 
   // Crossfade: preload the incoming image first so the back layer is always
@@ -55,15 +58,13 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
 
     if (!currentImageUrl || currentImageUrl === prevUrl) {
       if (currentImageUrl && !prevUrl) {
-        setFrontImageUrl(currentImageUrl)
-        setBackImageUrl(currentImageUrl)
+        dispatchImage({ type: 'init', url: currentImageUrl })
       }
       return
     }
 
     if (!prevUrl) {
-      setFrontImageUrl(currentImageUrl)
-      setBackImageUrl(currentImageUrl)
+      dispatchImage({ type: 'init', url: currentImageUrl })
       return
     }
 
@@ -72,14 +73,13 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
 
     const startFade = () => {
       if (cancelled) return
-      setIsFading(true)
+      dispatchImage({ type: 'fade-start' })
       fadeTimer = setTimeout(() => {
-        setFrontImageUrl(currentImageUrl)
-        setIsFading(false)
+        dispatchImage({ type: 'fade-end', url: currentImageUrl })
       }, 320)
     }
 
-    setBackImageUrl(currentImageUrl)
+    dispatchImage({ type: 'set-back', url: currentImageUrl })
 
     const img = new Image()
     img.src = getImageUrl(currentImageUrl)
@@ -111,20 +111,18 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
     setThumbLeft(ratio * (track.clientWidth - 150))
   }
 
-  const [displayedColorName, setDisplayedColorName] = useState('\u00A0')
-  const [colorNameVisible, setColorNameVisible] = useState(true)
+  const [colorName, dispatchColorName] = useReducer(colorNameReducer, { text: '\u00A0', visible: true })
   const isFirstColorRender = useRef(true)
 
   useEffect(() => {
     if (isFirstColorRender.current) {
       isFirstColorRender.current = false
-      setDisplayedColorName(activeColor?.name ?? '\u00A0')
+      dispatchColorName({ type: 'set', name: activeColor?.name ?? '\u00A0' })
       return
     }
-    setColorNameVisible(false)
+    dispatchColorName({ type: 'hide' })
     const timer = setTimeout(() => {
-      setDisplayedColorName(activeColor?.name ?? '\u00A0')
-      setColorNameVisible(true)
+      dispatchColorName({ type: 'show', name: activeColor?.name ?? '\u00A0' })
     }, 150)
     return () => clearTimeout(timer)
   }, [activeColor?.name])
@@ -167,15 +165,15 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
         <section className={styles.hero}>
           <div className={styles.imageCol}>
             <img
-              src={getImageUrl(backImageUrl)}
+              src={getImageUrl(image.back)}
               alt=""
               aria-hidden="true"
               className={styles.productImageBack}
             />
             <img
-              src={getImageUrl(frontImageUrl)}
+              src={getImageUrl(image.front)}
               alt={`${product.brand} ${product.name}`}
-              className={`${styles.productImageFront}${isFading ? ` ${styles.fading}` : ''}`}
+              className={`${styles.productImageFront}${image.fading ? ` ${styles.fading}` : ''}`}
             />
           </div>
 
@@ -221,9 +219,9 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
               </div>
               <p
                 className={styles.colorName}
-                style={{ opacity: colorNameVisible ? 1 : 0 }}
+                style={{ opacity: colorName.visible ? 1 : 0 }}
               >
-                {displayedColorName}
+                {colorName.text}
               </p>
             </div>
 

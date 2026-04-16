@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react'
+import { useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { TransitionProvider, type TransitionDirection } from '@/context/transitionContext'
@@ -23,13 +23,20 @@ const getDirection = (prev: string, next: string): TransitionDirection => {
 
 const AnimatedRoutes = ({ onLoadingChange }: AnimatedRoutesProps) => {
   const location = useLocation()
-  const prevPathRef = useRef(location.pathname)
 
-  const direction = useMemo(() => {
-    const dir = getDirection(prevPathRef.current, location.pathname)
-    prevPathRef.current = location.pathname
-    return dir
-  }, [location.pathname])
+  // Render-time state update: store prevPath + direction together so the
+  // computed direction is available on the same render that commits to the DOM.
+  const [{ prevPath, direction }, setNavState] = useState({
+    prevPath: location.pathname,
+    direction: 'forward' as TransitionDirection,
+  })
+
+  if (prevPath !== location.pathname) {
+    setNavState({
+      prevPath: location.pathname,
+      direction: getDirection(prevPath, location.pathname),
+    })
+  }
 
   return (
     <TransitionProvider value={direction}>
