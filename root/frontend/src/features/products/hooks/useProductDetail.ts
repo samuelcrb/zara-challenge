@@ -32,6 +32,7 @@ interface UseProductDetailReturn {
  */
 const useProductDetail = (): UseProductDetailReturn => {
   const { id } = useParams<{ id: string }>()
+  const productId = id ?? ''
 
   const [product, setProduct] = useState<ProductDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -41,7 +42,7 @@ const useProductDetail = (): UseProductDetailReturn => {
 
   // Reset selections and re-fetch whenever the product id changes
   useEffect(() => {
-    if (!id) return
+    if (!productId) return
 
     let cancelled = false
 
@@ -52,7 +53,7 @@ const useProductDetail = (): UseProductDetailReturn => {
       try {
         setIsLoading(true)
         setError(null)
-        const data = await getProductById(id)
+        const data = await getProductById(productId)
         if (cancelled) return
         setProduct(data)
       } catch (err) {
@@ -68,7 +69,7 @@ const useProductDetail = (): UseProductDetailReturn => {
     return () => {
       cancelled = true
     }
-  }, [id])
+  }, [productId])
 
   const currentPrice = selectedStorage?.price ?? product?.basePrice ?? 0
   const currentImageUrl = selectedColor?.imageUrl ?? product?.colorOptions[0].imageUrl ?? ''

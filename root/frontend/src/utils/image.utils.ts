@@ -2,9 +2,9 @@
  * Returns the BFF image proxy URL for a given source URL.
  * All images should go through this so they are normalised (trimmed, resized, webp).
  */
-export const getImageUrl = (url: string): string => {
+const getImageUrl = (url: string): string => {
   const base = import.meta.env.VITE_BASE_URL ?? '/api'
-  return `${base}/image?url=${encodeURIComponent(url)}`
+  return `${base}/image?url=${encodeURIComponent(url.replace(/^http:\/\//i, 'https://'))}`
 }
 
 /**
@@ -26,4 +26,4 @@ const preloadImages = (urls: string[]): Promise<void[]> => {
   )
 }
 
-export default preloadImages
+export { preloadImages, getImageUrl }

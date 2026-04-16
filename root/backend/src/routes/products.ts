@@ -7,6 +7,8 @@ const router = Router()
 
 const upstreamUrl = (path: string) => `${config.upstreamUrl}${path}`
 
+const toHttps = (url: string) => url.replace(/^http:\/\//i, 'https://')
+
 const upstreamHeaders: HeadersInit = {
   'Content-Type': 'application/json',
   'x-api-key': config.apiKey,
@@ -68,28 +70,28 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const seenIds = new Set<string>()
     const deduped: RawProduct[] = Array.isArray(raw)
       ? raw.map((p, index) => {
-          let uniqueId = p.id
-          if (seenIds.has(uniqueId)) {
-            let counter = 1
-            while (seenIds.has(`${p.id}-${counter}`)) counter++
-            uniqueId = `${p.id}-${counter}`
-          }
-          seenIds.add(uniqueId)
-          return { ...p, id: uniqueId, renderKey: `${p.id}-${index}` }
-        })
+        let uniqueId = p.id
+        if (seenIds.has(uniqueId)) {
+          let counter = 1
+          while (seenIds.has(`${p.id}-${counter}`)) counter++
+          uniqueId = `${p.id}-${counter}`
+        }
+        seenIds.add(uniqueId)
+        return { ...p, id: uniqueId, renderKey: `${p.id}-${index}`, imageUrl: toHttps(p.imageUrl) }
+      })
       : raw
 
     // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum
     const data: RawProduct[] = upstream.ok && Array.isArray(deduped)
       ? await Promise.all(
-          deduped.map(async p => {
-            const minPrice = await fetchMinStoragePrice(p.id)
-            if (minPrice !== undefined && minPrice !== p.basePrice) {
-              return { ...p, basePrice: minPrice }
-            }
-            return p
-          }),
-        )
+        deduped.map(async p => {
+          const minPrice = await fetchMinStoragePrice(p.id)
+          if (minPrice !== undefined && minPrice !== p.basePrice) {
+            return { ...p, basePrice: minPrice }
+          }
+          return p
+        }),
+      )
       : deduped
 
     if (upstream.ok && Array.isArray(data)) {
@@ -119,6 +121,13 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     } catch {
       res.status(502).json({ error: 'Upstream error', message: 'Failed to reach the upstream API' })
       return
+    }
+
+    if (typeof data.imageUrl === 'string') data.imageUrl = toHttps(data.imageUrl)
+    if (Array.isArray(data.colorOptions)) {
+      data.colorOptions = (data.colorOptions as Array<{ imageUrl?: string }>).map(c =>
+        typeof c.imageUrl === 'string' ? { ...c, imageUrl: toHttps(c.imageUrl) } : c
+      )
     }
 
     if (upstream.ok && Array.isArray(data.storageOptions) && data.storageOptions.length > 0) {
