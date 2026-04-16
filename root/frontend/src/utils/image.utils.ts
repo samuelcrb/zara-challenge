@@ -3,7 +3,7 @@
  * All images should go through this so they are normalised (trimmed, resized, webp).
  */
 export const getImageUrl = (url: string): string => {
-  const base = import.meta.env.VITE_BASE_URL
+  const base = import.meta.env.VITE_BASE_URL ?? '/api'
   return `${base}/image?url=${encodeURIComponent(url)}`
 }
 
