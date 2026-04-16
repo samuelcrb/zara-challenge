@@ -1,4 +1,3 @@
-console.log('SERVER VERSION 2 - PING ADDED')
 import 'dotenv/config'
 import express from 'express'
 import path from 'path'
@@ -22,13 +21,6 @@ const frontendPath = path.join(process.cwd(), 'frontend/dist')
 
 app.use(cors({ origin: config.corsOrigin }))
 app.use(express.json())
-
-// -------------------- HEALTH CHECK --------------------
-
-app.get('/ping', (_req, res) => {
-  console.log('PING HIT')
-  res.json({ ok: true })
-})
 
 // -------------------- API ROUTES (FIRST) --------------------
 
@@ -71,5 +63,5 @@ app.use(
 const PORT = config.port || process.env.PORT || 3000
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
+  console.log(`🚀 Server running on https://localhost:${PORT}`)
 })
