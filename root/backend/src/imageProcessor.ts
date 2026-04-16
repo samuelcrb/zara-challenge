@@ -66,7 +66,7 @@ export const processImage = async (url: string): Promise<Buffer> => {
   })
     .trim()
     .resize({ height: 400, withoutEnlargement: false })
-    .webp({ lossless: true })
+    .webp({ quality: 85 })
     .toBuffer()
 
   setCached(url, processed)
@@ -75,14 +75,28 @@ export const processImage = async (url: string): Promise<Buffer> => {
 
 /**
  * Processes a list of image URLs in the background (fire-and-forget).
- * Skips URLs already in cache.
+ * Skips URLs already in cache. Limits concurrency to avoid RAM spikes from
+ * simultaneous sharp raw-buffer allocations.
  */
+const PRELOAD_CONCURRENCY = 3
+
 export const preloadImages = (urls: string[]): void => {
-  for (const url of urls) {
-    if (!hasCached(url)) {
-      processImage(url).catch(() => {
+  const pending = urls.filter(url => !hasCached(url))
+  if (pending.length === 0) return
+
+  const queue = [...pending]
+
+  const worker = async (): Promise<void> => {
+    while (queue.length > 0) {
+      const url = queue.shift()!
+      await processImage(url).catch(() => {
         // Silently ignore preload errors — the image route will retry on demand
       })
     }
+  }
+
+  const concurrency = Math.min(PRELOAD_CONCURRENCY, pending.length)
+  for (let i = 0; i < concurrency; i++) {
+    worker()
   }
 }
