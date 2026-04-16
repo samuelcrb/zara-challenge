@@ -5,10 +5,10 @@ interface RequestOptions extends RequestInit {
 }
 
 /**
- * Builds the full URL with query params appended
- * @param endpoint - API endpoint path (e.g. '/products')
- * @param params - Optional query params to append
- * @returns Full URL string with query params
+ * Construye la URL completa con los parámetros de query añadidos
+ * @param endpoint - Ruta del endpoint de la API (p.ej. '/products')
+ * @param params - Parámetros de query opcionales a añadir
+ * @returns URL completa con los parámetros de query
  */
 const buildUrl = (
   endpoint: string,
@@ -26,11 +26,11 @@ const buildUrl = (
 }
 
 /**
- * Generic HTTP client that talks to the API
- * @param endpoint - API endpoint path (e.g. '/products')
- * @param options - Optional fetch options and query params
- * @returns Parsed JSON response typed as T
- * @throws Error with the API error message if the request fails
+ * Cliente HTTP genérico que se comunica con la API
+ * @param endpoint - Ruta del endpoint de la API (p.ej. '/products')
+ * @param options - Opciones de fetch y parámetros de query opcionales
+ * @returns Respuesta JSON parseada con tipo T
+ * @throws Error con el mensaje de error de la API si la petición falla
  */
 const http = async <T>(endpoint: string, options: RequestOptions = {}): Promise<T> => {
   const { params, ...fetchOptions } = options

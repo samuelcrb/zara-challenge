@@ -1,15 +1,15 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import type { CartItem, CartContextType } from '@/features/cart/types/cart.types'
 
-/** localStorage key used to persist the cart between sessions */
+/** Clave de localStorage usada para persistir el carrito entre sesiones */
 const CART_STORAGE_KEY = 'zara_cart'
 
-/** React context that holds cart state and actions */
+/** Contexto de React que almacena el estado y las acciones del carrito */
 const CartContext = createContext<CartContextType | null>(null)
 
 /**
- * Loads the persisted cart from localStorage.
- * Returns an empty array if no data is found or if parsing fails.
+ * Carga el carrito persistido desde localStorage.
+ * Devuelve un array vacío si no hay datos o si el parseo falla.
  */
 const loadCartFromStorage = (): CartItem[] => {
   try {
@@ -21,14 +21,14 @@ const loadCartFromStorage = (): CartItem[] => {
 }
 
 /**
- * Persists the current cart array to localStorage.
- * @param cart - The cart items to save
+ * Persiste el array del carrito actual en localStorage.
+ * @param cart - Los artículos del carrito a guardar
  */
 const saveCartToStorage = (cart: CartItem[]): void => {
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
 }
 
-/** Provides cart state and actions to the entire application */
+/** Provee el estado y las acciones del carrito a toda la aplicación */
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage)
 
@@ -37,27 +37,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [cart])
 
   /**
-   * Adds a product to the cart as a new row.
+   * Añade un producto al carrito como una nueva línea.
    */
   const addToCart = (item: Omit<CartItem, 'cartItemId'>): void => {
     const cartItemId = crypto.randomUUID()
     setCart(prev => [...prev, { ...item, cartItemId }])
   }
 
-  /** Removes a cart item entirely */
+  /** Elimina un artículo del carrito */
   const removeFromCart = (cartItemId: string): void => {
     setCart(prev => prev.filter(i => i.cartItemId !== cartItemId))
   }
 
-  /** Clears all items from the cart */
+  /** Vacía todos los artículos del carrito */
   const clearCart = (): void => {
     setCart([])
   }
 
-  /** Total number of items in the cart */
+  /** Número total de artículos en el carrito */
   const totalItems = cart.length
 
-  /** Total price of all cart items */
+  /** Precio total de todos los artículos del carrito */
   const totalPrice = cart.reduce((acc, item) => acc + item.price, 0)
 
   return (
@@ -77,8 +77,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 }
 
 /**
- * Hook to consume the CartContext
- * @throws Error if used outside of CartProvider
+ * Hook para consumir el CartContext
+ * @throws Error si se usa fuera de CartProvider
  */
 export const useCartContext = (): CartContextType => {
   const context = useContext(CartContext)

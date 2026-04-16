@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Delays updating a value until after a specified wait time.
- * Useful for avoiding excessive API calls on user input.
- * @param value - The value to debounce
- * @param delay - Delay in milliseconds (default: 300ms)
- * @returns The debounced value
+ * Retrasa la actualización de un valor hasta que transcurre el tiempo de espera indicado.
+ * Útil para evitar llamadas excesivas a la API mientras el usuario escribe.
+ * @param value - El valor a debouncear
+ * @param delay - Retardo en milisegundos (por defecto: 300ms)
+ * @returns El valor debounceado
  */
 const useDebounce = <T>(value: T, delay = 300): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)

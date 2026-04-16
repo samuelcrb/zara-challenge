@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest'
 
 /**
- * http.ts captures VITE_BASE_URL at module-load time, so we must:
- *  1. Stub the env variable
- *  2. Reset modules so http.ts is re-evaluated with the stubbed value
- *  3. Dynamically import the fresh copy
+ * http.ts captura VITE_BASE_URL en el momento de carga del módulo, por lo que hay que:
+ *  1. Hacer stub de la variable de entorno
+ *  2. Resetear módulos para que http.ts se reevalúe con el valor stub
+ *  3. Importar dinámicamente la copia recién cargada
  */
 describe('http client', () => {
   let http: (endpoint: string, options?: Record<string, unknown>) => Promise<unknown>
@@ -31,7 +31,7 @@ describe('http client', () => {
   const errorResponse = (status: number, body: unknown): Response =>
     ({ ok: false, status, json: () => Promise.resolve(body) }) as Response
 
-  // ─── URL building ──────────────────────────────────────────────────────────
+  // ─── Construcción de URL ───────────────────────────────────────────────────
 
   it('calls fetch with the base URL + endpoint', async () => {
     vi.mocked(fetch).mockResolvedValue(okResponse([]))
@@ -65,7 +65,7 @@ describe('http client', () => {
     expect(url).not.toContain('search=')
   })
 
-  // ─── Success ───────────────────────────────────────────────────────────────
+  // ─── Éxito ─────────────────────────────────────────────────────────────────
 
   it('returns parsed JSON on a 200 response', async () => {
     const data = [{ id: '1', name: 'iPhone 15' }]
@@ -89,7 +89,7 @@ describe('http client', () => {
     expect(options.signal).toBe(signal)
   })
 
-  // ─── Error handling ────────────────────────────────────────────────────────
+  // ─── Gestión de errores ────────────────────────────────────────────────────
 
   it('throws with the server error message on a non-ok response', async () => {
     vi.mocked(fetch).mockResolvedValue(errorResponse(404, { message: 'Product not found' }))

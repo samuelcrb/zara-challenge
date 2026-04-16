@@ -110,7 +110,7 @@ describe('CartContext', () => {
   })
 
   it('throws when useCartContext is used outside CartProvider', () => {
-    // Suppress the expected React error boundary console output
+    // Suprime la salida de consola esperada del error boundary de React
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => renderHook(() => useCartContext())).toThrow(
       'useCartContext must be used within CartProvider',

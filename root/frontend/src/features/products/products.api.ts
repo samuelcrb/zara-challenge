@@ -6,9 +6,9 @@ import type {
 } from '@/features/products/types/product.types'
 
 /**
- * Fetches a paginated and optionally filtered list of products
- * @param params - Optional search, limit and offset params
- * @returns Promise resolving to an array of products
+ * Obtiene una lista paginada y opcionalmente filtrada de productos
+ * @param params - Parámetros opcionales de búsqueda, límite y offset
+ * @returns Promesa que resuelve a un array de productos
  */
 export const getProducts = async (
   params?: GetProductsParams,
@@ -24,9 +24,9 @@ export const getProducts = async (
 }
 
 /**
- * Fetches the full detail of a single product by its id
- * @param id - The product id
- * @returns Promise resolving to a full ProductDetail object
+ * Obtiene el detalle completo de un producto por su id
+ * @param id - El id del producto
+ * @returns Promesa que resuelve a un objeto ProductDetail completo
  */
 export const getProductById = (id: string): Promise<ProductDetail> => {
   return http<ProductDetail>(`/products/${id}`)

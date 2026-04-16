@@ -42,7 +42,7 @@ describe('getImageUrl', () => {
 describe('preloadImages', () => {
   let preloadImages: (urls: string[]) => Promise<void[]>
 
-  // A mock Image that fires onload on the next microtask after src is set
+  // Mock de Image que dispara onload en la siguiente microtarea tras asignar src
   class LoadingImage {
     onload: (() => void) | null = null
     onerror: (() => void) | null = null
@@ -51,7 +51,7 @@ describe('preloadImages', () => {
     }
   }
 
-  // A mock Image that fires onerror on the next microtask after src is set
+  // Mock de Image que dispara onerror en la siguiente microtarea tras asignar src
   class FailingImage {
     onload: (() => void) | null = null
     onerror: (() => void) | null = null
@@ -61,7 +61,7 @@ describe('preloadImages', () => {
   }
 
   beforeAll(async () => {
-    // Import the real implementation (no module reset needed — no env vars used)
+    // Importa la implementación real (sin resetear módulos — no usa variables de entorno)
     const mod = await import('@/utils/image.utils')
     preloadImages = mod.preloadImages
   })

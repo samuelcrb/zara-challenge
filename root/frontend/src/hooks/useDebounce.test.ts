@@ -51,18 +51,18 @@ describe('useDebounce', () => {
 
     rerender({ value: 'ab' })
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(200) // 200ms — timer not fired yet
+      await vi.advanceTimersByTimeAsync(200) // 200ms — temporizador aún no disparado
     })
 
     rerender({ value: 'abc' })
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(200) // another 200ms — still not 300ms since 'abc'
+      await vi.advanceTimersByTimeAsync(200) // otros 200ms — todavía no han pasado 300ms desde 'abc'
     })
 
-    expect(result.current).toBe('a') // debounce not fired yet
+    expect(result.current).toBe('a') // debounce aún no disparado
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(100) // now 300ms since 'abc'
+      await vi.advanceTimersByTimeAsync(100) // ya han pasado 300ms desde 'abc'
     })
 
     expect(result.current).toBe('abc')

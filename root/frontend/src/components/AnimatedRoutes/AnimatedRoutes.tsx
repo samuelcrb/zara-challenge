@@ -11,9 +11,9 @@ interface AnimatedRoutesProps {
 }
 
 /**
- * Determines the navigation direction based on path changes.
- * Going to /cart is "forward"; leaving /cart is "backward".
- * All other transitions default to "forward".
+ * Determina la dirección de navegación según los cambios de ruta.
+ * Ir a /cart es "forward"; salir de /cart es "backward".
+ * El resto de transiciones son "forward" por defecto.
  */
 const getDirection = (prev: string, next: string): TransitionDirection => {
   if (next === '/cart') return 'forward'

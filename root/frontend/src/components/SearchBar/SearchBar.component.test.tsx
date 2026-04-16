@@ -18,7 +18,7 @@ const setup = (overrides: Partial<React.ComponentProps<typeof SearchBar>> = {}) 
 }
 
 describe('SearchBar component', () => {
-  // ─── Rendering ─────────────────────────────────────────────────────────────
+  // ─── Renderizado ───────────────────────────────────────────────────────────
 
   it('renders the search input with correct placeholder', () => {
     setup()
@@ -40,7 +40,7 @@ describe('SearchBar component', () => {
     expect(screen.getByText('42 resultados')).toBeInTheDocument()
   })
 
-  // ─── Clear button ──────────────────────────────────────────────────────────
+  // ─── Botón de limpiar ──────────────────────────────────────────────────────
 
   it('does not show the clear button when value is empty', () => {
     setup({ value: '' })
@@ -52,13 +52,13 @@ describe('SearchBar component', () => {
     expect(screen.getByLabelText('Borrar búsqueda')).toBeInTheDocument()
   })
 
-  // ─── Interactions ──────────────────────────────────────────────────────────
+  // ─── Interacciones ─────────────────────────────────────────────────────────
 
   it('calls onChange with a sanitized value when the user types', async () => {
     const { user, onChange } = setup()
     const input = screen.getByRole('searchbox')
-    // Controlled input: each keystroke fires onChange with sanitizeSearch(char).
-    // We test a single character to avoid accumulation confusion.
+    // Input controlado: cada tecla dispara onChange con sanitizeSearch(char).
+    // Se prueba un solo carácter para evitar confusión por acumulación.
     await user.type(input, 'S')
     expect(onChange).toHaveBeenCalledWith('S')
   })
@@ -67,7 +67,7 @@ describe('SearchBar component', () => {
     const { user, onChange } = setup()
     const input = screen.getByRole('searchbox')
     await user.type(input, '<')
-    // '<' is stripped by sanitizeSearch, so onChange receives ''
+    // '<' es eliminado por sanitizeSearch, por lo que onChange recibe ''
     expect(onChange).toHaveBeenLastCalledWith('')
   })
 

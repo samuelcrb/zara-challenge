@@ -12,7 +12,7 @@ describe('useLoadingBar', () => {
     vi.useRealTimers()
   })
 
-  // ─── Initial state ─────────────────────────────────────────────────────────
+  // ─── Estado inicial ────────────────────────────────────────────────────────
 
   it('starts in the idle phase with barWidth 0', () => {
     const { result } = renderHook(() => useLoadingBar(false))
@@ -20,7 +20,7 @@ describe('useLoadingBar', () => {
     expect(result.current.barWidth).toBe(0)
   })
 
-  // ─── Loading phase ─────────────────────────────────────────────────────────
+  // ─── Fase de carga ─────────────────────────────────────────────────────────
 
   it('transitions to loading phase when isLoading becomes true', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
@@ -35,17 +35,17 @@ describe('useLoadingBar', () => {
   it('sets barWidth to 85 after a requestAnimationFrame when loading starts', async () => {
     const { result } = renderHook(() => useLoadingBar(true))
 
-    // barWidth starts at 0 (before rAF fires)
+    // barWidth empieza en 0 (antes de que se dispare el rAF)
     expect(result.current.barWidth).toBe(0)
 
     await act(async () => {
-      await vi.runAllTimersAsync() // flush rAF via fake timers
+      await vi.runAllTimersAsync() // vacía el rAF con los temporizadores falsos
     })
 
     expect(result.current.barWidth).toBe(85)
   })
 
-  // ─── Completing phase ──────────────────────────────────────────────────────
+  // ─── Fase de finalización ──────────────────────────────────────────────────
 
   it('transitions to completing and sets barWidth 100 when isLoading becomes false', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
@@ -74,20 +74,20 @@ describe('useLoadingBar', () => {
     expect(result.current.barPhase).toBe('idle')
   })
 
-  // ─── Guard: no-op when not in loading phase ────────────────────────────────
+  // ─── Guardia: sin efecto si no está en fase de carga ──────────────────────
 
   it('does not transition to completing when isLoading=false and phase is already idle', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: false },
     })
 
-    // Toggle false → false (phase was never loading)
+    // Toggle false → false (la fase nunca fue loading)
     rerender({ loading: false })
 
     expect(result.current.barPhase).toBe('idle')
   })
 
-  // ─── Cycle counter ─────────────────────────────────────────────────────────
+  // ─── Contador de ciclos ────────────────────────────────────────────────────
 
   it('increments the cycle counter on each new loading start', async () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
@@ -101,7 +101,7 @@ describe('useLoadingBar', () => {
     })
     rerender({ loading: true })
 
-    // barWidth should reset to 0 on the second loading start
+    // barWidth debe reiniciarse a 0 al comenzar la segunda carga
     expect(result.current.barPhase).toBe('loading')
     expect(result.current.barWidth).toBe(0)
   })

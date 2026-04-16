@@ -35,10 +35,10 @@ describe('useProducts', () => {
     vi.clearAllMocks()
   })
 
-  // ─── Initial state ─────────────────────────────────────────────────────────
+  // ─── Estado inicial ────────────────────────────────────────────────────────
 
   it('has the correct initial state before fetch resolves', () => {
-    mockGetProducts.mockReturnValue(new Promise(() => {})) // never resolves → no async state updates
+    mockGetProducts.mockReturnValue(new Promise(() => {})) // nunca resuelve → sin actualizaciones de estado asíncronas
 
     const { result } = renderHook(() => useProducts())
 
@@ -49,7 +49,7 @@ describe('useProducts', () => {
     expect(result.current.fetchId).toBe(0)
   })
 
-  // ─── Successful fetch ──────────────────────────────────────────────────────
+  // ─── Petición exitosa ──────────────────────────────────────────────────────
 
   it('sets products and turns off loading on success', async () => {
     const products = [makeProduct(), makeProduct({ id: 'SAM-1', brand: 'Samsung' })]
@@ -80,7 +80,7 @@ describe('useProducts', () => {
     )
   })
 
-  // ─── Image preloading ──────────────────────────────────────────────────────
+  // ─── Precarga de imágenes ──────────────────────────────────────────────────
 
   it('preloads images of all returned products', async () => {
     const first = makeProduct({ id: 'SAM-1', imageUrl: 'https://example.com/a.jpg' })
@@ -118,16 +118,16 @@ describe('useProducts', () => {
     await waitFor(() => expect(result.current.products).toHaveLength(1))
   })
 
-  // ─── Cache hit ────────────────────────────────────────────────────────────
+  // ─── Acierto de caché ────────────────────────────────────────────────────
 
   it('returns cached products without calling getProducts again', async () => {
     const products = [makeProduct()]
     mockGetProducts.mockResolvedValue(products)
 
-    // First render: populates cache for ''
+    // Primer renderizado: rellena la caché para ''
     const { unmount } = renderHook(() => useProducts())
     await waitFor(() => expect(mockGetProducts).toHaveBeenCalled())
-    // Wait for products to be cached
+    // Espera a que los productos estén en caché
     await waitFor(() => {
       const hook = renderHook(() => useProducts())
       return hook.result.current.fetchId === 1
@@ -135,7 +135,7 @@ describe('useProducts', () => {
     unmount()
     vi.clearAllMocks()
 
-    // Second render: should hit cache, not call getProducts
+    // Segundo renderizado: debe usar la caché, sin llamar a getProducts
     const { result: result2 } = renderHook(() => useProducts())
     await waitFor(() => expect(result2.current.isLoading).toBe(false))
 
@@ -143,7 +143,7 @@ describe('useProducts', () => {
     expect(result2.current.products).toEqual(products)
   })
 
-  // ─── Error handling ────────────────────────────────────────────────────────
+  // ─── Gestión de errores ────────────────────────────────────────────────────
 
   it('sets the error message on API failure', async () => {
     mockGetProducts.mockRejectedValue(new Error('Network error'))
@@ -187,7 +187,7 @@ describe('useProducts', () => {
     expect(result.current.fetchId).toBe(0)
   })
 
-  // ─── Search debounce ───────────────────────────────────────────────────────
+  // ─── Debounce de búsqueda ─────────────────────────────────────────────────
 
   describe('debounce', () => {
     beforeEach(() => {
@@ -200,7 +200,7 @@ describe('useProducts', () => {
     it('does not fetch on every keystroke', async () => {
       const { result } = renderHook(() => useProducts())
 
-      // Flush initial fetch
+      // Vacía la petición inicial
       await act(async () => {
         await vi.runAllTimersAsync()
       })
@@ -272,7 +272,7 @@ describe('useProducts', () => {
     })
   })
 
-  // ─── Request cancellation ──────────────────────────────────────────────────
+  // ─── Cancelación de petición ──────────────────────────────────────────────
 
   describe('cancellation', () => {
     it('does not update state when unmounted before preload resolves', async () => {
@@ -286,7 +286,7 @@ describe('useProducts', () => {
 
       const { result, unmount } = renderHook(() => useProducts())
 
-      // Flush the initial fetch microtasks so preloadImages gets called
+      // Vacía las microtareas de la petición inicial para que se llame a preloadImages
       await act(async () => {})
 
       expect(mockPreloadImages).toHaveBeenCalled()
@@ -312,19 +312,19 @@ describe('useProducts', () => {
       it('aborts the previous request when search changes', async () => {
         let firstSignal: AbortSignal | undefined
         mockGetProducts.mockImplementation((_, signal) => {
-          firstSignal ??= signal // capture only the initial signal
-          return new Promise(() => {}) // never resolves
+          firstSignal ??= signal // captura solo la señal inicial
+          return new Promise(() => {}) // nunca resuelve
         })
 
         const { result } = renderHook(() => useProducts())
 
-        // Flush initial effects
+        // Vacía los efectos iniciales
         await act(async () => {})
 
         expect(firstSignal?.aborted).toBe(false)
 
-        // Change search and advance past debounce; advanceTimersByTimeAsync properly
-        // awaits React re-renders + effect cleanups triggered by the timer
+        // Cambia la búsqueda y avanza más allá del debounce; advanceTimersByTimeAsync
+        // espera correctamente los re-renders de React y las limpiezas de efecto
         act(() => {
           result.current.setSearch('test')
         })
@@ -350,24 +350,24 @@ describe('useProducts', () => {
 
         const { result } = renderHook(() => useProducts())
 
-        // Flush initial fetch — preload is now pending
+        // Vacía la petición inicial — la precarga está pendiente
         await act(async () => {})
 
         expect(mockPreloadImages).toHaveBeenCalledTimes(1)
-        expect(result.current.products).toEqual([]) // blocked by pending preload
+        expect(result.current.products).toEqual([]) // bloqueado por la precarga pendiente
 
-        // Fire a new search before first preload resolves
+        // Lanza una nueva búsqueda antes de que resuelva la primera precarga
         act(() => {
           result.current.setSearch('new')
         })
         act(() => {
           vi.advanceTimersByTime(300)
         })
-        await act(async () => {}) // second fetch runs and resolves (preload resolves too)
+        await act(async () => {}) // la segunda petición se ejecuta y resuelve (la precarga también)
 
         expect(result.current.products[0].id).toBe('SECOND')
 
-        // First preload resolves — should be ignored (its effect was cancelled)
+        // La primera precarga resuelve — debe ignorarse (su efecto fue cancelado)
         act(() => {
           resolveFirstPreload([])
         })

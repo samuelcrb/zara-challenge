@@ -5,10 +5,10 @@ import styles from './SearchBar.module.scss'
 const MAX_SEARCH_LENGTH = 50
 
 /**
- * Whitelist-based sanitization for the search input.
- * Allows letters (including accented/unicode), digits, spaces, hyphens, plus and dots —
- * the only characters that can legitimately appear in a phone brand or model name.
- * Collapses consecutive spaces and enforces a max length.
+ * Sanitización por lista blanca para el input de búsqueda.
+ * Permite letras (incluidas acentuadas/unicode), dígitos, espacios, guiones, más y puntos —
+ * los únicos caracteres que pueden aparecer legítimamente en una marca o modelo de móvil.
+ * Colapsa espacios consecutivos y aplica una longitud máxima.
  */
 export const sanitizeSearch = (raw: string): string =>
   raw

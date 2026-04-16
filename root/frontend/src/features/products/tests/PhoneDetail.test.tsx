@@ -25,7 +25,7 @@ vi.mock('react-router-dom', async importOriginal => {
   return { ...actual, useNavigate: () => mockNavigate }
 })
 
-// ─── Factories ─────────────────────────────────────────────────────────────────
+// ─── Factorías ─────────────────────────────────────────────────────────────────
 
 const makeColor = (overrides: Partial<ColorOption> = {}): ColorOption => ({
   name: 'Black',
@@ -71,7 +71,7 @@ const makeDetail = (overrides: Partial<ProductDetail> = {}): ProductDetail => ({
   ...overrides,
 })
 
-// ─── Default hook return ───────────────────────────────────────────────────────
+// ─── Valor de retorno del hook por defecto ─────────────────────────────────────
 
 const mockHandleColorSelect = vi.fn()
 const mockHandleStorageSelect = vi.fn()
@@ -89,7 +89,7 @@ const defaultHook = (): ReturnType<typeof useProductDetail> => ({
   handleStorageSelect: mockHandleStorageSelect,
 })
 
-// ─── Render helper ─────────────────────────────────────────────────────────────
+// ─── Auxiliar de renderizado ───────────────────────────────────────────────────
 
 const onLoadingChange = vi.fn()
 
@@ -118,7 +118,7 @@ describe('PhoneDetail page', () => {
     localStorage.clear()
   })
 
-  // ─── Loading / error states ──────────────────────────────────────────────────
+  // ─── Estados de carga / error ────────────────────────────────────────────────
 
   it('renders nothing when isLoading is true', () => {
     const { container } = renderDetail({ isLoading: true, product: null })
@@ -130,7 +130,7 @@ describe('PhoneDetail page', () => {
     expect(screen.getByText('Product not found')).toBeInTheDocument()
   })
 
-  // ─── Product info ────────────────────────────────────────────────────────────
+  // ─── Información del producto ────────────────────────────────────────────────
 
   it('renders the product brand and name as a heading', () => {
     renderDetail()
@@ -156,7 +156,7 @@ describe('PhoneDetail page', () => {
     expect(screen.getByText('Desde 99.90 EUR')).toBeInTheDocument()
   })
 
-  // ─── Specs ───────────────────────────────────────────────────────────────────
+  // ─── Especificaciones ────────────────────────────────────────────────────────
 
   it('renders the SPECIFICATIONS heading', () => {
     renderDetail()
@@ -171,12 +171,12 @@ describe('PhoneDetail page', () => {
 
   it('renders brand and name rows in the specs table', () => {
     renderDetail()
-    // Brand and Name are spec rows too
+    // Marca y Nombre también son filas de especificaciones
     expect(screen.getByText('Marca')).toBeInTheDocument()
     expect(screen.getByText('Nombre')).toBeInTheDocument()
   })
 
-  // ─── Storage options ─────────────────────────────────────────────────────────
+  // ─── Opciones de almacenamiento ──────────────────────────────────────────────
 
   it('renders a button for each storage option', () => {
     renderDetail()
@@ -192,7 +192,7 @@ describe('PhoneDetail page', () => {
     )
   })
 
-  // ─── Color options ────────────────────────────────────────────────────────────
+  // ─── Opciones de color ────────────────────────────────────────────────────────
 
   it('renders a button for each color option', () => {
     renderDetail()
@@ -208,7 +208,7 @@ describe('PhoneDetail page', () => {
     )
   })
 
-  // ─── Add to cart ──────────────────────────────────────────────────────────────
+  // ─── Añadir al carrito ────────────────────────────────────────────────────────
 
   it('renders the ADD TO CART button disabled when canAddToCart is false', () => {
     renderDetail({ canAddToCart: false })
@@ -230,7 +230,7 @@ describe('PhoneDetail page', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/cart')
   })
 
-  // ─── Back button ──────────────────────────────────────────────────────────────
+  // ─── Botón de volver ──────────────────────────────────────────────────────────
 
   it('calls navigate(-1) when the BACK button is clicked', async () => {
     const { user } = renderDetail()

@@ -31,7 +31,7 @@ vi.mock('@/utils/image.utils', () => ({
   getImageUrl: (url: string) => url,
 }))
 
-// ─── Factories ─────────────────────────────────────────────────────────────────
+// ─── Factorías ─────────────────────────────────────────────────────────────────
 
 const makeProduct = (id: string): Product => ({
   id,
@@ -51,7 +51,7 @@ const defaultHook = (): ReturnType<typeof useProducts> => ({
   fetchId: 1,
 })
 
-// ─── Render helper ─────────────────────────────────────────────────────────────
+// ─── Auxiliar de renderizado ───────────────────────────────────────────────────
 
 const onLoadingChange = vi.fn()
 
@@ -86,7 +86,7 @@ describe('PhoneList page', () => {
     expect(onLoadingChange).toHaveBeenCalledWith(false)
   })
 
-  // ─── Error state ──────────────────────────────────────────────────────────────
+  // ─── Estado de error ──────────────────────────────────────────────────────────
 
   it('shows the error message inside an alert when error is set', () => {
     renderList({ error: 'Something went wrong' })
@@ -99,14 +99,14 @@ describe('PhoneList page', () => {
     expect(screen.queryByRole('searchbox')).not.toBeInTheDocument()
   })
 
-  // ─── Content ──────────────────────────────────────────────────────────────────
+  // ─── Contenido ────────────────────────────────────────────────────────────────
 
   it('renders the search bar once content is revealed', async () => {
-    // fetchId=1 triggers content reveal; direction='backward' shows immediately
+    // fetchId=1 activa la revelación del contenido; direction='backward' lo muestra al instante
     renderList({ isLoading: false, products: [], fetchId: 1 })
-    // Content reveal requires CONTENT_REVEAL_DELAY to pass; use backward direction
-    // Instead, render with TransitionProvider value="backward" for instant reveal
-    // (re-render to isolate):
+    // La revelación del contenido requiere que pase CONTENT_REVEAL_DELAY; usar backward
+    // En su lugar, renderizar con TransitionProvider value="backward" para revelado inmediato
+    // (re-render para aislar):
     vi.mocked(useProducts).mockReturnValue({ ...defaultHook(), products: [] })
     render(
       <MemoryRouter>
@@ -145,7 +145,7 @@ describe('PhoneList page', () => {
   })
 })
 
-// ─── Color filter ──────────────────────────────────────────────────────────────
+// ─── Filtro por color ──────────────────────────────────────────────────────────
 
 describe('PhoneList — color filter', () => {
   beforeEach(() => {
@@ -153,7 +153,7 @@ describe('PhoneList — color filter', () => {
     clearProductCache()
   })
 
-  // 'OPP-A18' → blue only  |  'XMI-13TPro' → black only  (from PRODUCT_COLORS)
+  // 'OPP-A18' → solo azul  |  'XMI-13TPro' → solo negro  (de PRODUCT_COLORS)
   const renderWithProducts = (products: Product[]) => {
     vi.mocked(useProducts).mockReturnValue({ ...defaultHook(), products })
     return render(
@@ -237,7 +237,7 @@ describe('PhoneList — color filter', () => {
 
   it('filters the result count by selected color', async () => {
     const user = userEvent.setup()
-    // OPP-A18 → blue only, XMI-13TPro → black only
+    // OPP-A18 → solo azul, XMI-13TPro → solo negro
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
     expect(screen.getByText('2 resultados')).toBeInTheDocument()
     await user.click(screen.getByText('FILTRAR'))
@@ -256,12 +256,12 @@ describe('PhoneList — color filter', () => {
 
   it('counts products matching any of the selected colors', async () => {
     const user = userEvent.setup()
-    // OPP-A18 → blue, XMI-13TPro → black, OPP-R11F → blue+green
+    // OPP-A18 → azul, XMI-13TPro → negro, OPP-R11F → azul+verde
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro'), makeProduct('OPP-R11F')])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Azul'))  // matches OPP-A18, OPP-R11F
+    await user.click(screen.getByLabelText('Azul'))  // coincide con OPP-A18, OPP-R11F
     await user.click(screen.getByText('FILTRAR (1)'))
-    await user.click(screen.getByLabelText('Negro')) // adds XMI-13TPro
+    await user.click(screen.getByLabelText('Negro')) // añade XMI-13TPro
     expect(screen.getByText('3 resultados')).toBeInTheDocument()
   })
 })

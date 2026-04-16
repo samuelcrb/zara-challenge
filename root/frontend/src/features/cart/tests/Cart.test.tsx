@@ -32,7 +32,7 @@ vi.mock('@/utils/image.utils', () => ({
   getImageUrl: (url: string) => url,
 }))
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
+// ─── Auxiliares ────────────────────────────────────────────────────────────────
 
 const cartWrapper = ({ children }: { children: ReactNode }) => (
   <CartProvider>
@@ -52,7 +52,7 @@ const mockItem = {
   price: 999,
 }
 
-/** Renders the Cart page with an optional pre-populated cart */
+/** Renderiza la página Cart con un carrito pre-rellenado opcional */
 const renderCart = (items: typeof mockItem[] = []) => {
   const hookResult = renderHook(() => useCartContext(), { wrapper: cartWrapper })
   items.forEach(item => act(() => hookResult.result.current.addToCart(item)))
@@ -67,7 +67,7 @@ beforeEach(() => {
 })
 
 describe('Cart page', () => {
-  // ─── Empty state ─────────────────────────────────────────────────────────────
+  // ─── Estado vacío ────────────────────────────────────────────────────────────
 
   it('shows CART (0) in the title when the cart is empty', () => {
     renderCart()
@@ -80,7 +80,7 @@ describe('Cart page', () => {
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
   })
 
-  // ─── Cart with items ──────────────────────────────────────────────────────────
+  // ─── Carrito con artículos ────────────────────────────────────────────────────
 
   it('renders each cart item with name, storage | color and price', () => {
     renderCart([mockItem])
@@ -98,18 +98,18 @@ describe('Cart page', () => {
 
   it('shows the total price', () => {
     renderCart([mockItem, { ...mockItem, storage: '256GB', price: 1099 }])
-    // Both items: 999 + 1099 = 2098
+    // Ambos artículos: 999 + 1099 = 2098
     expect(screen.getAllByText(/2098 EUR/).length).toBeGreaterThan(0)
   })
 
-  // ─── Navigation ───────────────────────────────────────────────────────────────
+  // ─── Navegación ───────────────────────────────────────────────────────────────
 
   it('renders the CONTINUE SHOPPING button', () => {
     renderCart()
     expect(screen.getByRole('button', { name: 'SEGUIR COMPRANDO' })).toBeInTheDocument()
   })
 
-  // ─── Remove item ──────────────────────────────────────────────────────────────
+  // ─── Eliminar artículo ────────────────────────────────────────────────────────
 
   it('renders an "Eliminar" button for each item', () => {
     renderCart([mockItem])

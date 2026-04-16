@@ -18,7 +18,7 @@ vi.mock('@/features/products/products.api')
 const mockUseParams = vi.mocked(useParams)
 const mockGetProductById = vi.mocked(getProductById)
 
-// ─── Factories ─────────────────────────────────────────────────────────────
+// ─── Factorías ─────────────────────────────────────────────────────────────
 
 const makeColor = (overrides: Partial<ColorOption> = {}): ColorOption => ({
   name: 'Black',
@@ -76,10 +76,10 @@ describe('useProductDetail', () => {
     vi.clearAllMocks()
   })
 
-  // ─── Initial state ───────────────────────────────────────────────────────
+  // ─── Estado inicial ──────────────────────────────────────────────────────
 
   it('has the correct initial state before fetch resolves', () => {
-    mockGetProductById.mockReturnValue(new Promise(() => { })) // never resolves
+    mockGetProductById.mockReturnValue(new Promise(() => { })) // nunca resuelve
 
     const { result } = renderHook(() => useProductDetail())
 
@@ -91,7 +91,7 @@ describe('useProductDetail', () => {
     expect(result.current.canAddToCart).toBe(false)
   })
 
-  // ─── Successful fetch ────────────────────────────────────────────────────
+  // ─── Petición exitosa ────────────────────────────────────────────────────
 
   it('sets product and turns off loading on success', async () => {
     const product = makeProductDetail()
@@ -111,7 +111,7 @@ describe('useProductDetail', () => {
     await waitFor(() => expect(mockGetProductById).toHaveBeenCalledWith('APPLE-1'))
   })
 
-  // ─── Derived values ──────────────────────────────────────────────────────
+  // ─── Valores derivados ───────────────────────────────────────────────────
 
   it('currentPrice defaults to basePrice when no storage is selected', async () => {
     mockGetProductById.mockResolvedValue(makeProductDetail({ basePrice: 999 }))
@@ -131,7 +131,7 @@ describe('useProductDetail', () => {
     expect(result.current.currentImageUrl).toBe('https://example.com/black.jpg')
   })
 
-  // ─── Color selection ─────────────────────────────────────────────────────
+  // ─── Selección de color ──────────────────────────────────────────────────
 
   it('updates selectedColor and currentImageUrl when handleColorSelect is called', async () => {
     const white = makeColor({ name: 'White', hexCode: '#FFFFFF', imageUrl: 'https://example.com/white.jpg' })
@@ -145,7 +145,7 @@ describe('useProductDetail', () => {
     expect(result.current.currentImageUrl).toBe('https://example.com/white.jpg')
   })
 
-  // ─── Storage selection ───────────────────────────────────────────────────
+  // ─── Selección de almacenamiento ─────────────────────────────────────────
 
   it('updates selectedStorage and currentPrice when handleStorageSelect is called', async () => {
     const storage256 = makeStorage({ capacity: '256GB', price: 1099 })
@@ -191,7 +191,7 @@ describe('useProductDetail', () => {
     expect(result.current.canAddToCart).toBe(true)
   })
 
-  // ─── id change ───────────────────────────────────────────────────────────
+  // ─── Cambio de id ────────────────────────────────────────────────────────
 
   it('resets selectedColor and selectedStorage when id changes', async () => {
     const { result, rerender } = renderHook(() => useProductDetail())
@@ -227,7 +227,7 @@ describe('useProductDetail', () => {
     expect(mockGetProductById).toHaveBeenCalledWith('SAM-1')
   })
 
-  // ─── Error handling ──────────────────────────────────────────────────────
+  // ─── Gestión de errores ──────────────────────────────────────────────────
 
   it('sets the error message on API failure', async () => {
     mockGetProductById.mockRejectedValue(new Error('Not found'))
@@ -250,7 +250,7 @@ describe('useProductDetail', () => {
     expect(result.current.error).toBe('Something went wrong')
   })
 
-  // ─── No id ───────────────────────────────────────────────────────────────
+  // ─── Sin id ──────────────────────────────────────────────────────────────
 
   it('does not call the API when id is undefined', () => {
     mockUseParams.mockReturnValue({})
