@@ -4,52 +4,70 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import cors from 'cors'
 import config from './config.js'
+
 import productsRouter from './routes/products.js'
 import imageRouter from './routes/image.js'
 
-// Initialize Express application
 const app = express()
 
-// Get current file path in ES module context
+// ES Modules dirname fix
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Define absolute path to the Vite production build folder
+// Frontend build path (safe for Render)
 const frontendPath = path.join(process.cwd(), 'frontend/dist')
 
-// Enable CORS for configured frontend origin
-app.use(cors({ origin: config.corsOrigin }))
+// -------------------- MIDDLEWARE --------------------
 
-// Parse incoming JSON payloads
+app.use(cors({ origin: config.corsOrigin }))
 app.use(express.json())
 
-// Register API routes for products
-app.use('/api/products', productsRouter)
+// -------------------- HEALTH CHECK --------------------
 
-// Register API routes for images
+app.get('/ping', (_req, res) => {
+  res.json({ ok: true })
+})
+
+// -------------------- API ROUTES (FIRST) --------------------
+
+app.use('/api/products', productsRouter)
 app.use('/api/image', imageRouter)
 
-// Serve static files from the frontend production build
+// -------------------- STATIC FRONTEND --------------------
+
 app.use(express.static(frontendPath))
 
-// SPA fallback: always return index.html for client-side routing
-app.get('*', (_req, res) => {
+// -------------------- SPA FALLBACK (SAFE) --------------------
+
+// IMPORTANT: do NOT intercept /api routes
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({
+      error: 'Not Found',
+      path: req.path,
+    })
+  }
+
   res.sendFile(path.join(frontendPath, 'index.html'))
 })
 
-// Global error handler for unexpected server or upstream API errors
+// -------------------- GLOBAL ERROR HANDLER --------------------
+
 app.use(
   (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error(err)
+    console.error('🔥 Server error:', err)
 
     res.status(502).json({
       error: 'Upstream error',
-      message: 'Failed to reach the upstream API'
+      message: 'Failed to reach the upstream API',
     })
   }
 )
 
-// Start the HTTP server
-app.listen(config.port, () => {
-  console.log(`🚀 BFF running at http://localhost:${config.port}`)
+// -------------------- START SERVER --------------------
+
+const PORT = config.port || process.env.PORT || 3000
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
 })
