@@ -151,6 +151,11 @@ describe('PhoneDetail page', () => {
     expect(screen.queryByText(/From/)).not.toBeInTheDocument()
   })
 
+  it('shows decimal price with 2 decimal places', () => {
+    renderDetail({ selectedStorage: null, currentPrice: 99.9 })
+    expect(screen.getByText('From 99.90 EUR')).toBeInTheDocument()
+  })
+
   // ─── Specs ───────────────────────────────────────────────────────────────────
 
   it('renders the SPECIFICATIONS heading', () => {

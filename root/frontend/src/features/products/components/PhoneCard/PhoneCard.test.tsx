@@ -41,6 +41,11 @@ describe('PhoneCard', () => {
     expect(screen.getByText('999 EUR')).toBeInTheDocument()
   })
 
+  it('renders a decimal price with 2 decimal places', () => {
+    renderCard(makeProduct({ basePrice: 99.9 }))
+    expect(screen.getByText('99.90 EUR')).toBeInTheDocument()
+  })
+
   it('has an accessible label combining brand, name and price', () => {
     renderCard()
     expect(screen.getByLabelText('Apple iPhone 15, 999 EUR')).toBeInTheDocument()
