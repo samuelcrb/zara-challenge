@@ -39,7 +39,7 @@ const makeProduct = (id: string): Product => ({
   name: `Phone ${id}`,
   basePrice: 100,
   imageUrl: `https://example.com/${id}.jpg`,
-  renderKey: `${id}-0`,
+  renderKey: id,
 })
 
 const defaultHook = (): ReturnType<typeof useProducts> => ({

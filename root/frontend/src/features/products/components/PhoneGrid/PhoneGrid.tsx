@@ -25,7 +25,7 @@ const PhoneGrid = ({
   return (
     <ul className={classList} aria-label="Products list">
       {products.map(product => (
-        <li key={product.renderKey}>
+        <li key={product.id}>
           <PhoneCard product={product} />
         </li>
       ))}

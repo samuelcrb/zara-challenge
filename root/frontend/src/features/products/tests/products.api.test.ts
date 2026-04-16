@@ -32,11 +32,29 @@ describe('products API', () => {
     expect(mockHttp).toHaveBeenCalledWith('/products', expect.objectContaining({ signal }))
   })
 
-  it('returns the data from http', async () => {
+  it('returns the raw data from http unmodified', async () => {
     const data = [{ id: 'APPLE-1', brand: 'Apple', name: 'iPhone 15', basePrice: 999, imageUrl: 'x', renderKey: 'k' }]
     mockHttp.mockResolvedValue(data)
     const result = await getProducts()
     expect(result).toEqual(data)
+  })
+
+  it('removes duplicate products keeping the first occurrence', async () => {
+    const product = { id: 'APPLE-1', brand: 'Apple', name: 'iPhone 15', basePrice: 999, imageUrl: 'x', renderKey: 'APPLE-1' }
+    mockHttp.mockResolvedValue([product, { ...product, name: 'iPhone 15 duplicate' }])
+    const result = await getProducts()
+    expect(result).toHaveLength(1)
+    expect(result[0].name).toBe('iPhone 15')
+  })
+
+  it('keeps products with different ids', async () => {
+    const data = [
+      { id: 'APPLE-1', brand: 'Apple', name: 'iPhone 15', basePrice: 999, imageUrl: 'x', renderKey: 'x' },
+      { id: 'APPLE-2', brand: 'Apple', name: 'iPhone 14', basePrice: 799, imageUrl: 'y', renderKey: 'y' },
+    ]
+    mockHttp.mockResolvedValue(data)
+    const result = await getProducts()
+    expect(result).toHaveLength(2)
   })
 
   // ─── getProductById ─────────────────────────────────────────────────────────

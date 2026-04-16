@@ -10,11 +10,17 @@ import type {
  * @param params - Optional search, limit and offset params
  * @returns Promise resolving to an array of products
  */
-export const getProducts = (
+export const getProducts = async (
   params?: GetProductsParams,
   signal?: AbortSignal
 ): Promise<Product[]> => {
-  return http<Product[]>('/products', { params, signal })
+  const data = await http<Product[]>('/products', { params, signal })
+  const seen = new Set<string>()
+  return data.filter(p => {
+    if (seen.has(p.id)) return false
+    seen.add(p.id)
+    return true
+  })
 }
 
 /**
