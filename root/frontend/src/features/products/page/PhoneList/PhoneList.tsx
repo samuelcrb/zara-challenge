@@ -140,6 +140,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
       {showContent && (
         <div className={styles.content}>
           <motion.div
+            className={styles.stickyHeader}
             variants={searchBarVariants}
             initial="initial"
             animate="animate"
@@ -153,6 +154,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
               rightSlot={
                 <div className={styles.filterControls}>
                   <div className={`${styles.filterPanel}${filterOpen ? ` ${styles.filterPanelOpen}` : ''}`}>
+                    {/* showColorName=false: en móvil no hay hover, y al seleccionar el nombre aparece tan brevemente que no aporta información útil */}
                     <ColorSelector
                       colors={FILTER_COLORS}
                       selectedHexCode={selectedFilterColor}

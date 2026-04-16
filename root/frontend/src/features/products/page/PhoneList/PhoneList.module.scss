@@ -4,11 +4,34 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
 }
 
+.stickyHeader {
+  position: fixed;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: $color-white;
+
+  @include respond-to(md) {
+    padding-top: $spacing-xxl;
+  }
+}
+
+
+
 .content {
+  padding-top: 144px;
   padding-bottom: $spacing-xxl * 2;
+
+  @include respond-to(md) {
+    padding-top: calc(144px + #{$spacing-xxl});
+  }
+
+  @media (max-width: #{$breakpoint-sm}) {
+    padding-top: 56px;
+  }
 }
 
 .filterControls {
