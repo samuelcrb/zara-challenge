@@ -2,11 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import useProducts, { clearProductCache } from '@/features/products/hooks/useProducts'
 import { getProducts } from '@/features/products/products.api'
-import preloadImages from '@/utils/image.utils'
+import { preloadImages } from '@/utils/image.utils'
 import type { Product } from '@/features/products/types/product.types'
 
 vi.mock('@/features/products/products.api')
-vi.mock('@/utils/image.utils')
+vi.mock('@/utils/image.utils', () => ({
+  preloadImages: vi.fn(),
+  getImageUrl: vi.fn((url: string) => url),
+}))
 
 const mockGetProducts = vi.mocked(getProducts)
 const mockPreloadImages = vi.mocked(preloadImages)
