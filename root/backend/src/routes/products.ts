@@ -113,7 +113,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const upstream = await fetch(upstreamUrl(`/products/${req.params.id}`), {
       headers: upstreamHeaders,
     })
-    let data: unknown
+    let data: Record<string, unknown>
     try {
       data = await upstream.json()
     } catch {
