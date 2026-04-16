@@ -55,7 +55,13 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     if (offset) url.searchParams.set('offset', String(offset))
 
     const upstream = await fetch(url, { headers: upstreamHeaders })
-    const raw: Array<{ id: string; imageUrl: string }> = await upstream.json()
+    let raw: Array<{ id: string; imageUrl: string }>
+    try {
+      raw = await upstream.json()
+    } catch {
+      res.status(502).json({ error: 'Upstream error', message: 'Failed to reach the upstream API' })
+      return
+    }
 
     // Deduplicate ids — when the same id appears more than once, rename subsequent
     // occurrences to `${id}-1`, `${id}-2`, … and assign a stable renderKey per item
@@ -107,7 +113,13 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const upstream = await fetch(upstreamUrl(`/products/${req.params.id}`), {
       headers: upstreamHeaders,
     })
-    const data = await upstream.json()
+    let data: unknown
+    try {
+      data = await upstream.json()
+    } catch {
+      res.status(502).json({ error: 'Upstream error', message: 'Failed to reach the upstream API' })
+      return
+    }
 
     if (upstream.ok && Array.isArray(data.storageOptions) && data.storageOptions.length > 0) {
       const minPrice = Math.min(...data.storageOptions.map((s: StorageOption) => s.price))
