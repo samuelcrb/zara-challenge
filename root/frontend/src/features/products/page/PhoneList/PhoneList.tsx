@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import useProducts from '@/features/products/hooks/useProducts'
 import PhoneGrid from '@/features/products/components/PhoneGrid/PhoneGrid'
@@ -8,13 +8,14 @@ import PageTransition from '@/components/PageTransition/PageTransition'
 import { CONTENT_REVEAL_DELAY, GRID_EXIT_DURATION, HEADER_TRANSITION, PAGE_TRANSITION } from '@/constants/animation'
 import { useTransitionDirection } from '@/context/transitionContext'
 import type { Product } from '@/features/products/types/product.types'
+import { PRODUCT_COLORS } from '@/features/products/constants/productColors'
 import styles from './PhoneList.module.scss'
 
 const FILTER_COLORS = [
-  { hexCode: '#D9D9D9', name: 'Silver' },
-  { hexCode: '#F5F5F5', name: 'White' },
+  { hexCode: '#2f2c2cff', name: 'Black' },
+  { hexCode: '#e6e0e0ff', name: 'White' },
   { hexCode: '#A7C7E7', name: 'Blue' },
-  { hexCode: '#5D916B', name: 'Green' },
+  { hexCode: '#74b585ff', name: 'Green' },
 ]
 
 type GridTransition =
@@ -36,17 +37,19 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   })
   const [transition, setTransition] = useState<GridTransition>({ status: 'idle' })
   const [filterOpen, setFilterOpen] = useState(false)
-  const [selectedFilterColor, setSelectedFilterColor] = useState<string | null>(null)
+  const [selectedFilterColors, setSelectedFilterColors] = useState<string[]>([])
   const latestProducts = useRef<Product[]>(products)
   useLayoutEffect(() => {
     latestProducts.current = products
   })
   const isFirstFetch = useRef(true)
+  const isFirstColorFilter = useRef(true)
 
-  // Reset isFirstFetch on unmount so StrictMode's simulated remount starts clean
+  // Reset refs on unmount so StrictMode's simulated remount starts clean
   useEffect(() => {
     return () => {
       isFirstFetch.current = true
+      isFirstColorFilter.current = true
     }
   }, [])
 
@@ -59,6 +62,22 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     const timer = setTimeout(() => setShowContent(true), CONTENT_REVEAL_DELAY)
     return () => clearTimeout(timer)
   }, [isLoading, showContent])
+
+  useEffect(() => {
+    if (isFirstColorFilter.current) {
+      isFirstColorFilter.current = false
+      return
+    }
+
+    setTransition({ status: 'exiting' })
+
+    const timer = setTimeout(() => {
+      setDisplayedGrid(g => ({ ...g, key: g.key + 1 }))
+      setTransition({ status: 'entering', variant: 'filter' })
+    }, GRID_EXIT_DURATION)
+
+    return () => clearTimeout(timer)
+  }, [selectedFilterColors])
 
   useEffect(() => {
     if (fetchId === 0) return
@@ -90,7 +109,28 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
 
   const isExiting = transition.status === 'exiting'
 
+  const selectedColorKeys = selectedFilterColors
+    .map(hex => FILTER_COLORS.find(c => c.hexCode === hex)?.name.toLowerCase())
+    .filter((k): k is string => k !== undefined)
+
+  const applyColorFilter = (list: Product[]) =>
+    selectedColorKeys.length === 0
+      ? list
+      : list.filter(p => selectedColorKeys.some(key => PRODUCT_COLORS[p.id]?.includes(key)))
+
   const handleFilterClick = () => setFilterOpen(open => !open)
+
+  const handleColorSelect = (hexCode: string) => {
+    setSelectedFilterColors(prev =>
+      prev.includes(hexCode) ? prev.filter(h => h !== hexCode) : [...prev, hexCode]
+    )
+    setFilterOpen(false)
+  }
+
+  const handleClearColors = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedFilterColors([])
+  }
 
   // When coming back from cart, the SearchBar enters from below (slide up);
   // when leaving to cart, the SearchBar slides down and fades out.
@@ -149,7 +189,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
             <SearchBar
               value={search}
               onChange={setSearch}
-              resultsCount={products.length}
+              resultsCount={applyColorFilter(products).length}
               hideResults={filterOpen}
               rightSlot={
                 <div className={styles.filterControls}>
@@ -157,15 +197,22 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
                     {/* showColorName=false: en móvil no hay hover, y al seleccionar el nombre aparece tan brevemente que no aporta información útil */}
                     <ColorSelector
                       colors={FILTER_COLORS}
-                      selectedHexCode={selectedFilterColor}
-                      onChange={setSelectedFilterColor}
+                      selectedHexCodes={selectedFilterColors}
+                      onChange={handleColorSelect}
                       showColorName={false}
                     />
                   </div>
                   <div className={styles.filterLabelContainer}>
                     <span className={styles.filterLabel} onClick={handleFilterClick}>
-                      {filterOpen ? 'CERRAR' : 'FILTRAR'}
+                      {filterOpen
+                        ? 'CERRAR'
+                        : selectedFilterColors.length > 0
+                          ? `FILTRAR (${selectedFilterColors.length})`
+                          : 'FILTRAR'}
                     </span>
+                    {selectedFilterColors.length > 0 && !filterOpen && (
+                      <span className={styles.filterClear} onClick={handleClearColors}>✕</span>
+                    )}
                   </div>
                 </div>
               }
@@ -179,7 +226,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
           >
             <PhoneGrid
               key={displayedGrid.key}
-              products={displayedGrid.products}
+              products={applyColorFilter(displayedGrid.products)}
               animationType={
                 transition.status === 'entering'
                   ? transition.variant

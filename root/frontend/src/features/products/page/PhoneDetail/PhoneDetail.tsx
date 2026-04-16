@@ -188,7 +188,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
               <p className={styles.sectionLabel}>COLOR. PICK YOUR FAVOURITE.</p>
               <ColorSelector
                 colors={product.colorOptions}
-                selectedHexCode={selectedColor?.hexCode ?? null}
+                selectedHexCodes={selectedColor ? [selectedColor.hexCode] : []}
                 onChange={hexCode => {
                   const color = product.colorOptions.find(c => c.hexCode === hexCode)
                   if (color) handleColorSelect(color)

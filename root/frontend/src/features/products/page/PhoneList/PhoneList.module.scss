@@ -56,10 +56,9 @@
 }
 
 .filterLabelContainer {
-  width: 50px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 4px;
 }
 
 .filterLabel {
@@ -67,6 +66,17 @@
   font-family: $font-family;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.filterClear {
+  font-size: 10px;
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .error {

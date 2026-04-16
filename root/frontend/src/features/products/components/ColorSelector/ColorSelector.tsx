@@ -9,14 +9,14 @@ export interface ColorOption {
 
 interface ColorSelectorProps {
   colors: ColorOption[]
-  selectedHexCode: string | null
+  selectedHexCodes: string[]
   onChange: (hexCode: string) => void
   showColorName?: boolean
 }
 
-const ColorSelector = ({ colors, selectedHexCode, onChange, showColorName = true }: ColorSelectorProps) => {
+const ColorSelector = ({ colors, selectedHexCodes, onChange, showColorName = true }: ColorSelectorProps) => {
   const [hoveredHexCode, setHoveredHexCode] = useState<string | null>(null)
-  const activeHexCode = hoveredHexCode ?? selectedHexCode
+  const activeHexCode = hoveredHexCode ?? selectedHexCodes[0] ?? null
   const activeName = colors.find(c => c.hexCode === activeHexCode)?.name ?? '\u00A0'
 
   const [colorName, dispatchColorName] = useReducer(colorNameReducer, {
@@ -44,7 +44,7 @@ const ColorSelector = ({ colors, selectedHexCode, onChange, showColorName = true
         {colors.map(color => (
           <button
             key={color.hexCode}
-            className={`${styles.colorSwatch}${selectedHexCode === color.hexCode ? ` ${styles.selected}` : ''}`}
+            className={`${styles.colorSwatch}${selectedHexCodes.includes(color.hexCode) ? ` ${styles.selected}` : ''}`}
             style={{ background: color.hexCode }}
             onClick={() => onChange(color.hexCode)}
             onMouseEnter={() => setHoveredHexCode(color.hexCode)}
