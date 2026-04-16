@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '@/features/products/types/product.types'
 import { getImageUrl } from '@/utils/image.utils'
+import { formatPrice } from '@/utils/price.utils'
 import styles from './PhoneCard.module.scss'
 
 interface PhoneCardProps {
@@ -12,7 +13,7 @@ const PhoneCard = ({ product }: PhoneCardProps) => {
     <Link
       to={`/product/${product.id}`}
       className={styles.card}
-      aria-label={`${product.brand} ${product.name}, ${product.basePrice} EUR`}
+      aria-label={`${product.brand} ${product.name}, ${formatPrice(product.basePrice)} EUR`}
     >
       <div className={styles.imageWrapper}>
         <img
@@ -26,7 +27,7 @@ const PhoneCard = ({ product }: PhoneCardProps) => {
           <span className={styles.brand}>{product.brand}</span>
           <span className={styles.name}>{product.name}</span>
         </div>
-        <span className={styles.price}>{product.basePrice} EUR</span>
+        <span className={styles.price}>{formatPrice(product.basePrice)} EUR</span>
       </div>
     </Link>
   )

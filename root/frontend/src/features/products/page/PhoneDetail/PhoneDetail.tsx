@@ -5,6 +5,7 @@ import type { ColorOption } from '@/features/products/types/product.types'
 import PhoneCard from '@/features/products/components/PhoneCard/PhoneCard'
 import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
+import { formatPrice } from '@/utils/price.utils'
 import styles from './PhoneDetail.module.scss'
 import { imageReducer, colorNameReducer } from './PhoneDetail.reducer'
 
@@ -136,8 +137,8 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   if (!product) return null
 
   const priceLabel = selectedStorage
-    ? `${currentPrice} EUR`
-    : `From ${currentPrice} EUR`
+    ? `${formatPrice(currentPrice)} EUR`
+    : `From ${formatPrice(currentPrice)} EUR`
 
   const handleAddToCart = () => {
     if (!canAddToCart || !product || !selectedColor || !selectedStorage) return

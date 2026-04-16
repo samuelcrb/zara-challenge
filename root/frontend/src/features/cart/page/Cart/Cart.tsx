@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
+import { formatPrice } from '@/utils/price.utils'
 import { useTransitionDirection } from '@/context/transitionContext'
 import PageTransition from '@/components/PageTransition/PageTransition'
 import { FADE_DURATION, HEADER_TRANSITION, PAGE_TRANSITION } from '@/constants/animation'
@@ -113,7 +114,7 @@ const Cart = () => {
                     <p className={styles.itemMeta}>
                       {item.storage}&nbsp;&nbsp;|&nbsp;&nbsp;{item.color}
                     </p>
-                    <p className={styles.itemPrice}>{item.price} EUR</p>
+                    <p className={styles.itemPrice}>{formatPrice(item.price)} EUR</p>
                   </div>
                   <button
                     className={styles.removeBtn}
@@ -133,7 +134,7 @@ const Cart = () => {
           {showCartContent && (
             <div className={`${styles.totalRow}${cartContentFading ? ` ${styles.contentFading}` : ''}`}>
               <span className={styles.totalLabel}>TOTAL</span>
-              <span key={totalPrice} className={`${styles.totalAmount} ${styles.animatedValue}`}>{totalPrice} EUR</span>
+              <span key={totalPrice} className={`${styles.totalAmount} ${styles.animatedValue}`}>{formatPrice(totalPrice)} EUR</span>
             </div>
           )}
           <div className={styles.buttons}>
@@ -143,7 +144,7 @@ const Cart = () => {
             {showCartContent && (
               <div className={`${styles.payGroup}${cartContentFading ? ` ${styles.contentFading}` : ''}`}>
                 <span className={styles.totalDesktop}>
-                  TOTAL&nbsp;&nbsp;&nbsp;<span key={totalPrice} className={styles.animatedValue}>{totalPrice} EUR</span>
+                  TOTAL&nbsp;&nbsp;&nbsp;<span key={totalPrice} className={styles.animatedValue}>{formatPrice(totalPrice)} EUR</span>
                 </span>
                 <button className={styles.payBtn}>PAY</button>
               </div>
