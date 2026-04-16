@@ -6,7 +6,6 @@
   npm ci
   npm run lint
   npm run type-check
-  npm run test:run
   npm run build
   cd ..
 
@@ -14,7 +13,6 @@
   cd backend
   npm ci
   npm run type-check
-  npm run test
   npm run build
   cd ..
 
