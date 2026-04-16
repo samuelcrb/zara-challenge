@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import PhoneList from '@/features/products/page/PhoneList/PhoneList'
 import useProducts, { clearProductCache } from '@/features/products/hooks/useProducts'
@@ -140,6 +141,127 @@ describe('PhoneList page', () => {
         </TransitionProvider>
       </MemoryRouter>,
     )
+    expect(screen.getByText('3 results')).toBeInTheDocument()
+  })
+})
+
+// ─── Color filter ──────────────────────────────────────────────────────────────
+
+describe('PhoneList — color filter', () => {
+  beforeEach(() => {
+    onLoadingChange.mockReset()
+    clearProductCache()
+  })
+
+  // 'OPP-A18' → blue only  |  'XMI-13TPro' → black only  (from PRODUCT_COLORS)
+  const renderWithProducts = (products: Product[]) => {
+    vi.mocked(useProducts).mockReturnValue({ ...defaultHook(), products })
+    return render(
+      <MemoryRouter>
+        <TransitionProvider value="backward">
+          <PhoneList onLoadingChange={vi.fn()} />
+        </TransitionProvider>
+      </MemoryRouter>,
+    )
+  }
+
+  it('shows FILTRAR button initially', () => {
+    renderWithProducts([])
+    expect(screen.getByText('FILTRAR')).toBeInTheDocument()
+  })
+
+  it('opens the color panel when clicking FILTRAR', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    expect(screen.getByText('CERRAR')).toBeInTheDocument()
+    expect(screen.getByLabelText('Blue')).toBeInTheDocument()
+  })
+
+  it('closes the panel and updates the label after selecting a color', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    expect(screen.queryByText('CERRAR')).not.toBeInTheDocument()
+    expect(screen.getByText('FILTRAR (1)')).toBeInTheDocument()
+  })
+
+  it('shows the clear button after selecting a color', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    expect(screen.getByText('✕')).toBeInTheDocument()
+  })
+
+  it('increments the count when a second color is selected', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByText('FILTRAR (1)'))
+    await user.click(screen.getByLabelText('Green'))
+    expect(screen.getByText('FILTRAR (2)')).toBeInTheDocument()
+  })
+
+  it('deselects a color when clicking it again', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByText('FILTRAR (1)'))
+    await user.click(screen.getByLabelText('Blue'))
+    expect(screen.getByText('FILTRAR')).toBeInTheDocument()
+    expect(screen.queryByText('✕')).not.toBeInTheDocument()
+  })
+
+  it('clears all selected colors when clicking ✕', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByText('✕'))
+    expect(screen.getByText('FILTRAR')).toBeInTheDocument()
+    expect(screen.queryByText('✕')).not.toBeInTheDocument()
+  })
+
+  it('does not open the panel when clicking ✕', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByText('✕'))
+    expect(screen.queryByText('CERRAR')).not.toBeInTheDocument()
+  })
+
+  it('filters the result count by selected color', async () => {
+    const user = userEvent.setup()
+    // OPP-A18 → blue only, XMI-13TPro → black only
+    renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
+    expect(screen.getByText('2 results')).toBeInTheDocument()
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    expect(screen.getByText('1 result')).toBeInTheDocument()
+  })
+
+  it('restores the full count after clearing the color filter', async () => {
+    const user = userEvent.setup()
+    renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByText('✕'))
+    expect(screen.getByText('2 results')).toBeInTheDocument()
+  })
+
+  it('counts products matching any of the selected colors', async () => {
+    const user = userEvent.setup()
+    // OPP-A18 → blue, XMI-13TPro → black, OPP-R11F → blue+green
+    renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro'), makeProduct('OPP-R11F')])
+    await user.click(screen.getByText('FILTRAR'))
+    await user.click(screen.getByLabelText('Blue'))  // matches OPP-A18, OPP-R11F
+    await user.click(screen.getByText('FILTRAR (1)'))
+    await user.click(screen.getByLabelText('Black')) // adds XMI-13TPro
     expect(screen.getByText('3 results')).toBeInTheDocument()
   })
 })
