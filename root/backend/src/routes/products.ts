@@ -65,20 +65,15 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       return
     }
 
-    // Deduplicate ids — when the same id appears more than once, rename subsequent
-    // occurrences to `${id}-1`, `${id}-2`, … and assign a stable renderKey per item
+    // Deduplicate ids — when the same id appears more than once, keep only the first occurrence
     const seenIds = new Set<string>()
     const deduped: RawProduct[] = Array.isArray(raw)
-      ? raw.map((p, index) => {
-        let uniqueId = p.id
-        if (seenIds.has(uniqueId)) {
-          let counter = 1
-          while (seenIds.has(`${p.id}-${counter}`)) counter++
-          uniqueId = `${p.id}-${counter}`
-        }
-        seenIds.add(uniqueId)
-        return { ...p, id: uniqueId, renderKey: `${p.id}-${index}`, imageUrl: toHttps(p.imageUrl) }
-      })
+      ? raw.reduce<RawProduct[]>((acc, p, index) => {
+        if (seenIds.has(p.id)) return acc
+        seenIds.add(p.id)
+        acc.push({ ...p, renderKey: `${p.id}-${index}`, imageUrl: toHttps(p.imageUrl) })
+        return acc
+      }, [])
       : raw
 
     // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum

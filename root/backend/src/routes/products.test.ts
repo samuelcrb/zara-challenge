@@ -125,9 +125,9 @@ describe('GET /', () => {
 
     const res = await supertest(app).get('/')
 
+    expect(res.body).toHaveLength(1)
     expect(res.body[0].id).toBe('abc')
-    expect(res.body[1].id).not.toBe('abc')
-    expect(res.body[1].id).toMatch(/^abc-/)
+    expect(res.body[0].imageUrl).toContain('u1')
   })
 
   it('forwards search, limit and offset to upstream', async () => {
