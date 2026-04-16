@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import type React from 'react'
 import styles from './SearchBar.module.scss'
 
 const MAX_SEARCH_LENGTH = 50
@@ -21,9 +22,12 @@ interface SearchBarProps {
   onChange: (value: string) => void
   onClear?: () => void
   resultsCount: number
+  rightSlot?: React.ReactNode
+  filterSlot?: React.ReactNode
+  hideResults?: boolean
 }
 
-const SearchBar = ({ value, onChange, onClear, resultsCount }: SearchBarProps) => {
+const SearchBar = ({ value, onChange, onClear, resultsCount, rightSlot, filterSlot, hideResults }: SearchBarProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleClear = () => {
@@ -50,9 +54,15 @@ const SearchBar = ({ value, onChange, onClear, resultsCount }: SearchBarProps) =
           </button>
         )}
       </div>
-      <p className={styles.results} aria-live="polite">
-        {resultsCount} {resultsCount === 1 ? 'result' : 'results'}
-      </p>
+      <div className={styles.bottomRow}>
+        <div className={styles.leftSlot}>
+          <p className={`${styles.results}${hideResults ? ` ${styles.resultsHidden}` : ''}`} aria-live="polite">
+            {resultsCount} {resultsCount === 1 ? 'result' : 'results'}
+          </p>
+          {filterSlot}
+        </div>
+        {rightSlot}
+      </div>
     </div>
   )
 }

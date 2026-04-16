@@ -76,8 +76,25 @@
   }
 }
 
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.leftSlot {
+  display: flex;
+  flex-direction: column;
+}
+
 .results {
   font-family: $font-family;
   font-size: $font-size-sm;
   color: $color-text;
+  transition: opacity 300ms ease;
+
+  &.resultsHidden {
+    opacity: 0;
+  }
 }

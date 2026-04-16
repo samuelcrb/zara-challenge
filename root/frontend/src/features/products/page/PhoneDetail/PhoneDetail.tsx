@@ -1,13 +1,13 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useProductDetail from '@/features/products/hooks/useProductDetail'
-import type { ColorOption } from '@/features/products/types/product.types'
 import PhoneCard from '@/features/products/components/PhoneCard/PhoneCard'
+import ColorSelector from '@/features/products/components/ColorSelector/ColorSelector'
 import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
 import { formatPrice } from '@/utils/price.utils'
 import styles from './PhoneDetail.module.scss'
-import { imageReducer, colorNameReducer } from './PhoneDetail.reducer'
+import { imageReducer } from './PhoneDetail.reducer'
 
 interface PhoneDetailProps {
   onLoadingChange: (loading: boolean) => void
@@ -39,9 +39,6 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
     handleColorSelect,
     handleStorageSelect,
   } = useProductDetail()
-
-  const [hoveredColor, setHoveredColor] = useState<ColorOption | null>(null)
-  const activeColor = hoveredColor ?? selectedColor
 
   const [image, dispatchImage] = useReducer(imageReducer, {
     front: currentImageUrl,
@@ -111,22 +108,6 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
     const ratio = maxScroll > 0 ? el.scrollLeft / maxScroll : 0
     setThumbLeft(ratio * (track.clientWidth - 150))
   }
-
-  const [colorName, dispatchColorName] = useReducer(colorNameReducer, { text: '\u00A0', visible: true })
-  const isFirstColorRender = useRef(true)
-
-  useEffect(() => {
-    if (isFirstColorRender.current) {
-      isFirstColorRender.current = false
-      dispatchColorName({ type: 'set', name: activeColor?.name ?? '\u00A0' })
-      return
-    }
-    dispatchColorName({ type: 'hide' })
-    const timer = setTimeout(() => {
-      dispatchColorName({ type: 'show', name: activeColor?.name ?? '\u00A0' })
-    }, 150)
-    return () => clearTimeout(timer)
-  }, [activeColor?.name])
 
   useEffect(() => {
     onLoadingChange(isLoading)
@@ -205,25 +186,14 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
             {/* Color */}
             <div className={styles.section}>
               <p className={styles.sectionLabel}>COLOR. PICK YOUR FAVOURITE.</p>
-              <div className={styles.colorOptions}>
-                {product.colorOptions.map(color => (
-                  <button
-                    key={color.hexCode}
-                    className={`${styles.colorSwatch}${selectedColor?.hexCode === color.hexCode ? ` ${styles.selected}` : ''}`}
-                    style={{ background: color.hexCode }}
-                    onClick={() => handleColorSelect(color)}
-                    onMouseEnter={() => setHoveredColor(color)}
-                    onMouseLeave={() => setHoveredColor(null)}
-                    aria-label={color.name}
-                  />
-                ))}
-              </div>
-              <p
-                className={styles.colorName}
-                style={{ opacity: colorName.visible ? 1 : 0 }}
-              >
-                {colorName.text}
-              </p>
+              <ColorSelector
+                colors={product.colorOptions}
+                selectedHexCode={selectedColor?.hexCode ?? null}
+                onChange={hexCode => {
+                  const color = product.colorOptions.find(c => c.hexCode === hexCode)
+                  if (color) handleColorSelect(color)
+                }}
+              />
             </div>
 
             <button

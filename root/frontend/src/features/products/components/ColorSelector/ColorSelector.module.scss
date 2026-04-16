@@ -1,0 +1,35 @@
+@use '@/styles/variables' as *;
+
+.colorOptions {
+  display: flex;
+  gap: 20px;
+}
+
+.colorSwatch {
+  width: 20px;
+  height: 20px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 1px solid #cccccc;
+    transition: border-color 150ms ease;
+  }
+
+  &.selected::after {
+    border-color: $color-primary;
+  }
+}
+
+.colorName {
+  font-size: $font-size-xs;
+  letter-spacing: 0.06em;
+  margin: $spacing-sm 0 0;
+  color: $color-text;
+  transition: opacity 150ms ease;
+}

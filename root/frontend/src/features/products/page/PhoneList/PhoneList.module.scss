@@ -11,6 +11,41 @@
   padding-bottom: $spacing-xxl * 2;
 }
 
+.filterControls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.filterPanel {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+
+  &.filterPanelOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.filterLabelContainer {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-family: $font-family;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .error {
   display: flex;
   align-items: center;
