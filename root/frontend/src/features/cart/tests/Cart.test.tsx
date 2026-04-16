@@ -71,7 +71,7 @@ describe('Cart page', () => {
 
   it('shows CART (0) in the title when the cart is empty', () => {
     renderCart()
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('CART')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('CARRITO')
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
@@ -106,7 +106,7 @@ describe('Cart page', () => {
 
   it('renders the CONTINUE SHOPPING button', () => {
     renderCart()
-    expect(screen.getByRole('button', { name: 'CONTINUE SHOPPING' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'SEGUIR COMPRANDO' })).toBeInTheDocument()
   })
 
   // ─── Remove item ──────────────────────────────────────────────────────────────

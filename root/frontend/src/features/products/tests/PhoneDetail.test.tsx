@@ -139,7 +139,7 @@ describe('PhoneDetail page', () => {
 
   it('shows "From X EUR" label when no storage is selected', () => {
     renderDetail({ selectedStorage: null, currentPrice: 999 })
-    expect(screen.getByText('From 999 EUR')).toBeInTheDocument()
+    expect(screen.getByText('Desde 999 EUR')).toBeInTheDocument()
   })
 
   it('shows "X EUR" label when storage is selected', () => {
@@ -153,27 +153,27 @@ describe('PhoneDetail page', () => {
 
   it('shows decimal price with 2 decimal places', () => {
     renderDetail({ selectedStorage: null, currentPrice: 99.9 })
-    expect(screen.getByText('From 99.90 EUR')).toBeInTheDocument()
+    expect(screen.getByText('Desde 99.90 EUR')).toBeInTheDocument()
   })
 
   // ─── Specs ───────────────────────────────────────────────────────────────────
 
   it('renders the SPECIFICATIONS heading', () => {
     renderDetail()
-    expect(screen.getByRole('heading', { name: 'SPECIFICATIONS' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ESPECIFICACIONES' })).toBeInTheDocument()
   })
 
   it('renders all spec rows', () => {
     renderDetail()
-    const specs = ['Screen', 'Resolution', 'Processor', 'Main Camera', 'Selfie Camera', 'Battery', 'OS', 'Screen Refresh Rate']
+    const specs = ['Pantalla', 'Resolución', 'Procesador', 'Cámara principal', 'Cámara frontal', 'Batería', 'Sistema operativo', 'Tasa de refresco']
     specs.forEach(label => expect(screen.getByText(label)).toBeInTheDocument())
   })
 
   it('renders brand and name rows in the specs table', () => {
     renderDetail()
     // Brand and Name are spec rows too
-    expect(screen.getByText('Brand')).toBeInTheDocument()
-    expect(screen.getByText('Name')).toBeInTheDocument()
+    expect(screen.getByText('Marca')).toBeInTheDocument()
+    expect(screen.getByText('Nombre')).toBeInTheDocument()
   })
 
   // ─── Storage options ─────────────────────────────────────────────────────────
@@ -212,12 +212,12 @@ describe('PhoneDetail page', () => {
 
   it('renders the ADD TO CART button disabled when canAddToCart is false', () => {
     renderDetail({ canAddToCart: false })
-    expect(screen.getByRole('button', { name: 'ADD TO CART' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'AÑADIR AL CARRITO' })).toBeDisabled()
   })
 
   it('renders the ADD TO CART button enabled when canAddToCart is true', () => {
     renderDetail({ canAddToCart: true })
-    expect(screen.getByRole('button', { name: 'ADD TO CART' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'AÑADIR AL CARRITO' })).toBeEnabled()
   })
 
   it('navigates to /cart after clicking ADD TO CART', async () => {
@@ -226,7 +226,7 @@ describe('PhoneDetail page', () => {
       selectedColor: makeColor(),
       selectedStorage: makeStorage(),
     })
-    await user.click(screen.getByRole('button', { name: 'ADD TO CART' }))
+    await user.click(screen.getByRole('button', { name: 'AÑADIR AL CARRITO' }))
     expect(mockNavigate).toHaveBeenCalledWith('/cart')
   })
 
@@ -234,7 +234,7 @@ describe('PhoneDetail page', () => {
 
   it('calls navigate(-1) when the BACK button is clicked', async () => {
     const { user } = renderDetail()
-    await user.click(screen.getByRole('button', { name: /BACK/i }))
+    await user.click(screen.getByRole('button', { name: /ATRÁS/i }))
     expect(mockNavigate).toHaveBeenCalledWith(-1)
   })
 })

@@ -13,7 +13,7 @@ interface UseProductsReturn {
   fetchId: number
 }
 
-// Module-level cache — persists across PhoneList remounts within the same session
+// Caché a nivel de módulo — persiste entre remontajes de PhoneList en la misma sesión
 const productCache = new Map<string, Product[]>()
 
 export const clearProductCache = () => productCache.clear()
@@ -27,12 +27,12 @@ const useProducts = (): UseProductsReturn => {
   const [products, setProducts] = useState<Product[]>(cached ?? [])
   const [isLoading, setIsLoading] = useState(!cached)
   const [error, setError] = useState<string | null>(null)
-  // Monotonically incrementing counter — PhoneList watches it to trigger grid transitions
+  // Contador monotónicamente creciente — PhoneList lo observa para disparar transiciones del grid
   const [fetchId, setFetchId] = useState(cached ? 1 : 0)
-  // Prevents a spurious fetchId increment on the first cache hit (e.g. navigating back from cart)
+  // Evita un incremento espurio de fetchId en el primer acierto de caché (p.ej. al volver del carrito)
   const isInitialized = useRef(false)
 
-  // Reset isInitialized on unmount so StrictMode's simulated remount starts clean
+  // Reinicia isInitialized al desmontar para que el remontaje simulado de StrictMode empiece limpio
   useEffect(() => {
     return () => {
       isInitialized.current = false
@@ -45,10 +45,10 @@ const useProducts = (): UseProductsReturn => {
       setProducts(hit)
       setIsLoading(false)
       if (isInitialized.current) {
-        // Real search change resolved from cache: increment to trigger grid transition
+        // Cambio de búsqueda real resuelto desde caché: incrementa para disparar la transición del grid
         setFetchId(id => id + 1)
       } else {
-        // First render with cached data: just ensure fetchId is non-zero
+        // Primer render con datos en caché: simplemente asegura que fetchId no sea cero
         setFetchId(id => (id === 0 ? 1 : id))
         isInitialized.current = true
       }

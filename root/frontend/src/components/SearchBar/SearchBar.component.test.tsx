@@ -22,34 +22,34 @@ describe('SearchBar component', () => {
 
   it('renders the search input with correct placeholder', () => {
     setup()
-    expect(screen.getByPlaceholderText('Search for a smartphone...')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Busca un smartphone...')).toBeInTheDocument()
   })
 
   it('renders 1 "result" (singular) when resultsCount is 1', () => {
     setup({ resultsCount: 1 })
-    expect(screen.getByText('1 result')).toBeInTheDocument()
+    expect(screen.getByText('1 resultado')).toBeInTheDocument()
   })
 
   it('renders N "results" (plural) when resultsCount is 0', () => {
     setup({ resultsCount: 0 })
-    expect(screen.getByText('0 results')).toBeInTheDocument()
+    expect(screen.getByText('0 resultados')).toBeInTheDocument()
   })
 
   it('renders N "results" (plural) when resultsCount is many', () => {
     setup({ resultsCount: 42 })
-    expect(screen.getByText('42 results')).toBeInTheDocument()
+    expect(screen.getByText('42 resultados')).toBeInTheDocument()
   })
 
   // ─── Clear button ──────────────────────────────────────────────────────────
 
   it('does not show the clear button when value is empty', () => {
     setup({ value: '' })
-    expect(screen.queryByLabelText('Clear search')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Borrar búsqueda')).not.toBeInTheDocument()
   })
 
   it('shows the clear button when value is non-empty', () => {
     setup({ value: 'Samsung' })
-    expect(screen.getByLabelText('Clear search')).toBeInTheDocument()
+    expect(screen.getByLabelText('Borrar búsqueda')).toBeInTheDocument()
   })
 
   // ─── Interactions ──────────────────────────────────────────────────────────
@@ -73,21 +73,21 @@ describe('SearchBar component', () => {
 
   it('calls onChange with empty string when clear button is clicked', async () => {
     const { user, onChange } = setup({ value: 'Samsung' })
-    await user.click(screen.getByLabelText('Clear search'))
+    await user.click(screen.getByLabelText('Borrar búsqueda'))
     expect(onChange).toHaveBeenCalledWith('')
   })
 
   it('calls the optional onClear callback when clear button is clicked', async () => {
     const onClear = vi.fn()
     const { user } = setup({ value: 'Samsung', onClear })
-    await user.click(screen.getByLabelText('Clear search'))
+    await user.click(screen.getByLabelText('Borrar búsqueda'))
     expect(onClear).toHaveBeenCalled()
   })
 
   it('focuses the input after clicking clear', async () => {
     const { user } = setup({ value: 'Samsung' })
     const input = screen.getByRole('searchbox')
-    await user.click(screen.getByLabelText('Clear search'))
+    await user.click(screen.getByLabelText('Borrar búsqueda'))
     expect(input).toHaveFocus()
   })
 })

@@ -12,10 +12,10 @@ import { PRODUCT_COLORS } from '@/features/products/constants/productColors'
 import styles from './PhoneList.module.scss'
 
 const FILTER_COLORS = [
-  { hexCode: '#2f2c2cff', name: 'Black' },
-  { hexCode: '#e6e0e0ff', name: 'White' },
-  { hexCode: '#A7C7E7', name: 'Blue' },
-  { hexCode: '#74b585ff', name: 'Green' },
+  { hexCode: '#2f2c2cff', name: 'Negro' },
+  { hexCode: '#e6e0e0ff', name: 'Blanco' },
+  { hexCode: '#A7C7E7', name: 'Azul' },
+  { hexCode: '#74b585ff', name: 'Verde' },
 ]
 
 type GridTransition =
@@ -45,7 +45,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
   const isFirstFetch = useRef(true)
   const isFirstColorFilter = useRef(true)
 
-  // Reset refs on unmount so StrictMode's simulated remount starts clean
+  // Reinicia los refs al desmontar para que el remontaje simulado de StrictMode empiece limpio
   useEffect(() => {
     return () => {
       isFirstFetch.current = true
@@ -132,8 +132,8 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
     setSelectedFilterColors([])
   }
 
-  // When coming back from cart, the SearchBar enters from below (slide up);
-  // when leaving to cart, the SearchBar slides down and fades out.
+  // Al volver del carrito, la SearchBar entra desde abajo (deslizamiento hacia arriba);
+  // al ir al carrito, se desliza hacia abajo y desaparece con fade.
   const searchBarVariants = {
     initial: direction === 'backward'
       ? { y: HEADER_TRANSITION.slideDistance, opacity: 0 }

@@ -14,14 +14,14 @@ interface PhoneDetailProps {
 }
 
 const SPEC_ROWS = [
-  { key: 'screen', label: 'Screen' },
-  { key: 'resolution', label: 'Resolution' },
-  { key: 'processor', label: 'Processor' },
-  { key: 'mainCamera', label: 'Main Camera' },
-  { key: 'selfieCamera', label: 'Selfie Camera' },
-  { key: 'battery', label: 'Battery' },
-  { key: 'os', label: 'OS' },
-  { key: 'screenRefreshRate', label: 'Screen Refresh Rate' },
+  { key: 'screen', label: 'Pantalla' },
+  { key: 'resolution', label: 'Resolución' },
+  { key: 'processor', label: 'Procesador' },
+  { key: 'mainCamera', label: 'Cámara principal' },
+  { key: 'selfieCamera', label: 'Cámara frontal' },
+  { key: 'battery', label: 'Batería' },
+  { key: 'os', label: 'Sistema operativo' },
+  { key: 'screenRefreshRate', label: 'Tasa de refresco' },
 ] as const
 
 const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
@@ -47,9 +47,9 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   })
   const prevImageUrlRef = useRef(currentImageUrl)
 
-  // Crossfade: preload the incoming image first so the back layer is always
-  // fully visible before the front starts fading. Avoids a blank flash on the
-  // first few color changes when images aren't yet cached.
+  // Crossfade: precarga la imagen entrante para que la capa trasera siempre esté
+  // completamente visible antes de que la delantera empiece a desvanecerse.
+  // Evita un destello en blanco en los primeros cambios de color sin caché.
   useEffect(() => {
     const prevUrl = prevImageUrlRef.current
     prevImageUrlRef.current = currentImageUrl
@@ -119,7 +119,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
 
   const priceLabel = selectedStorage
     ? `${formatPrice(currentPrice)} EUR`
-    : `From ${formatPrice(currentPrice)} EUR`
+    : `Desde ${formatPrice(currentPrice)} EUR`
 
   const handleAddToCart = () => {
     if (!canAddToCart || !product || !selectedColor || !selectedStorage) return
@@ -140,10 +140,10 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
       <div className={styles.page}>
         <button className={styles.back} onClick={() => navigate(-1)}>
           <img src="/arrow.svg" alt="" aria-hidden="true" className={styles.backArrow} />
-          BACK
+          ATRÁS
         </button>
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
+        {/* ── Cabecera ───────────────────────────────────────────── */}
         <section className={styles.hero}>
           <div className={styles.imageCol}>
             <img
@@ -167,9 +167,9 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
               <p className={styles.productPrice}>{priceLabel}</p>
             </div>
 
-            {/* Storage */}
+            {/* Almacenamiento */}
             <div className={styles.section}>
-              <p className={styles.sectionLabel}>STORAGE ¿HOW MUCH SPACE DO YOU NEED?</p>
+              <p className={styles.sectionLabel}>ALMACENAMIENTO. ¿CUÁNTO ESPACIO NECESITAS?</p>
               <div className={styles.storageOptions}>
                 {product.storageOptions.map(storage => (
                   <button
@@ -185,7 +185,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
 
             {/* Color */}
             <div className={styles.section}>
-              <p className={styles.sectionLabel}>COLOR. PICK YOUR FAVOURITE.</p>
+              <p className={styles.sectionLabel}>COLOR. ELIGE TU FAVORITO.</p>
               <ColorSelector
                 colors={product.colorOptions}
                 selectedHexCodes={selectedColor ? [selectedColor.hexCode] : []}
@@ -201,25 +201,25 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
               disabled={!canAddToCart}
               onClick={handleAddToCart}
             >
-              ADD TO CART
+              AÑADIR AL CARRITO
             </button>
           </div>
         </section>
 
-        {/* ── Specifications ────────────────────────────────────── */}
+        {/* ── Especificaciones ──────────────────────────────────── */}
         <section className={styles.specs}>
-          <h2 className={styles.sectionTitle}>SPECIFICATIONS</h2>
+          <h2 className={styles.sectionTitle}>ESPECIFICACIONES</h2>
           <div className={styles.specsTable}>
             <div className={styles.specRow}>
-              <span className={styles.specLabel}>Brand</span>
+              <span className={styles.specLabel}>Marca</span>
               <span className={styles.specValue}>{product.brand}</span>
             </div>
             <div className={styles.specRow}>
-              <span className={styles.specLabel}>Name</span>
+              <span className={styles.specLabel}>Nombre</span>
               <span className={styles.specValue}>{product.name}</span>
             </div>
             <div className={styles.specRow}>
-              <span className={styles.specLabel}>Description</span>
+              <span className={styles.specLabel}>Descripción</span>
               <span className={styles.specValue}>{product.description}</span>
             </div>
             {SPEC_ROWS.map(({ key, label }) => (
@@ -232,11 +232,11 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
         </section>
       </div>
 
-      {/* ── Similar items — outside .page, full-width so cards can overflow ── */}
+      {/* ── Artículos similares — fuera de .page, ancho completo para que las tarjetas desborden ── */}
       {product.similarProducts.length > 0 && (
         <section className={styles.similar}>
           <div className={styles.similarAlign}>
-            <h2 className={styles.sectionTitle}>SIMILAR ITEMS</h2>
+            <h2 className={styles.sectionTitle}>ARTÍCULOS SIMILARES</h2>
           </div>
           <div className={styles.similarScroll} ref={scrollRef} onScroll={handleScroll}>
             {product.similarProducts.map((p, i) => (

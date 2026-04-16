@@ -12,9 +12,9 @@ const MAX_SEARCH_LENGTH = 50
  */
 export const sanitizeSearch = (raw: string): string =>
   raw
-    .replace(/[^\p{L}\p{N}\s\-+.]/gu, '') // whitelist: letters, digits, spaces, - + .
-    .replace(/^\s/, '')                    // no leading space
-    .replace(/\s{2,}/g, ' ')              // no consecutive spaces
+    .replace(/[^\p{L}\p{N}\s\-+.]/gu, '') // lista blanca: letras, dígitos, espacios, - + .
+    .replace(/^\s/, '')                    // sin espacio al inicio
+    .replace(/\s{2,}/g, ' ')              // sin espacios consecutivos
     .slice(0, MAX_SEARCH_LENGTH)
 
 interface SearchBarProps {
@@ -43,13 +43,13 @@ const SearchBar = ({ value, onChange, onClear, resultsCount, rightSlot, filterSl
           ref={inputRef}
           type="search"
           className={styles.input}
-          placeholder="Search for a smartphone..."
+          placeholder="Busca un smartphone..."
           value={value}
           onChange={e => onChange(sanitizeSearch(e.target.value))}
-          aria-label="Search for a smartphone"
+          aria-label="Busca un smartphone"
         />
         {value && (
-          <button className={styles.clearButton} onClick={handleClear} aria-label="Clear search">
+          <button className={styles.clearButton} onClick={handleClear} aria-label="Borrar búsqueda">
             ✕
           </button>
         )}
@@ -57,7 +57,7 @@ const SearchBar = ({ value, onChange, onClear, resultsCount, rightSlot, filterSl
       <div className={styles.bottomRow}>
         <div className={styles.leftSlot}>
           <p className={`${styles.results}${hideResults ? ` ${styles.resultsHidden}` : ''}`} aria-live="polite">
-            {resultsCount} {resultsCount === 1 ? 'result' : 'results'}
+            {resultsCount} {resultsCount === 1 ? 'resultado' : 'resultados'}
           </p>
           {filterSlot}
         </div>

@@ -27,7 +27,7 @@ const renderGrid = (props: Partial<React.ComponentProps<typeof PhoneGrid>> = {})
 describe('PhoneGrid', () => {
   it('has the "Products list" accessible label', () => {
     renderGrid()
-    expect(screen.getByRole('list', { name: 'Products list' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Lista de productos' })).toBeInTheDocument()
   })
 
   it('renders one list item per product', () => {

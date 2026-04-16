@@ -1,4 +1,4 @@
-// Detailed specifications of a product
+// Especificaciones detalladas de un producto
 export interface ProductSpecs {
   screen: string
   resolution: string
@@ -10,20 +10,20 @@ export interface ProductSpecs {
   screenRefreshRate: string
 }
 
-// Available color variant for a product
+// Variante de color disponible para un producto
 export interface ColorOption {
   name: string
   hexCode: string
   imageUrl: string
 }
 
-// Available storage variant with its price
+// Variante de almacenamiento disponible con su precio
 export interface StorageOption {
   capacity: string
   price: number
 }
 
-// Product as returned by GET /products (list)
+// Producto devuelto por GET /products (listado)
 export interface Product {
   id: string
   brand: string
@@ -33,7 +33,7 @@ export interface Product {
   renderKey: string
 }
 
-// Product as returned by GET /products/:id (detail)
+// Producto devuelto por GET /products/:id (detalle)
 export interface ProductDetail extends Product {
   description: string
   rating: number
@@ -43,14 +43,14 @@ export interface ProductDetail extends Product {
   similarProducts: Product[]
 }
 
-// Query params for GET /products
+// Parámetros de query para GET /products
 export type GetProductsParams = {
   search?: string
   limit?: number
   offsPet?: number
 }
 
-// API error response shape
+// Estructura de respuesta de error de la API
 export interface ApiError {
   error: string
   message: string

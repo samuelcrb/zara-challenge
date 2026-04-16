@@ -20,8 +20,8 @@ const Navbar = ({ isLoading, showBorder = false, onCartClick }: NavbarProps) => 
       className={`${styles.header}${showBorder || isCartPage ? ` ${styles.bordered}` : ''}`}
       role="banner"
     >
-      <nav className={styles.nav} aria-label="Main navigation">
-        <Link to="/" className={styles.logo} aria-label="Go to home">
+      <nav className={styles.nav} aria-label="Navegación principal">
+        <Link to="/" className={styles.logo} aria-label="Ir al inicio">
           <img src="/logo-navbar.svg" alt="Zara" />
         </Link>
 
@@ -29,7 +29,7 @@ const Navbar = ({ isLoading, showBorder = false, onCartClick }: NavbarProps) => 
           <Link
             to="/cart"
             className={styles.cart}
-            aria-label={`Cart, ${totalItems} items`}
+            aria-label={`Carrito, ${totalItems} artículos`}
             onClick={e => {
               if (onCartClick) {
                 e.preventDefault()

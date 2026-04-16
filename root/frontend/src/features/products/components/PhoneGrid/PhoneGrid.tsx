@@ -23,7 +23,7 @@ const PhoneGrid = ({
     .join(' ')
 
   return (
-    <ul className={classList} aria-label="Products list">
+    <ul className={classList} aria-label="Lista de productos">
       {products.map(product => (
         <li key={product.id}>
           <PhoneCard product={product} />

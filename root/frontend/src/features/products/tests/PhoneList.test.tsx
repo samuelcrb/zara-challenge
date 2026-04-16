@@ -128,7 +128,7 @@ describe('PhoneList page', () => {
         </TransitionProvider>
       </MemoryRouter>,
     )
-    expect(screen.getByRole('list', { name: 'Products list' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Lista de productos' })).toBeInTheDocument()
   })
 
   it('shows the result count from the search bar', () => {
@@ -141,7 +141,7 @@ describe('PhoneList page', () => {
         </TransitionProvider>
       </MemoryRouter>,
     )
-    expect(screen.getByText('3 results')).toBeInTheDocument()
+    expect(screen.getByText('3 resultados')).toBeInTheDocument()
   })
 })
 
@@ -175,14 +175,14 @@ describe('PhoneList — color filter', () => {
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
     expect(screen.getByText('CERRAR')).toBeInTheDocument()
-    expect(screen.getByLabelText('Blue')).toBeInTheDocument()
+    expect(screen.getByLabelText('Azul')).toBeInTheDocument()
   })
 
   it('closes the panel and updates the label after selecting a color', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     expect(screen.queryByText('CERRAR')).not.toBeInTheDocument()
     expect(screen.getByText('FILTRAR (1)')).toBeInTheDocument()
   })
@@ -191,7 +191,7 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     expect(screen.getByText('✕')).toBeInTheDocument()
   })
 
@@ -199,9 +199,9 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     await user.click(screen.getByText('FILTRAR (1)'))
-    await user.click(screen.getByLabelText('Green'))
+    await user.click(screen.getByLabelText('Verde'))
     expect(screen.getByText('FILTRAR (2)')).toBeInTheDocument()
   })
 
@@ -209,9 +209,9 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     await user.click(screen.getByText('FILTRAR (1)'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     expect(screen.getByText('FILTRAR')).toBeInTheDocument()
     expect(screen.queryByText('✕')).not.toBeInTheDocument()
   })
@@ -220,7 +220,7 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     await user.click(screen.getByText('✕'))
     expect(screen.getByText('FILTRAR')).toBeInTheDocument()
     expect(screen.queryByText('✕')).not.toBeInTheDocument()
@@ -230,7 +230,7 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     await user.click(screen.getByText('✕'))
     expect(screen.queryByText('CERRAR')).not.toBeInTheDocument()
   })
@@ -239,19 +239,19 @@ describe('PhoneList — color filter', () => {
     const user = userEvent.setup()
     // OPP-A18 → blue only, XMI-13TPro → black only
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
-    expect(screen.getByText('2 results')).toBeInTheDocument()
+    expect(screen.getByText('2 resultados')).toBeInTheDocument()
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
-    expect(screen.getByText('1 result')).toBeInTheDocument()
+    await user.click(screen.getByLabelText('Azul'))
+    expect(screen.getByText('1 resultado')).toBeInTheDocument()
   })
 
   it('restores the full count after clearing the color filter', async () => {
     const user = userEvent.setup()
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))
+    await user.click(screen.getByLabelText('Azul'))
     await user.click(screen.getByText('✕'))
-    expect(screen.getByText('2 results')).toBeInTheDocument()
+    expect(screen.getByText('2 resultados')).toBeInTheDocument()
   })
 
   it('counts products matching any of the selected colors', async () => {
@@ -259,9 +259,9 @@ describe('PhoneList — color filter', () => {
     // OPP-A18 → blue, XMI-13TPro → black, OPP-R11F → blue+green
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro'), makeProduct('OPP-R11F')])
     await user.click(screen.getByText('FILTRAR'))
-    await user.click(screen.getByLabelText('Blue'))  // matches OPP-A18, OPP-R11F
+    await user.click(screen.getByLabelText('Azul'))  // matches OPP-A18, OPP-R11F
     await user.click(screen.getByText('FILTRAR (1)'))
-    await user.click(screen.getByLabelText('Black')) // adds XMI-13TPro
-    expect(screen.getByText('3 results')).toBeInTheDocument()
+    await user.click(screen.getByLabelText('Negro')) // adds XMI-13TPro
+    expect(screen.getByText('3 resultados')).toBeInTheDocument()
   })
 })

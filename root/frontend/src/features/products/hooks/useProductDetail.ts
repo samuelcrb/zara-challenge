@@ -21,14 +21,14 @@ interface UseProductDetailReturn {
 }
 
 /**
- * Manages all state and derived values for the product detail page.
+ * Gestiona todo el estado y los valores derivados para la página de detalle de producto.
  *
- * Reads the product `id` from the URL, fetches the full `ProductDetail`,
- * and exposes selection state for color and storage together with the
- * computed price, image URL, and cart-readiness flag.
+ * Lee el `id` del producto desde la URL, obtiene el `ProductDetail` completo
+ * y expone el estado de selección de color y almacenamiento junto con el
+ * precio calculado, la URL de imagen y el indicador de listo para añadir al carrito.
  *
- * Both `selectedColor` and `selectedStorage` are reset to `null` whenever
- * the `id` param changes so stale selections never leak across navigations.
+ * Tanto `selectedColor` como `selectedStorage` se reinician a `null` cada vez que
+ * cambia el parámetro `id` para evitar que selecciones obsoletas se propaguen entre navegaciones.
  */
 const useProductDetail = (): UseProductDetailReturn => {
   const { id } = useParams<{ id: string }>()
@@ -40,7 +40,7 @@ const useProductDetail = (): UseProductDetailReturn => {
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null)
   const [selectedStorage, setSelectedStorage] = useState<StorageOption | null>(null)
 
-  // Reset selections and re-fetch whenever the product id changes
+  // Reinicia las selecciones y vuelve a obtener datos cada vez que cambia el id del producto
   useEffect(() => {
     if (!productId) return
 

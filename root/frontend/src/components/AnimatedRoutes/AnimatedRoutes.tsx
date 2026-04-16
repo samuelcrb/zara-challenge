@@ -24,8 +24,8 @@ const getDirection = (prev: string, next: string): TransitionDirection => {
 const AnimatedRoutes = ({ onLoadingChange }: AnimatedRoutesProps) => {
   const location = useLocation()
 
-  // Render-time state update: store prevPath + direction together so the
-  // computed direction is available on the same render that commits to the DOM.
+  // Actualización de estado en tiempo de render: guarda prevPath y direction juntos
+  // para que la dirección calculada esté disponible en el mismo render que se aplica al DOM.
   const [{ prevPath, direction }, setNavState] = useState({
     prevPath: location.pathname,
     direction: 'forward' as TransitionDirection,

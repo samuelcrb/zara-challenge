@@ -33,8 +33,8 @@ const Cart = () => {
 
   const showCartContent = cart.length > 0 || cartContentFading
 
-  // Title: slides down from above on forward entry (from listing),
-  // slides up and fades out on backward exit (to listing).
+  // Título: entra deslizándose desde arriba al navegar hacia adelante (desde el listado),
+  // sale deslizándose hacia arriba con fade al volver (al listado).
   const titleVariants = {
     initial: direction === 'forward'
       ? { y: -HEADER_TRANSITION.slideDistance, opacity: 0 }
@@ -85,7 +85,7 @@ const Cart = () => {
         animate="animate"
         exit="exit"
       >
-        CART (<span key={totalItems} className={styles.animatedValue}>{totalItems}</span>)
+        CARRITO (<span key={totalItems} className={styles.animatedValue}>{totalItems}</span>)
       </motion.h1>
 
       <motion.div
@@ -139,14 +139,14 @@ const Cart = () => {
           )}
           <div className={styles.buttons}>
             <button className={styles.continueBtn} onClick={() => navigate('/')}>
-              CONTINUE SHOPPING
+              SEGUIR COMPRANDO
             </button>
             {showCartContent && (
               <div className={`${styles.payGroup}${cartContentFading ? ` ${styles.contentFading}` : ''}`}>
                 <span className={styles.totalDesktop}>
                   TOTAL&nbsp;&nbsp;&nbsp;<span key={totalPrice} className={styles.animatedValue}>{formatPrice(totalPrice)} EUR</span>
                 </span>
-                <button className={styles.payBtn}>PAY</button>
+                <button className={styles.payBtn}>PAGAR</button>
               </div>
             )}
           </div>

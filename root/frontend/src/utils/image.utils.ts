@@ -1,6 +1,6 @@
 /**
- * Returns the BFF image proxy URL for a given source URL.
- * All images should go through this so they are normalised (trimmed, resized, webp).
+ * Devuelve la URL del proxy de imágenes BFF para una URL de origen dada.
+ * Todas las imágenes deben pasar por aquí para ser normalizadas (recortadas, redimensionadas, webp).
  */
 const getImageUrl = (url: string): string => {
   const base = import.meta.env.VITE_BASE_URL ?? '/api'
@@ -8,9 +8,9 @@ const getImageUrl = (url: string): string => {
 }
 
 /**
- * Preloads an array of image URLs into the browser cache.
- * Resolves when all images have loaded or failed.
- * @param urls - Array of image URLs to preload
+ * Precarga un array de URLs de imágenes en la caché del navegador.
+ * Resuelve cuando todas las imágenes han cargado o fallado.
+ * @param urls - Array de URLs de imágenes a precargar
  */
 const preloadImages = (urls: string[]): Promise<void[]> => {
   return Promise.all(
@@ -19,7 +19,7 @@ const preloadImages = (urls: string[]): Promise<void[]> => {
         new Promise<void>(resolve => {
           const img = new Image()
           img.onload = () => resolve()
-          img.onerror = () => resolve() // Resolve anyway to avoid blocking on broken images
+          img.onerror = () => resolve() // Resuelve igualmente para no bloquear por imágenes rotas
           img.src = url
         })
     )

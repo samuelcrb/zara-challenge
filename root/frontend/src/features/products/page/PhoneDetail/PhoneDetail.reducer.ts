@@ -1,4 +1,4 @@
-// ── Image crossfade reducer ────────────────────────────────────────────────────
+// ── Reducer de crossfade de imagen ────────────────────────────────────────────
 export type ImageState = { front: string; back: string; fading: boolean }
 export type ImageAction =
   | { type: 'init'; url: string }
@@ -15,7 +15,7 @@ export const imageReducer = (state: ImageState, action: ImageAction): ImageState
   }
 }
 
-// ── Color-name fade reducer ────────────────────────────────────────────────────
+// ── Reducer de fade del nombre de color ───────────────────────────────────────
 export type ColorNameState = { text: string; visible: boolean }
 export type ColorNameAction =
   | { type: 'set'; name: string }

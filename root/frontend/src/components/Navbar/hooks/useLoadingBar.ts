@@ -4,9 +4,9 @@ import { reducer, initialState } from './useLoadingBar.reducer'
 import type { BarPhase } from './useLoadingBar.reducer'
 
 /**
- * Controls the loading bar animation phase based on a loading state.
- * @param isLoading - Whether the app is currently loading
- * @returns barPhase and barWidth for animation
+ * Controla la fase de animación de la barra de carga según el estado de carga.
+ * @param isLoading - Si la aplicación está cargando actualmente
+ * @returns barPhase y barWidth para la animación
  */
 const useLoadingBar = (isLoading: boolean) => {
   const [{ barPhase, barWidth, cycle }, dispatch] = useReducer(reducer, initialState)
@@ -31,7 +31,7 @@ const useLoadingBar = (isLoading: boolean) => {
     return () => clearTimeout(timer)
   }, [isLoading])
 
-  // Trigger the grow transition after the bar mounts at width 0
+  // Dispara la transición de crecimiento después de que la barra se monta con ancho 0
   useEffect(() => {
     if (barPhase !== 'loading') return
     const frame = requestAnimationFrame(() => dispatch({ type: 'grow' }))
