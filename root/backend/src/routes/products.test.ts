@@ -154,6 +154,16 @@ describe('GET /', () => {
     expect(res.status).toBe(502)
     expect(cache.setCachedProducts).not.toHaveBeenCalled()
   })
+
+  it('converts http imageUrls to https', async () => {
+    const products = [{ id: 'p1', imageUrl: 'http://cdn.example.com/img.jpg', basePrice: 100 }]
+    const detail = { id: 'p1', storageOptions: [{ capacity: '128 GB', price: 100 }] }
+    mockUpstreamWithDetail(products, detail)
+
+    const res = await supertest(app).get('/')
+
+    expect(res.body[0].imageUrl).toBe('https://cdn.example.com/img.jpg')
+  })
 })
 
 describe('GET /:id', () => {
@@ -202,5 +212,36 @@ describe('GET /:id', () => {
     const res = await supertest(app).get('/p1')
 
     expect(res.body.basePrice).toBe(299)
+  })
+
+  it('converts http imageUrl to https', async () => {
+    mockUpstream({
+      id: 'p1',
+      imageUrl: 'http://cdn.example.com/phone.jpg',
+      basePrice: 299,
+      storageOptions: [],
+    })
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.body.imageUrl).toBe('https://cdn.example.com/phone.jpg')
+  })
+
+  it('converts http imageUrls inside colorOptions to https', async () => {
+    mockUpstream({
+      id: 'p1',
+      imageUrl: 'http://cdn.example.com/phone.jpg',
+      basePrice: 299,
+      storageOptions: [],
+      colorOptions: [
+        { name: 'Black', hexCode: '#000', imageUrl: 'http://cdn.example.com/black.jpg' },
+        { name: 'White', hexCode: '#fff', imageUrl: 'http://cdn.example.com/white.jpg' },
+      ],
+    })
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.body.colorOptions[0].imageUrl).toBe('https://cdn.example.com/black.jpg')
+    expect(res.body.colorOptions[1].imageUrl).toBe('https://cdn.example.com/white.jpg')
   })
 })

@@ -28,6 +28,13 @@ describe('getImageUrl', () => {
     const result = getImageUrl(source)
     expect(result).toContain(encodeURIComponent(source))
   })
+
+  it('upgrades http source URLs to https before encoding', () => {
+    const result = getImageUrl('http://cdn.example.com/photo.jpg')
+    expect(result).toBe(
+      'http://localhost:3000/image?url=https%3A%2F%2Fcdn.example.com%2Fphoto.jpg',
+    )
+  })
 })
 
 // ─── preloadImages ────────────────────────────────────────────────────────────
@@ -56,7 +63,7 @@ describe('preloadImages', () => {
   beforeAll(async () => {
     // Import the real implementation (no module reset needed — no env vars used)
     const mod = await import('@/utils/image.utils')
-    preloadImages = mod.default
+    preloadImages = mod.preloadImages
   })
 
   beforeEach(() => {
