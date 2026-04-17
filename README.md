@@ -8,7 +8,7 @@ Aplicación fullstack para explorar y comprar móviles. El backend actúa como B
 
 **Backend**
 - Node.js 18 + Express + TypeScript
-- Sharp — procesado de imágenes (eliminación de fondo, conversión a WebP)!
+- Sharp — procesado de imágenes (eliminación de fondo, conversión a WebP)
 - Vitest + Supertest — tests de integración
 
 **Frontend**
@@ -192,7 +192,7 @@ La prueba técnica está en español y la app va a ser evaluada en ese contexto.
 
 ### Lo que no hice y por qué
 
-- **Redux / Zustand**: el carrito es el único estado global y Context API es suficiente. Añadir una librería de estado sería over-engineering para este caso.
+- **Redux / Zustand**: el carrito es el único estado global y Context API es suficiente. Añadir una librería de estado sería over-engineering para este caso. Fuera de scope.
 - **SSR / Next.js**: es una SPA sencilla, no hay requisitos de SEO ni de rendimiento en first-paint que lo justifiquen.
 - **Base de datos**: el carrito se persiste en `localStorage`. Para una prueba técnica es correcto; en producción habría que plantearse sesiones server-side o una BD.
 - **Autenticación**: fuera de scope.
