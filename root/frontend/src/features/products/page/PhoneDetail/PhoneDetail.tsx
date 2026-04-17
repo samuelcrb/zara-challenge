@@ -6,6 +6,7 @@ import ColorSelector from '@/features/products/components/ColorSelector/ColorSel
 import { useCartContext } from '@/features/cart/CartContext'
 import { getImageUrl } from '@/utils/image.utils'
 import { formatPrice } from '@/utils/price.utils'
+import ErrorMessage from '@/components/ErrorMessage/ErrorMessage'
 import styles from './PhoneDetail.module.scss'
 import { imageReducer } from './PhoneDetail.reducer'
 
@@ -114,7 +115,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
   }, [isLoading, onLoadingChange])
 
   if (isLoading) return null
-  if (error) return <p>{error}</p>
+  if (error) return <ErrorMessage message={error} />
   if (!product) return null
 
   const priceLabel = selectedStorage
