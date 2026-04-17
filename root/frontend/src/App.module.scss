@@ -1,7 +1,7 @@
 @use '@/styles/variables' as *;
 
 .main {
-  padding-top: calc(#{$navbar-height} + #{$spacing-xxl});
+  padding-top: $navbar-height;
   max-width: 1920px;
   margin-left: auto;
   margin-right: auto;

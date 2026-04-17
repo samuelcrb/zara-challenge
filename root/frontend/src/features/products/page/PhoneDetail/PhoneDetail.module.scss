@@ -34,11 +34,23 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: $color-text;
-  padding: $spacing-md 0;
+  padding: $spacing-md 16px;
   position: sticky;
   top: $navbar-height;
   z-index: 10;
   width: 100%;
+
+  @include respond-to(md) {
+    padding: $spacing-md 40px;
+  }
+
+  @include respond-to(lg) {
+    padding: $spacing-md 60px;
+  }
+
+  @include respond-to(xl) {
+    padding: $spacing-md 100px;
+  }
 }
 
 .backArrow {
@@ -59,7 +71,8 @@
   @include respond-to(md) {
     grid-template-columns: 1fr 1fr;
     gap: $spacing-xxl;
-    padding: $spacing-xxl 0;
+    padding: $spacing-xxl*4 0;
+    align-items: stretch;
   }
 }
 
@@ -69,7 +82,7 @@
   height: 215px;
 
   @include respond-to(md) {
-    height: 400px;
+    height: 100%;
   }
 }
 
@@ -98,23 +111,39 @@
 
 .infoCol {
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   gap: $spacing-xl;
-  max-width: 440px;
+}
+
+.titleBlock {
+  margin-bottom: $spacing-sm;
+
+  @include respond-to(md) {
+    margin-bottom: $spacing-xxl;
+  }
 }
 
 .productName {
-  font-size: $font-size-xl;
+  font-size: 20px;
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0;
   line-height: 1.2;
+
+  @include respond-to(md) {
+    font-size: $font-size-xl;
+  }
 }
 
 .productPrice {
   font-size: $font-size-sm;
   margin: $spacing-sm 0 0;
+
+  @include respond-to(md) {
+    font-size: $font-size-lg;
+  }
 }
 
 // ─── Storage & color sections ─────────────────────────────────────────────────
@@ -122,7 +151,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-lg;
 }
 
 .sectionLabel {
@@ -131,6 +160,10 @@
   letter-spacing: 0.08em;
   color: $color-primary;
   margin: 0;
+
+  @include respond-to(md) {
+    font-size: $font-size-sm;
+  }
 }
 
 .storageOptions {
@@ -208,6 +241,12 @@
   width: 100%;
   padding: $spacing-md;
   border: none;
+  margin-top: $spacing-lg;
+
+  @include respond-to(md) {
+    margin-top: 0;
+  }
+
   font-family: $font-family;
   font-size: $font-size-xs;
   text-transform: uppercase;
@@ -215,7 +254,8 @@
   cursor: default;
   background: $color-background-alt;
   color: $color-text-muted;
-  transition: background 200ms ease, color 200ms ease;
+  transition: background 200ms ease,
+  color 200ms ease;
 
   &.active {
     background: $color-primary;
@@ -229,7 +269,7 @@
 .specs {
   display: flex;
   flex-direction: column;
-  padding: $spacing-xxl 0;
+  padding: $spacing-xxl * 2 0;
 }
 
 .sectionTitle {
@@ -270,7 +310,7 @@
 
 // ─── Similar items ────────────────────────────────────────────────────────────
 .similar {
-  padding-bottom: $spacing-xxl;
+  padding: $spacing-xxl 0;
 }
 
 .similarAlign {

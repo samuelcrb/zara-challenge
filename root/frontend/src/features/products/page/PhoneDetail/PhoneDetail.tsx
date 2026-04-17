@@ -138,12 +138,12 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
 
   return (
     <>
-      <div className={styles.page}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
-          <img src="/arrow.svg" alt="" aria-hidden="true" className={styles.backArrow} />
-          ATRÁS
-        </button>
+      <button className={styles.back} onClick={() => navigate(-1)}>
+        <img src="/arrow.svg" alt="" aria-hidden="true" className={styles.backArrow} />
+        ATRÁS
+      </button>
 
+      <div className={styles.page}>
         {/* ── Cabecera ───────────────────────────────────────────── */}
         <section className={styles.hero}>
           <div className={styles.imageCol}>
@@ -161,7 +161,7 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
           </div>
 
           <div className={styles.infoCol}>
-            <div>
+            <div className={styles.titleBlock}>
               <h1 className={styles.productName}>
                 {product.brand} {product.name}
               </h1>

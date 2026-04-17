@@ -28,10 +28,6 @@
   @include respond-to(md) {
     padding-top: calc(144px + #{$spacing-xxl});
   }
-
-  @media (max-width: #{$breakpoint-sm}) {
-    padding-top: 56px;
-  }
 }
 
 .filterControls {
