@@ -69,6 +69,7 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
       return
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTransition({ status: 'exiting' })
 
     const timer = setTimeout(() => {
@@ -203,15 +204,15 @@ const PhoneList = ({ onLoadingChange }: PhoneListProps) => {
                     />
                   </div>
                   <div className={styles.filterLabelContainer}>
-                    <span className={styles.filterLabel} onClick={handleFilterClick}>
+                    <button type="button" className={styles.filterLabel} onClick={handleFilterClick}>
                       {filterOpen
                         ? 'CERRAR'
                         : selectedFilterColors.length > 0
                           ? `FILTRAR (${selectedFilterColors.length})`
                           : 'FILTRAR'}
-                    </span>
+                    </button>
                     {selectedFilterColors.length > 0 && !filterOpen && (
-                      <span className={styles.filterClear} onClick={handleClearColors}>✕</span>
+                      <button type="button" className={styles.filterClear} onClick={handleClearColors}>✕</button>
                     )}
                   </div>
                 </div>
