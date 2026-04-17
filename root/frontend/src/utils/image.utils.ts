@@ -3,6 +3,7 @@
  * Todas las imágenes deben pasar por aquí para ser normalizadas (recortadas, redimensionadas, webp).
  */
 const getImageUrl = (url: string): string => {
+  if (!url) return ''
   const base = import.meta.env.VITE_BASE_URL ?? '/api'
   return `${base}/image?url=${encodeURIComponent(url.replace(/^http:\/\//i, 'https://'))}`
 }

@@ -147,13 +147,13 @@ const PhoneDetail = ({ onLoadingChange }: PhoneDetailProps) => {
         <section className={styles.hero}>
           <div className={styles.imageCol}>
             <img
-              src={getImageUrl(image.back)}
+              src={getImageUrl(image.back) || undefined}
               alt=""
               aria-hidden="true"
               className={styles.productImageBack}
             />
             <img
-              src={getImageUrl(image.front)}
+              src={getImageUrl(image.front) || undefined}
               alt={`${product.brand} ${product.name}`}
               className={`${styles.productImageFront}${image.fading ? ` ${styles.fading}` : ''}`}
             />
