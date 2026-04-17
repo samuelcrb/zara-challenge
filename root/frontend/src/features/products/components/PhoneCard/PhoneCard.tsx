@@ -17,7 +17,7 @@ const PhoneCard = ({ product }: PhoneCardProps) => {
     >
       <div className={styles.imageWrapper}>
         <img
-          src={getImageUrl(product.imageUrl)}
+          src={getImageUrl(product.imageUrl) || undefined}
           alt={`${product.brand} ${product.name}`}
           className={styles.image}
         />
