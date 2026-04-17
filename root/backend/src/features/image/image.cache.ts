@@ -28,3 +28,5 @@ export const setCached = (url: string, buffer: Buffer): void => {
 }
 
 export const hasCached = (url: string): boolean => cache.has(url)
+
+export const clearCache = (): void => { cache.clear() }

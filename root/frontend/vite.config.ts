@@ -35,7 +35,17 @@ export default defineConfig(({ mode }) => ({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      exclude: ['node_modules/', 'src/tests/setup.ts'],
+      exclude: [
+        'node_modules/',
+        'src/tests/setup.ts',
+        'eslint.config.js',
+        'vite.config.ts',
+        'src/main.tsx',
+        'src/App.tsx',
+        '**/dist/**',
+        '**/*.d.ts',
+        '**/types/**',
+      ],
     },
   },
 }))

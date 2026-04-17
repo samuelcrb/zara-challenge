@@ -139,7 +139,7 @@ describe('PhoneDetail page', () => {
 
   it('shows "From X EUR" label when no storage is selected', () => {
     renderDetail({ selectedStorage: null, currentPrice: 999 })
-    expect(screen.getByText('Desde 999 EUR')).toBeInTheDocument()
+    expect(screen.getByText('Desde 999,00 EUR')).toBeInTheDocument()
   })
 
   it('shows "X EUR" label when storage is selected', () => {
@@ -147,13 +147,13 @@ describe('PhoneDetail page', () => {
       selectedStorage: makeStorage({ capacity: '128GB', price: 999 }),
       currentPrice: 999,
     })
-    expect(screen.getByText('999 EUR')).toBeInTheDocument()
+    expect(screen.getByText('999,00 EUR')).toBeInTheDocument()
     expect(screen.queryByText(/From/)).not.toBeInTheDocument()
   })
 
   it('shows decimal price with 2 decimal places', () => {
     renderDetail({ selectedStorage: null, currentPrice: 99.9 })
-    expect(screen.getByText('Desde 99.90 EUR')).toBeInTheDocument()
+    expect(screen.getByText('Desde 99,90 EUR')).toBeInTheDocument()
   })
 
   // ─── Especificaciones ────────────────────────────────────────────────────────
@@ -236,5 +236,27 @@ describe('PhoneDetail page', () => {
     const { user } = renderDetail()
     await user.click(screen.getByRole('button', { name: /ATRÁS/i }))
     expect(mockNavigate).toHaveBeenCalledWith(-1)
+  })
+
+  // ─── Artículos similares ──────────────────────────────────────────────────────
+
+  it('renders the SIMILAR PRODUCTS section when similarProducts is non-empty', () => {
+    const similar: ProductDetail['similarProducts'] = [
+      { id: 'SAM-1', brand: 'Samsung', name: 'Galaxy S24', basePrice: 899, imageUrl: 'https://example.com/s24.jpg', renderKey: 'SAM-1-0' },
+    ]
+    renderDetail({ product: makeDetail({ similarProducts: similar }) })
+    expect(screen.getByRole('heading', { name: 'ARTÍCULOS SIMILARES' })).toBeInTheDocument()
+  })
+
+  it('does not render the SIMILAR PRODUCTS section when similarProducts is empty', () => {
+    renderDetail({ product: makeDetail({ similarProducts: [] }) })
+    expect(screen.queryByRole('heading', { name: 'ARTÍCULOS SIMILARES' })).not.toBeInTheDocument()
+  })
+
+  // ─── Producto no encontrado ───────────────────────────────────────────────────
+
+  it('renders nothing when product is null and not loading', () => {
+    const { container } = renderDetail({ product: null, error: null, isLoading: false })
+    expect(container).toBeEmptyDOMElement()
   })
 })

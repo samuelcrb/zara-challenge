@@ -38,17 +38,17 @@ describe('PhoneCard', () => {
 
   it('renders the price in EUR', () => {
     renderCard()
-    expect(screen.getByText('999 EUR')).toBeInTheDocument()
+    expect(screen.getByText('999,00 EUR')).toBeInTheDocument()
   })
 
-  it('renders a decimal price with 2 decimal places', () => {
+  it('renders a decimal price with Spanish format', () => {
     renderCard(makeProduct({ basePrice: 99.9 }))
-    expect(screen.getByText('99.90 EUR')).toBeInTheDocument()
+    expect(screen.getByText('99,90 EUR')).toBeInTheDocument()
   })
 
   it('has an accessible label combining brand, name and price', () => {
     renderCard()
-    expect(screen.getByLabelText('Apple iPhone 15, 999 EUR')).toBeInTheDocument()
+    expect(screen.getByLabelText('Apple iPhone 15, 999,00 EUR')).toBeInTheDocument()
   })
 
   it('links to /product/:id', () => {

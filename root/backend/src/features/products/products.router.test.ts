@@ -16,6 +16,10 @@ import * as cache from './products.cache.js'
 
 const app = express()
 app.use('/', productsRouter)
+// Manejador de errores para capturar los errores pasados a next(err) en los tests
+app.use((_err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  res.status(500).json({ error: 'caught' })
+})
 
 const mockUpstream = (body: unknown, status = 200) => {
   vi.stubGlobal(
@@ -243,5 +247,80 @@ describe('GET /:id', () => {
 
     expect(res.body.colorOptions[0].imageUrl).toBe('https://cdn.example.com/black.jpg')
     expect(res.body.colorOptions[1].imageUrl).toBe('https://cdn.example.com/white.jpg')
+  })
+
+  it('returns 502 when upstream.json() throws on GET /:id', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.reject(new Error('parse error')),
+      }),
+    )
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.status).toBe(502)
+    expect(res.body.error).toBe('Upstream error')
+  })
+
+  it('calls next(err) when fetch itself throws on GET /:id', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
+
+    const res = await supertest(app).get('/p1')
+
+    expect(res.status).toBe(500)
+  })
+})
+
+describe('GET / error paths', () => {
+  beforeEach(() => {
+    vi.mocked(cache.getCachedProducts).mockReturnValue(undefined)
+  })
+
+  it('calls next(err) when fetch itself throws on GET /', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+
+    const res = await supertest(app).get('/')
+
+    expect(res.status).toBe(500)
+  })
+
+  it('keeps original basePrice when fetchMinStoragePrice fetch throws', async () => {
+    const products = [{ id: 'p1', imageUrl: 'https://cdn.example.com/img.jpg', basePrice: 500 }]
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: URL | string) => {
+        const isDetail = /\/products\/[^/]+$/.test(url.toString())
+        if (isDetail) return Promise.reject(new Error('network error'))
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(products),
+        })
+      }),
+    )
+
+    const res = await supertest(app).get('/')
+
+    expect(res.status).toBe(200)
+    expect(res.body[0].basePrice).toBe(500)
+  })
+
+  it('returns 502 when upstream.json() throws on GET /', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.reject(new Error('parse error')),
+      }),
+    )
+
+    const res = await supertest(app).get('/')
+
+    expect(res.status).toBe(502)
+    expect(res.body.error).toBe('Upstream error')
   })
 })

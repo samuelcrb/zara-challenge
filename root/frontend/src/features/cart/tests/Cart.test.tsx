@@ -88,7 +88,7 @@ describe('Cart page', () => {
     expect(within(listItem).getByText('iPhone 15')).toBeInTheDocument()
     expect(within(listItem).getByText(/128GB/)).toBeInTheDocument()
     expect(within(listItem).getByText(/Black/)).toBeInTheDocument()
-    expect(within(listItem).getByText('999 EUR')).toBeInTheDocument()
+    expect(within(listItem).getByText('999,00 EUR')).toBeInTheDocument()
   })
 
   it('renders two rows when the same product is added twice', () => {
@@ -99,7 +99,7 @@ describe('Cart page', () => {
   it('shows the total price', () => {
     renderCart([mockItem, { ...mockItem, storage: '256GB', price: 1099 }])
     // Ambos artículos: 999 + 1099 = 2098
-    expect(screen.getAllByText(/2098 EUR/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/2\.098,00 EUR/).length).toBeGreaterThan(0)
   })
 
   // ─── Navegación ───────────────────────────────────────────────────────────────
@@ -114,5 +114,19 @@ describe('Cart page', () => {
   it('renders an "Eliminar" button for each item', () => {
     renderCart([mockItem])
     expect(screen.getByRole('button', { name: 'Eliminar' })).toBeInTheDocument()
+  })
+
+  it('applies the fading class on the item immediately after clicking Eliminar', async () => {
+    const user = userEvent.setup()
+    renderCart([mockItem])
+    await user.click(screen.getByRole('button', { name: 'Eliminar' }))
+    // El ítem sigue en el DOM (esperando la animación), pero con la clase de fade
+    const item = screen.getByRole('listitem')
+    expect(item.className).toMatch(/itemFading/)
+  })
+
+  it('renders the PAGAR button when there are items', () => {
+    renderCart([mockItem])
+    expect(screen.getByRole('button', { name: 'PAGAR' })).toBeInTheDocument()
   })
 })
