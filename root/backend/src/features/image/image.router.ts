@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express'
-import { processImage } from '../imageProcessor.js'
+import { processImage } from './image.processor.js'
 
 const router = Router()
 

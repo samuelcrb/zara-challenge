@@ -1,5 +1,5 @@
 import sharp from 'sharp'
-import { getCached, setCached, hasCached } from './imageCache.js'
+import { getCached, setCached, hasCached } from './image.cache.js'
 
 const removeWhiteBackground = (
   data: Buffer,

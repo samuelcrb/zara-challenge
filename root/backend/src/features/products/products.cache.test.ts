@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { getCachedProducts, setCachedProducts, clearProductsCache } from './productsCache.js'
+import { getCachedProducts, setCachedProducts, clearProductsCache } from './products.cache.js'
 
 beforeEach(() => clearProductsCache())
 

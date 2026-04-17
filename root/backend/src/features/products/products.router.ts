@@ -1,7 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express'
-import config from '../config.js'
-import { preloadImages } from '../imageProcessor.js'
-import { getCachedProducts, setCachedProducts } from '../productsCache.js'
+import config from '../../config.js'
+import { preloadImages } from '../image/image.processor.js'
+import { getCachedProducts, setCachedProducts } from './products.cache.js'
 
 const router = Router()
 

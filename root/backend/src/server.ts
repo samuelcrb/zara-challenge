@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url'
 import cors from 'cors'
 import config from './config.js'
 
-import productsRouter from './routes/products.js'
-import imageRouter from './routes/image.js'
+import productsRouter from './features/products/products.router.js'
+import imageRouter from './features/image/image.router.js'
 
 const app = express()
 

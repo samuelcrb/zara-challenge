@@ -2,17 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import express from 'express'
 import supertest from 'supertest'
 
-vi.mock('../productsCache.js', () => ({
+vi.mock('./products.cache.js', () => ({
   getCachedProducts: vi.fn(),
   setCachedProducts: vi.fn(),
 }))
 
-vi.mock('../imageProcessor.js', () => ({
+vi.mock('../image/image.processor.js', () => ({
   preloadImages: vi.fn(),
 }))
 
-import productsRouter from './products.js'
-import * as cache from '../productsCache.js'
+import productsRouter from './products.router.js'
+import * as cache from './products.cache.js'
 
 const app = express()
 app.use('/', productsRouter)

@@ -28,7 +28,7 @@ vi.mock('sharp', () => {
   }
 })
 
-import imageRouter from './image.js'
+import imageRouter from './image.router.js'
 
 const app = express()
 app.use('/', imageRouter)
