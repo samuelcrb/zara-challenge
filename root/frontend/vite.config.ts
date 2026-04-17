@@ -11,14 +11,14 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Production: minify and concatenate assets
-    // Development: skip minification for readable output
+    // Producción: minificar y concatenar recursos
+    // Desarrollo: omitir minificación para salida legible
     minify: mode === 'production',
     sourcemap: mode !== 'production',
     rollupOptions: {
       output: mode === 'production'
         ? {
-            // Concatenate vendor libs into a single chunk in production
+            // Agrupar librerías de terceros en un único chunk en producción
             manualChunks: (id) => {
               if (id.includes('node_modules')) return 'vendor'
             },

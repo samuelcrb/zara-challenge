@@ -3,7 +3,7 @@ import { processImage } from '../imageProcessor.js'
 
 const router = Router()
 
-/** GET /api/image?url=<imageUrl> */
+/** GET /api/image?url=<imageUrl> — Devuelve la imagen procesada en formato webp */
 router.get('/', async (req: Request, res: Response) => {
   const { url } = req.query
 

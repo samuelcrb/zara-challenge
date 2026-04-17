@@ -10,11 +10,11 @@ import imageRouter from './routes/image.js'
 
 const app = express()
 
-// ES Modules dirname fix
+// Corrección de __dirname para ES Modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Frontend build path (safe for Render)
+// Ruta al build del frontend (compatible con Render)
 const frontendPath = path.join(process.cwd(), 'frontend/dist')
 
 // -------------------- MIDDLEWARE --------------------
@@ -22,18 +22,18 @@ const frontendPath = path.join(process.cwd(), 'frontend/dist')
 app.use(cors({ origin: config.corsOrigin }))
 app.use(express.json())
 
-// -------------------- API ROUTES (FIRST) --------------------
+// -------------------- RUTAS API (PRIMERO) --------------------
 
 app.use('/api/products', productsRouter)
 app.use('/api/image', imageRouter)
 
-// -------------------- STATIC FRONTEND --------------------
+// -------------------- FRONTEND ESTÁTICO --------------------
 
 app.use(express.static(frontendPath))
 
-// -------------------- SPA FALLBACK (SAFE) --------------------
+// -------------------- FALLBACK SPA (SEGURO) --------------------
 
-// IMPORTANT: do NOT intercept /api routes
+// IMPORTANTE: no interceptar rutas /api
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({
@@ -45,7 +45,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'))
 })
 
-// -------------------- GLOBAL ERROR HANDLER --------------------
+// -------------------- MANEJADOR DE ERRORES GLOBAL --------------------
 
 app.use(
   (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -58,10 +58,10 @@ app.use(
   }
 )
 
-// -------------------- START SERVER --------------------
+// -------------------- ARRANCAR SERVIDOR --------------------
 
 const PORT = config.port || process.env.PORT || 3000
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on https://localhost:${PORT}`)
+  console.log(`🚀 Servidor iniciado en https://localhost:${PORT}`)
 })

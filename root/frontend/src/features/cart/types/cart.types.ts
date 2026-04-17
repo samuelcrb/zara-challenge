@@ -1,6 +1,6 @@
-/** Represents a product added to the cart */
+/** Representa un producto añadido al carrito */
 export type CartItem = {
-  /** Unique identifier for this cart entry */
+  /** Identificador único de esta entrada del carrito */
   cartItemId: string
   productId: string
   name: string
@@ -11,7 +11,7 @@ export type CartItem = {
   price: number
 }
 
-/** Shape of the cart context value */
+/** Forma del valor del contexto del carrito */
 export type CartContextType = {
   cart: CartItem[]
   addToCart: (item: Omit<CartItem, 'cartItemId'>) => void

@@ -42,8 +42,8 @@ const removeWhiteBackground = (
 }
 
 /**
- * Downloads, removes white background, crops and resizes an image.
- * Returns the processed webp Buffer, using the in-memory cache when available.
+ * Descarga, elimina el fondo blanco, recorta y redimensiona una imagen.
+ * Devuelve el Buffer webp procesado, usando la caché en memoria si está disponible.
  */
 export const processImage = async (url: string): Promise<Buffer> => {
   const cached = getCached(url)
@@ -74,9 +74,9 @@ export const processImage = async (url: string): Promise<Buffer> => {
 }
 
 /**
- * Processes a list of image URLs in the background (fire-and-forget).
- * Skips URLs already in cache. Limits concurrency to avoid RAM spikes from
- * simultaneous sharp raw-buffer allocations.
+ * Procesa una lista de URLs de imágenes en segundo plano (dispara y olvida).
+ * Omite URLs ya en caché. Limita la concurrencia para evitar picos de RAM por
+ * asignaciones simultáneas de buffers raw de sharp.
  */
 const PRELOAD_CONCURRENCY = 3
 
@@ -90,7 +90,7 @@ export const preloadImages = (urls: string[]): void => {
     while (queue.length > 0) {
       const url = queue.shift()!
       await processImage(url).catch(() => {
-        // Silently ignore preload errors — the image route will retry on demand
+        // Ignorar errores de precarga silenciosamente — la ruta de imagen reintentará bajo demanda
       })
     }
   }

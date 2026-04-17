@@ -1,9 +1,9 @@
 /**
- * In-memory cache for product list responses.
- * Key: stringified query params. Value: cached payload + expiry.
+ * Caché en memoria para respuestas de la lista de productos.
+ * Clave: parámetros de consulta serializados. Valor: payload en caché + expiración.
  */
 
-const TTL_MS = 5 * 60 * 1000 // 5 minutes
+const TTL_MS = 5 * 60 * 1000 // 5 minutos
 
 interface CacheEntry {
   data: unknown

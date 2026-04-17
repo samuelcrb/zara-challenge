@@ -26,7 +26,7 @@ interface RawProduct {
   [key: string]: unknown
 }
 
-/** Fetch storageOptions for a product and return the minimum price, or undefined on failure */
+/** Obtiene las opciones de almacenamiento de un producto y devuelve el precio mínimo, o undefined si falla */
 const fetchMinStoragePrice = async (id: string): Promise<number | undefined> => {
   try {
     const res = await fetch(upstreamUrl(`/products/${id}`), { headers: upstreamHeaders })
@@ -39,7 +39,7 @@ const fetchMinStoragePrice = async (id: string): Promise<number | undefined> => 
   }
 }
 
-/** GET /api/products */
+/** GET /api/products — Devuelve el listado de productos */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { search, limit, offset } = req.query
@@ -65,7 +65,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       return
     }
 
-    // Deduplicate ids — when the same id appears more than once, keep only the first occurrence
+    // Eliminar ids duplicados — cuando el mismo id aparece más de una vez, conservar solo la primera ocurrencia
     const seenIds = new Set<string>()
     const deduped: RawProduct[] = Array.isArray(raw)
       ? raw.reduce<RawProduct[]>((acc, p, index) => {
@@ -76,7 +76,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       }, [])
       : raw
 
-    // Fetch storageOptions for each product in parallel and correct basePrice to the true minimum
+    // Obtener storageOptions de cada producto en paralelo y corregir basePrice al mínimo real
     const data: RawProduct[] = upstream.ok && Array.isArray(deduped)
       ? await Promise.all(
         deduped.map(async p => {
@@ -95,7 +95,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(upstream.status).json(data)
 
-    // Preload images in background so they're ready when the browser requests them
+    // Precargar imágenes en segundo plano para que estén listas cuando el navegador las solicite
     if (Array.isArray(data)) {
       preloadImages(data.map((p: { imageUrl: string }) => p.imageUrl))
     }
@@ -104,7 +104,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 })
 
-/** GET /api/products/:id */
+/** GET /api/products/:id — Devuelve el detalle de un producto */
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const upstream = await fetch(upstreamUrl(`/products/${req.params.id}`), {

@@ -33,7 +33,7 @@ beforeEach(() => {
   vi.mocked(cache.setCachedProducts).mockReset()
 })
 
-/** Stubs fetch so that the list call returns `listBody` and any detail call returns `detailBody` */
+/** Reemplaza fetch para que la llamada de lista devuelva `listBody` y cualquier llamada de detalle devuelva `detailBody` */
 const mockUpstreamWithDetail = (
   listBody: unknown,
   detailBody: unknown,

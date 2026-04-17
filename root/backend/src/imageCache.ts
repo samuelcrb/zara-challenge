@@ -1,10 +1,10 @@
 /**
- * LRU in-memory cache for processed image buffers.
- * Key: original image URL. Value: processed webp Buffer.
+ * Caché LRU en memoria para buffers de imágenes procesadas.
+ * Clave: URL original de la imagen. Valor: Buffer webp procesado.
  *
- * Capped at MAX_ENTRIES to bound memory usage. Map insertion order is used
- * as a cheap LRU proxy: on every hit the entry is re-inserted at the tail,
- * and on overflow the head (oldest) entry is evicted.
+ * Limitado a MAX_ENTRIES para acotar el uso de memoria. El orden de inserción
+ * en Map se usa como proxy LRU sencillo: en cada acceso la entrada se reinserta
+ * al final, y cuando se supera el límite se expulsa la entrada más antigua.
  */
 const MAX_ENTRIES = 50
 
@@ -13,7 +13,7 @@ const cache = new Map<string, Buffer>()
 export const getCached = (url: string): Buffer | undefined => {
   const buf = cache.get(url)
   if (buf === undefined) return undefined
-  // Refresh LRU position
+  // Actualizar posición LRU
   cache.delete(url)
   cache.set(url, buf)
   return buf

@@ -71,12 +71,12 @@ $col-width: 344px;
     pointer-events: none;
   }
 
-  // Page entry: the whole grid fades in
+  // Entrada de página: toda la cuadrícula aparece con fundido
   &.fadeEntering {
     animation: fadeIn $animation-duration-fade ease forwards;
   }
 
-  // Search filter: slide from bottom on mobile, slide from right on desktop
+  // Filtro de búsqueda: deslizamiento desde abajo en móvil, desde la derecha en escritorio
   &.slideEntering > li {
     animation: slideInFromBottom $animation-duration-enter ease both;
 

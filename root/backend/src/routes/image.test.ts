@@ -2,17 +2,17 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import express from 'express'
 import supertest from 'supertest'
 
-// Mock sharp before importing the route so processImage never hits native bindings
+// Mockear sharp antes de importar la ruta para que processImage no invoque bindings nativos
 vi.mock('sharp', () => {
   const rawResult = {
     data: Buffer.alloc(1 * 1 * 4, 128),
     info: { width: 1, height: 1, channels: 4 },
   }
-  const webpBuffer = Buffer.from([0x52, 0x49, 0x46, 0x46]) // minimal fake webp
+  const webpBuffer = Buffer.from([0x52, 0x49, 0x46, 0x46]) // webp mínimo falso
 
-  // processImage calls sharp() twice:
-  //   1st: .ensureAlpha().raw().toBuffer({ resolveWithObject: true })  → rawResult
-  //   2nd: sharp(raw, opts).trim().resize().webp().toBuffer()          → webpBuffer
+  // processImage llama a sharp() dos veces:
+  //   1ª: .ensureAlpha().raw().toBuffer({ resolveWithObject: true })  → rawResult
+  //   2ª: sharp(raw, opts).trim().resize().webp().toBuffer()          → webpBuffer
   let call = 0
   return {
     default: vi.fn(() => {

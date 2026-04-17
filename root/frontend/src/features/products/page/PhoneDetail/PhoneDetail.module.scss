@@ -20,7 +20,7 @@
   }
 }
 
-// ─── Back button ─────────────────────────────────────────────────────────────
+// ─── Botón atrás ─────────────────────────────────────────────────────────────
 
 .back {
   display: flex;
@@ -59,7 +59,7 @@
   height: 9px;
 }
 
-// ─── Hero ────────────────────────────────────────────────────────────────────
+// ─── Cabecera principal ──────────────────────────────────────────────────────
 
 .hero {
   display: grid;
@@ -107,7 +107,7 @@
   }
 }
 
-// ─── Info panel ──────────────────────────────────────────────────────────────
+// ─── Panel de información ────────────────────────────────────────────────────
 
 .infoCol {
   display: flex;
@@ -146,7 +146,7 @@
   }
 }
 
-// ─── Storage & color sections ─────────────────────────────────────────────────
+// ─── Secciones de almacenamiento y color ─────────────────────────────────────
 
 .section {
   display: flex;
@@ -235,7 +235,7 @@
   transition: opacity 150ms ease;
 }
 
-// ─── Add to cart button ───────────────────────────────────────────────────────
+// ─── Botón añadir al carrito ──────────────────────────────────────────────────
 
 .addBtn {
   width: 100%;
@@ -264,7 +264,7 @@
   }
 }
 
-// ─── Specifications ───────────────────────────────────────────────────────────
+// ─── Especificaciones ─────────────────────────────────────────────────────────
 
 .specs {
   display: flex;
@@ -308,7 +308,7 @@
   color: $color-primary;
 }
 
-// ─── Similar items ────────────────────────────────────────────────────────────
+// ─── Artículos similares ──────────────────────────────────────────────────────
 .similar {
   padding: $spacing-xxl 0;
 }
@@ -361,8 +361,8 @@
   flex: 0 0 344px;
   height: 344px;
 
-  // Align the first card's left edge with the page content edge.
-  // max() ensures alignment is preserved when .page auto-centers on wide viewports.
+  // Alinear el borde izquierdo de la primera tarjeta con el borde del contenido de .page.
+  // max() garantiza que la alineación se mantenga cuando .page se centra automáticamente en viewports anchos.
   &:first-child {
     margin-left: 16px;
 

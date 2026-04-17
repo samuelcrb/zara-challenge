@@ -6,15 +6,15 @@
   to   { opacity: 0; }
 }
 
-// ─── Page layout ─────────────────────────────────────────────────────────────
+// ─── Maquetación de página ───────────────────────────────────────────────────
 
 .page {
   padding: 0 16px $spacing-xxl;
-  padding-bottom: calc(#{$spacing-xxl} + 120px); // reserve space for 2-row mobile footer
+  padding-bottom: calc(#{$spacing-xxl} + 120px); // reservar espacio para el footer de 2 filas en móvil
 
   @include respond-to(md) {
     padding: 0 40px $spacing-xxl;
-    padding-bottom: calc(#{$spacing-xxl} + 80px); // single-row desktop footer
+    padding-bottom: calc(#{$spacing-xxl} + 80px); // footer de una fila en escritorio
   }
 
   @include respond-to(lg) {
@@ -28,7 +28,7 @@
   }
 }
 
-// ─── Title ───────────────────────────────────────────────────────────────────
+// ─── Título ───────────────────────────────────────────────────────────────────
 
 .title {
   font-size: 20px;
@@ -42,7 +42,7 @@
   }
 }
 
-// ─── Items list ──────────────────────────────────────────────────────────────
+// ─── Lista de artículos ──────────────────────────────────────────────────────
 
 .itemList {
   list-style: none;
@@ -153,7 +153,7 @@
   }
 }
 
-// ─── Bottom bar ───────────────────────────────────────────────────────────────
+// ─── Barra inferior ───────────────────────────────────────────────────────────
 
 .bottomBar {
   position: fixed;
@@ -188,7 +188,7 @@
   }
 }
 
-// Mobile-only total row (TOTAL label left, price right)
+// Fila de total solo en móvil (etiqueta TOTAL a la izquierda, precio a la derecha)
 .totalRow {
   display: flex;
   justify-content: space-between;
@@ -206,7 +206,7 @@
   color: $color-text;
 }
 
-// Row holding both action buttons
+// Fila que contiene ambos botones de acción
 .buttons {
   display: flex;
   align-items: stretch;
@@ -254,7 +254,7 @@
   }
 }
 
-// Desktop-only total + pay group
+// Grupo de total + pago solo en escritorio
 .payGroup {
   width: calc(50% - 6px);
   display: flex;
@@ -268,7 +268,7 @@
   }
 }
 
-// Total text shown only on desktop (inside payGroup)
+// Texto del total visible solo en escritorio (dentro de payGroup)
 .totalDesktop {
   display: none;
   font-size: $font-size-sm;
