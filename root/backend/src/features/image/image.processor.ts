@@ -32,13 +32,40 @@ const removeWhiteBackground = (
     pixels[pos * 4 + 3] = 0
     const x = pos % width
     const y = Math.floor(pos / width)
-    if (x > 0)          queue.push(pos - 1)
-    if (x < width - 1)  queue.push(pos + 1)
-    if (y > 0)          queue.push(pos - width)
+    if (x > 0) queue.push(pos - 1)
+    if (x < width - 1) queue.push(pos + 1)
+    if (y > 0) queue.push(pos - width)
     if (y < height - 1) queue.push(pos + width)
   }
 
   return Buffer.from(pixels.buffer, pixels.byteOffset, pixels.byteLength)
+}
+
+/**
+ * Limita las operaciones concurrentes de Sharp para evitar saturar el pool de hilos de libuv (tamaño por defecto 4),
+ * lo que retrasaría todas las operaciones de E/S asíncronas, incluidas las solicitudes a APIs externas.
+ */
+const MAX_CONCURRENT_SHARP = 3
+let activeSharp = 0
+const sharpQueue: Array<() => void> = []
+
+const acquireSharpSlot = (): Promise<void> =>
+  new Promise(resolve => {
+    if (activeSharp < MAX_CONCURRENT_SHARP) {
+      activeSharp++
+      resolve()
+    } else {
+      sharpQueue.push(() => {
+        activeSharp++
+        resolve()
+      })
+    }
+  })
+
+const releaseSharpSlot = (): void => {
+  activeSharp--
+  const next = sharpQueue.shift()
+  if (next) next()
 }
 
 /**
@@ -54,23 +81,28 @@ export const processImage = async (url: string): Promise<Buffer> => {
 
   const buffer = Buffer.from(await upstream.arrayBuffer())
 
-  const { data, info } = await sharp(buffer)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true })
+  await acquireSharpSlot()
+  try {
+    const { data, info } = await sharp(buffer)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
 
-  const cleaned = removeWhiteBackground(data, info.width, info.height)
+    const cleaned = removeWhiteBackground(data, info.width, info.height)
 
-  const processed = await sharp(cleaned, {
-    raw: { width: info.width, height: info.height, channels: 4 },
-  })
-    .trim()
-    .resize({ height: 400, withoutEnlargement: false })
-    .webp({ quality: 85 })
-    .toBuffer()
+    const processed = await sharp(cleaned, {
+      raw: { width: info.width, height: info.height, channels: 4 },
+    })
+      .trim()
+      .resize({ height: 400, withoutEnlargement: false })
+      .webp({ quality: 85 })
+      .toBuffer()
 
-  setCached(url, processed)
-  return processed
+    setCached(url, processed)
+    return processed
+  } finally {
+    releaseSharpSlot()
+  }
 }
 
 /**
