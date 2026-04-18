@@ -4,17 +4,17 @@ import { getCached, setCached, hasCached, clearCache } from './image.cache.js'
 beforeEach(() => clearCache())
 
 describe('getCached', () => {
-  it('returns undefined for an unknown url', () => {
+  it('devuelve undefined para una URL desconocida', () => {
     expect(getCached('https://example.com/missing.jpg')).toBeUndefined()
   })
 
-  it('returns the stored buffer', () => {
+  it('devuelve el buffer almacenado', () => {
     const buf = Buffer.from([1, 2, 3])
     setCached('https://example.com/a.jpg', buf)
     expect(getCached('https://example.com/a.jpg')).toEqual(buf)
   })
 
-  it('promotes the entry to the end of the map (LRU update)', () => {
+  it('promueve la entrada al final del mapa (actualización LRU)', () => {
     const urlA = 'https://example.com/a.jpg'
     const urlB = 'https://example.com/b.jpg'
     setCached(urlA, Buffer.from([1]))
@@ -28,23 +28,23 @@ describe('getCached', () => {
 })
 
 describe('setCached', () => {
-  it('hasCached returns false before setting', () => {
+  it('hasCached devuelve false antes de guardar', () => {
     expect(hasCached('https://example.com/never.jpg')).toBe(false)
   })
 
-  it('hasCached returns true after setting', () => {
+  it('hasCached devuelve true después de guardar', () => {
     setCached('https://example.com/b.jpg', Buffer.from([4, 5]))
     expect(hasCached('https://example.com/b.jpg')).toBe(true)
   })
 
-  it('overwrites an existing entry without duplicating it', () => {
+  it('sobreescribe una entrada existente sin duplicarla', () => {
     const url = 'https://example.com/dup.jpg'
     setCached(url, Buffer.from([1]))
     setCached(url, Buffer.from([2]))
     expect(getCached(url)).toEqual(Buffer.from([2]))
   })
 
-  it('evicts the oldest entry when the cache exceeds MAX_ENTRIES (50)', () => {
+  it('expulsa la entrada más antigua cuando la caché supera MAX_ENTRIES (50)', () => {
     const urls: string[] = []
     for (let i = 0; i < 50; i++) {
       const url = `https://example.com/img-${i}.jpg`

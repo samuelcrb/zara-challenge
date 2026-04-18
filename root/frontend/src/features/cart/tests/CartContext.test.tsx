@@ -20,25 +20,25 @@ describe('CartContext', () => {
     localStorage.clear()
   })
 
-  it('starts with an empty cart', () => {
+  it('empieza con un carrito vacío', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     expect(result.current.cart).toHaveLength(0)
   })
 
-  it('adds an item to the cart', () => {
+  it('añade un artículo al carrito', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     expect(result.current.cart).toHaveLength(1)
   })
 
-  it('adds a new row when adding the same product again', () => {
+  it('añade una nueva fila al añadir el mismo producto de nuevo', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart(mockItem))
     expect(result.current.cart).toHaveLength(2)
   })
 
-  it('each cart entry gets a unique cartItemId', () => {
+  it('cada entrada del carrito obtiene un cartItemId único', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart(mockItem))
@@ -46,42 +46,42 @@ describe('CartContext', () => {
     expect(a.cartItemId).not.toBe(b.cartItemId)
   })
 
-  it('adds a new row for a different configuration', () => {
+  it('añade una nueva fila para una configuración diferente', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart({ ...mockItem, storage: '256GB' }))
     expect(result.current.cart).toHaveLength(2)
   })
 
-  it('removes an item from the cart', () => {
+  it('elimina un artículo del carrito', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.removeFromCart(result.current.cart[0].cartItemId))
     expect(result.current.cart).toHaveLength(0)
   })
 
-  it('calculates totalItems correctly', () => {
+  it('calcula totalItems correctamente', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart(mockItem))
     expect(result.current.totalItems).toBe(2)
   })
 
-  it('calculates totalPrice correctly', () => {
+  it('calcula totalPrice correctamente', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     act(() => result.current.addToCart(mockItem))
     expect(result.current.totalPrice).toBe(909 * 2)
   })
 
-  it('persists cart to localStorage', () => {
+  it('persiste el carrito en localStorage', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => result.current.addToCart(mockItem))
     const stored = JSON.parse(localStorage.getItem('zara_cart') ?? '[]')
     expect(stored).toHaveLength(1)
   })
 
-  it('loads persisted cart from localStorage on mount', () => {
+  it('carga el carrito persistido desde localStorage al montar', () => {
     const cartItemId = 'some-uuid'
     localStorage.setItem(
       'zara_cart',
@@ -92,13 +92,13 @@ describe('CartContext', () => {
     expect(result.current.cart[0].cartItemId).toBe(cartItemId)
   })
 
-  it('returns empty cart when localStorage contains invalid JSON', () => {
+  it('devuelve un carrito vacío cuando localStorage contiene JSON inválido', () => {
     localStorage.setItem('zara_cart', 'not-valid-json')
     const { result } = renderHook(() => useCartContext(), { wrapper })
     expect(result.current.cart).toHaveLength(0)
   })
 
-  it('clearCart removes all items', () => {
+  it('clearCart elimina todos los artículos', () => {
     const { result } = renderHook(() => useCartContext(), { wrapper })
     act(() => {
       result.current.addToCart(mockItem)
@@ -109,7 +109,7 @@ describe('CartContext', () => {
     expect(result.current.cart).toHaveLength(0)
   })
 
-  it('throws when useCartContext is used outside CartProvider', () => {
+  it('lanza un error cuando useCartContext se usa fuera de CartProvider', () => {
     // Suprime la salida de consola esperada del error boundary de React
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => renderHook(() => useCartContext())).toThrow(

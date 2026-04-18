@@ -14,7 +14,7 @@ describe('useLoadingBar', () => {
 
   // ─── Estado inicial ────────────────────────────────────────────────────────
 
-  it('starts in the idle phase with barWidth 0', () => {
+  it('empieza en la fase idle con barWidth 0', () => {
     const { result } = renderHook(() => useLoadingBar(false))
     expect(result.current.barPhase).toBe('idle')
     expect(result.current.barWidth).toBe(0)
@@ -22,7 +22,7 @@ describe('useLoadingBar', () => {
 
   // ─── Fase de carga ─────────────────────────────────────────────────────────
 
-  it('transitions to loading phase when isLoading becomes true', () => {
+  it('transiciona a la fase de carga cuando isLoading pasa a true', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: false },
     })
@@ -32,7 +32,7 @@ describe('useLoadingBar', () => {
     expect(result.current.barPhase).toBe('loading')
   })
 
-  it('sets barWidth to 85 after a requestAnimationFrame when loading starts', async () => {
+  it('establece barWidth a 85 tras un requestAnimationFrame al comenzar la carga', async () => {
     const { result } = renderHook(() => useLoadingBar(true))
 
     // barWidth empieza en 0 (antes de que se dispare el rAF)
@@ -47,7 +47,7 @@ describe('useLoadingBar', () => {
 
   // ─── Fase de finalización ──────────────────────────────────────────────────
 
-  it('transitions to completing and sets barWidth 100 when isLoading becomes false', () => {
+  it('transiciona a completing y establece barWidth a 100 cuando isLoading pasa a false', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: true },
     })
@@ -58,7 +58,7 @@ describe('useLoadingBar', () => {
     expect(result.current.barWidth).toBe(100)
   })
 
-  it('returns to idle after BAR_COMPLETE_DURATION', async () => {
+  it('vuelve a idle tras BAR_COMPLETE_DURATION', async () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: true },
     })
@@ -76,7 +76,7 @@ describe('useLoadingBar', () => {
 
   // ─── Guardia: sin efecto si no está en fase de carga ──────────────────────
 
-  it('does not transition to completing when isLoading=false and phase is already idle', () => {
+  it('no transiciona a completing cuando isLoading=false y la fase ya es idle', () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: false },
     })
@@ -89,7 +89,7 @@ describe('useLoadingBar', () => {
 
   // ─── Contador de ciclos ────────────────────────────────────────────────────
 
-  it('increments the cycle counter on each new loading start', async () => {
+  it('incrementa el contador de ciclos en cada nuevo inicio de carga', async () => {
     const { result, rerender } = renderHook(({ loading }) => useLoadingBar(loading), {
       initialProps: { loading: false },
     })

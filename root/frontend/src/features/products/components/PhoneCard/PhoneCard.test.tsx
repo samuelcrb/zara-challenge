@@ -26,38 +26,38 @@ const renderCard = (product: Product = makeProduct()) =>
   )
 
 describe('PhoneCard', () => {
-  it('renders the brand name', () => {
+  it('renderiza el nombre de la marca', () => {
     renderCard()
     expect(screen.getByText('Apple')).toBeInTheDocument()
   })
 
-  it('renders the product name', () => {
+  it('renderiza el nombre del producto', () => {
     renderCard()
     expect(screen.getByText('iPhone 15')).toBeInTheDocument()
   })
 
-  it('renders the price in EUR', () => {
+  it('renderiza el precio en EUR', () => {
     renderCard()
     expect(screen.getByText('999,00 EUR')).toBeInTheDocument()
   })
 
-  it('renders a decimal price with Spanish format', () => {
+  it('renderiza un precio decimal con formato español', () => {
     renderCard(makeProduct({ basePrice: 99.9 }))
     expect(screen.getByText('99,90 EUR')).toBeInTheDocument()
   })
 
-  it('has an accessible label combining brand, name and price', () => {
+  it('tiene una etiqueta accesible que combina marca, nombre y precio', () => {
     renderCard()
     expect(screen.getByLabelText('Apple iPhone 15, 999,00 EUR')).toBeInTheDocument()
   })
 
-  it('links to /product/:id', () => {
+  it('enlaza a /product/:id', () => {
     renderCard()
     const link = screen.getByRole('link')
     expect(link).toHaveAttribute('href', '/product/APPLE-1')
   })
 
-  it('renders the product image with a proxied src', () => {
+  it('renderiza la imagen del producto con un src a través del proxy', () => {
     renderCard()
     const img = screen.getByRole('img')
     expect(img).toHaveAttribute(
@@ -66,7 +66,7 @@ describe('PhoneCard', () => {
     )
   })
 
-  it('uses brand + name as the image alt text', () => {
+  it('usa marca + nombre como texto alternativo de la imagen', () => {
     renderCard()
     expect(screen.getByAltText('Apple iPhone 15')).toBeInTheDocument()
   })

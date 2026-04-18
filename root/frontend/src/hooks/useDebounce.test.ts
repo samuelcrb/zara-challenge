@@ -11,12 +11,12 @@ describe('useDebounce', () => {
     vi.useRealTimers()
   })
 
-  it('returns the initial value immediately', () => {
+  it('devuelve el valor inicial de inmediato', () => {
     const { result } = renderHook(() => useDebounce('hello', 300))
     expect(result.current).toBe('hello')
   })
 
-  it('does not update the value before the delay elapses', async () => {
+  it('no actualiza el valor antes de que transcurra el retraso', async () => {
     const { result, rerender } = renderHook(({ value }) => useDebounce(value, 300), {
       initialProps: { value: 'a' },
     })
@@ -30,7 +30,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('a')
   })
 
-  it('updates the value after the delay elapses', async () => {
+  it('actualiza el valor después de que transcurra el retraso', async () => {
     const { result, rerender } = renderHook(({ value }) => useDebounce(value, 300), {
       initialProps: { value: 'a' },
     })
@@ -44,7 +44,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('ab')
   })
 
-  it('resets the timer on each new value — only the last value is applied', async () => {
+  it('reinicia el temporizador con cada nuevo valor — solo se aplica el último', async () => {
     const { result, rerender } = renderHook(({ value }) => useDebounce(value, 300), {
       initialProps: { value: 'a' },
     })
@@ -68,7 +68,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('abc')
   })
 
-  it('uses 300 ms as the default delay', async () => {
+  it('usa 300 ms como retraso por defecto', async () => {
     const { result, rerender } = renderHook(({ value }) => useDebounce(value), {
       initialProps: { value: 'x' },
     })

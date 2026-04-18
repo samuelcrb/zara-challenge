@@ -37,7 +37,7 @@ describe('useProducts', () => {
 
   // ─── Estado inicial ────────────────────────────────────────────────────────
 
-  it('has the correct initial state before fetch resolves', () => {
+  it('tiene el estado inicial correcto antes de que se resuelva la petición', () => {
     mockGetProducts.mockReturnValue(new Promise(() => {})) // nunca resuelve → sin actualizaciones de estado asíncronas
 
     const { result } = renderHook(() => useProducts())
@@ -51,7 +51,7 @@ describe('useProducts', () => {
 
   // ─── Petición exitosa ──────────────────────────────────────────────────────
 
-  it('sets products and turns off loading on success', async () => {
+  it('establece products y desactiva la carga al tener éxito', async () => {
     const products = [makeProduct(), makeProduct({ id: 'SAM-1', brand: 'Samsung' })]
     mockGetProducts.mockResolvedValue(products)
 
@@ -63,13 +63,13 @@ describe('useProducts', () => {
     expect(result.current.error).toBeNull()
   })
 
-  it('increments fetchId on each successful fetch', async () => {
+  it('incrementa fetchId en cada petición exitosa', async () => {
     const { result } = renderHook(() => useProducts())
 
     await waitFor(() => expect(result.current.fetchId).toBe(1))
   })
 
-  it('passes search and limit params to getProducts', async () => {
+  it('pasa los parámetros search y limit a getProducts', async () => {
     renderHook(() => useProducts())
 
     await waitFor(() =>
@@ -82,7 +82,7 @@ describe('useProducts', () => {
 
   // ─── Precarga de imágenes ──────────────────────────────────────────────────
 
-  it('preloads images of all returned products', async () => {
+  it('precarga las imágenes de todos los productos devueltos', async () => {
     const first = makeProduct({ id: 'SAM-1', imageUrl: 'https://example.com/a.jpg' })
     const second = makeProduct({ id: 'APPLE-1', imageUrl: 'https://example.com/b.jpg' })
     mockGetProducts.mockResolvedValue([first, second])
@@ -97,7 +97,7 @@ describe('useProducts', () => {
     )
   })
 
-  it('does not set products until preload resolves', async () => {
+  it('no establece products hasta que se resuelva la precarga', async () => {
     let resolvePreload!: (v: void[]) => void
     mockPreloadImages.mockReturnValue(
       new Promise(resolve => {
@@ -120,7 +120,7 @@ describe('useProducts', () => {
 
   // ─── Acierto de caché ────────────────────────────────────────────────────
 
-  it('returns cached products without calling getProducts again', async () => {
+  it('devuelve los productos en caché sin llamar a getProducts de nuevo', async () => {
     const products = [makeProduct()]
     mockGetProducts.mockResolvedValue(products)
 
@@ -145,7 +145,7 @@ describe('useProducts', () => {
 
   // ─── Gestión de errores ────────────────────────────────────────────────────
 
-  it('sets the error message on API failure', async () => {
+  it('establece el mensaje de error al fallar la API', async () => {
     mockGetProducts.mockRejectedValue(new Error('Network error'))
 
     const { result } = renderHook(() => useProducts())
@@ -156,7 +156,7 @@ describe('useProducts', () => {
     expect(result.current.products).toEqual([])
   })
 
-  it('sets fallback message for non-Error throws', async () => {
+  it('establece el mensaje de reserva para errores que no son instancias de Error', async () => {
     mockGetProducts.mockRejectedValue('unexpected')
 
     const { result } = renderHook(() => useProducts())
@@ -166,7 +166,7 @@ describe('useProducts', () => {
     expect(result.current.error).toBe('Something went wrong')
   })
 
-  it('does not set error on AbortError', async () => {
+  it('no establece error en AbortError', async () => {
     const abortError = Object.assign(new Error('Aborted'), { name: 'AbortError' })
     mockGetProducts.mockRejectedValue(abortError)
 
@@ -177,7 +177,7 @@ describe('useProducts', () => {
     expect(result.current.error).toBeNull()
   })
 
-  it('does not increment fetchId on error', async () => {
+  it('no incrementa fetchId en caso de error', async () => {
     mockGetProducts.mockRejectedValue(new Error('fail'))
 
     const { result } = renderHook(() => useProducts())
@@ -189,7 +189,7 @@ describe('useProducts', () => {
 
   // ─── Debounce de búsqueda ─────────────────────────────────────────────────
 
-  describe('debounce', () => {
+  describe('debounce de búsqueda', () => {
     beforeEach(() => {
       vi.useFakeTimers()
     })
@@ -197,7 +197,7 @@ describe('useProducts', () => {
       vi.useRealTimers()
     })
 
-    it('does not fetch on every keystroke', async () => {
+    it('no realiza una petición con cada pulsación de tecla', async () => {
       const { result } = renderHook(() => useProducts())
 
       // Vacía la petición inicial
@@ -219,7 +219,7 @@ describe('useProducts', () => {
       expect(mockGetProducts).not.toHaveBeenCalled()
     })
 
-    it('fetches after 300ms with the latest search value', async () => {
+    it('realiza la petición tras 300ms con el último valor de búsqueda', async () => {
       const { result } = renderHook(() => useProducts())
 
       await act(async () => {
@@ -240,7 +240,7 @@ describe('useProducts', () => {
       )
     })
 
-    it('resets the debounce timer on each keystroke', async () => {
+    it('reinicia el temporizador de debounce con cada pulsación de tecla', async () => {
       const { result } = renderHook(() => useProducts())
 
       await act(async () => {
@@ -274,8 +274,8 @@ describe('useProducts', () => {
 
   // ─── Cancelación de petición ──────────────────────────────────────────────
 
-  describe('cancellation', () => {
-    it('does not update state when unmounted before preload resolves', async () => {
+  describe('cancelación de petición', () => {
+    it('no actualiza el estado al desmontar antes de que se resuelva la precarga', async () => {
       let resolvePreload!: (v: void[]) => void
       mockPreloadImages.mockReturnValue(
         new Promise(resolve => {
@@ -301,7 +301,7 @@ describe('useProducts', () => {
       expect(result.current.fetchId).toBe(0)
     })
 
-    describe('with fake timers', () => {
+    describe('con temporizadores falsos', () => {
       beforeEach(() => {
         vi.useFakeTimers()
       })
@@ -309,7 +309,7 @@ describe('useProducts', () => {
         vi.useRealTimers()
       })
 
-      it('aborts the previous request when search changes', async () => {
+      it('cancela la petición anterior cuando cambia la búsqueda', async () => {
         let firstSignal: AbortSignal | undefined
         mockGetProducts.mockImplementation((_, signal) => {
           firstSignal ??= signal // captura solo la señal inicial
@@ -335,7 +335,7 @@ describe('useProducts', () => {
         expect(firstSignal?.aborted).toBe(true)
       })
 
-      it('ignores stale preload when a newer search completes first', async () => {
+      it('ignora la precarga obsoleta cuando una búsqueda más reciente completa primero', async () => {
         let resolveFirstPreload!: (v: void[]) => void
         mockPreloadImages
           .mockReturnValueOnce(

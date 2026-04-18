@@ -2,39 +2,39 @@ import { describe, it, expect } from 'vitest'
 import { sanitizeSearch } from './SearchBar'
 
 describe('sanitizeSearch', () => {
-  it('allows letters, digits, spaces, hyphens, plus and dots', () => {
+  it('permite letras, dígitos, espacios, guiones, signos más y puntos', () => {
     expect(sanitizeSearch('Galaxy S24+ Ultra 5.0')).toBe('Galaxy S24+ Ultra 5.0')
   })
 
-  it('strips HTML and script injection characters', () => {
+  it('elimina caracteres de inyección HTML y script', () => {
     expect(sanitizeSearch('<script>alert(1)</script>')).toBe('scriptalert1script')
     expect(sanitizeSearch('foo"bar;baz')).toBe('foobarbaz')
     expect(sanitizeSearch('a&b=c|d')).toBe('abcd')
   })
 
-  it('does not allow a leading space', () => {
+  it('no permite un espacio al principio', () => {
     expect(sanitizeSearch(' Samsung')).toBe('Samsung')
   })
 
-  it('collapses consecutive spaces into one', () => {
+  it('colapsa espacios consecutivos en uno solo', () => {
     expect(sanitizeSearch('Galaxy  S24')).toBe('Galaxy S24')
     expect(sanitizeSearch('a   b   c')).toBe('a b c')
   })
 
-  it('allows a single space between words', () => {
+  it('permite un único espacio entre palabras', () => {
     expect(sanitizeSearch('iPhone 15 Pro Max')).toBe('iPhone 15 Pro Max')
   })
 
-  it('truncates to 50 characters', () => {
+  it('trunca a 50 caracteres', () => {
     const long = 'a'.repeat(60)
     expect(sanitizeSearch(long)).toHaveLength(50)
   })
 
-  it('returns empty string for fully invalid input', () => {
+  it('devuelve cadena vacía para entrada completamente inválida', () => {
     expect(sanitizeSearch('<>&"\';{}')).toBe('')
   })
 
-  it('allows accented and unicode letters', () => {
+  it('permite letras acentuadas y unicode', () => {
     expect(sanitizeSearch('Teléfono Móvil')).toBe('Teléfono Móvil')
   })
 })

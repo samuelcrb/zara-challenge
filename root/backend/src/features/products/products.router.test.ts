@@ -60,7 +60,7 @@ const mockUpstreamWithDetail = (
 }
 
 describe('GET /', () => {
-  it('returns cached data without calling upstream', async () => {
+  it('devuelve los datos en caché sin llamar al upstream', async () => {
     const cached = [{ id: '1', imageUrl: 'u' }]
     vi.mocked(cache.getCachedProducts).mockReturnValue(cached)
     const fetchSpy = vi.fn()
@@ -73,7 +73,7 @@ describe('GET /', () => {
     expect(fetchSpy).not.toHaveBeenCalled()
   })
 
-  it('fetches upstream on cache miss, caches and returns result', async () => {
+  it('consulta el upstream ante un fallo de caché, almacena y devuelve el resultado', async () => {
     const products = [{ id: '1', imageUrl: 'u', basePrice: 100 }]
     const detail = { id: '1', storageOptions: [{ capacity: '128 GB', price: 100 }] }
     mockUpstreamWithDetail(products, detail)
@@ -85,7 +85,7 @@ describe('GET /', () => {
     expect(cache.setCachedProducts).toHaveBeenCalledOnce()
   })
 
-  it('corrects basePrice to the minimum storageOptions price', async () => {
+  it('corrige basePrice al precio mínimo de las opciones de almacenamiento', async () => {
     const products = [{ id: 'p1', imageUrl: 'u', basePrice: 500 }]
     const detail = {
       id: 'p1',
@@ -103,7 +103,7 @@ describe('GET /', () => {
     expect(res.body[0].basePrice).toBe(399)
   })
 
-  it('keeps basePrice unchanged when it is already the minimum', async () => {
+  it('mantiene basePrice sin cambios cuando ya es el mínimo', async () => {
     const products = [{ id: 'p1', imageUrl: 'u', basePrice: 299 }]
     const detail = {
       id: 'p1',
@@ -119,7 +119,7 @@ describe('GET /', () => {
     expect(res.body[0].basePrice).toBe(299)
   })
 
-  it('deduplicates products with repeated ids', async () => {
+  it('elimina duplicados de productos con ids repetidos', async () => {
     const raw = [
       { id: 'abc', imageUrl: 'u1', basePrice: 100 },
       { id: 'abc', imageUrl: 'u2', basePrice: 100 },
@@ -134,7 +134,7 @@ describe('GET /', () => {
     expect(res.body[0].imageUrl).toContain('u1')
   })
 
-  it('forwards search, limit and offset to upstream', async () => {
+  it('reenvía search, limit y offset al upstream', async () => {
     const fetchSpy = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -150,7 +150,7 @@ describe('GET /', () => {
     expect(listCall.searchParams.get('offset')).toBe('5')
   })
 
-  it('does not cache when upstream returns a non-ok status', async () => {
+  it('no almacena en caché cuando el upstream devuelve un estado no válido', async () => {
     mockUpstream({ error: 'upstream down' }, 502)
 
     const res = await supertest(app).get('/')
@@ -159,7 +159,7 @@ describe('GET /', () => {
     expect(cache.setCachedProducts).not.toHaveBeenCalled()
   })
 
-  it('converts http imageUrls to https', async () => {
+  it('convierte las imageUrls http a https', async () => {
     const products = [{ id: 'p1', imageUrl: 'http://cdn.example.com/img.jpg', basePrice: 100 }]
     const detail = { id: 'p1', storageOptions: [{ capacity: '128 GB', price: 100 }] }
     mockUpstreamWithDetail(products, detail)
@@ -171,7 +171,7 @@ describe('GET /', () => {
 })
 
 describe('GET /:id', () => {
-  it('corrects basePrice to the minimum storageOptions price', async () => {
+  it('corrige basePrice al precio mínimo de las opciones de almacenamiento', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -195,7 +195,7 @@ describe('GET /:id', () => {
     expect(res.body.basePrice).toBe(399)
   })
 
-  it('keeps basePrice when it is already the minimum', async () => {
+  it('mantiene basePrice cuando ya es el mínimo', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -218,7 +218,7 @@ describe('GET /:id', () => {
     expect(res.body.basePrice).toBe(299)
   })
 
-  it('converts http imageUrl to https', async () => {
+  it('convierte la imageUrl http a https', async () => {
     mockUpstream({
       id: 'p1',
       imageUrl: 'http://cdn.example.com/phone.jpg',
@@ -231,7 +231,7 @@ describe('GET /:id', () => {
     expect(res.body.imageUrl).toBe('https://cdn.example.com/phone.jpg')
   })
 
-  it('converts http imageUrls inside colorOptions to https', async () => {
+  it('convierte las imageUrls http dentro de colorOptions a https', async () => {
     mockUpstream({
       id: 'p1',
       imageUrl: 'http://cdn.example.com/phone.jpg',
@@ -249,7 +249,7 @@ describe('GET /:id', () => {
     expect(res.body.colorOptions[1].imageUrl).toBe('https://cdn.example.com/white.jpg')
   })
 
-  it('returns 502 when upstream.json() throws on GET /:id', async () => {
+  it('devuelve 502 cuando upstream.json() lanza un error en GET /:id', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -265,7 +265,7 @@ describe('GET /:id', () => {
     expect(res.body.error).toBe('Upstream error')
   })
 
-  it('calls next(err) when fetch itself throws on GET /:id', async () => {
+  it('llama a next(err) cuando fetch lanza un error en GET /:id', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
 
     const res = await supertest(app).get('/p1')
@@ -279,7 +279,7 @@ describe('GET / error paths', () => {
     vi.mocked(cache.getCachedProducts).mockReturnValue(undefined)
   })
 
-  it('calls next(err) when fetch itself throws on GET /', async () => {
+  it('llama a next(err) cuando fetch lanza un error en GET /', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
 
     const res = await supertest(app).get('/')
@@ -287,7 +287,7 @@ describe('GET / error paths', () => {
     expect(res.status).toBe(500)
   })
 
-  it('keeps original basePrice when fetchMinStoragePrice fetch throws', async () => {
+  it('mantiene el basePrice original cuando fetchMinStoragePrice lanza un error', async () => {
     const products = [{ id: 'p1', imageUrl: 'https://cdn.example.com/img.jpg', basePrice: 500 }]
     vi.stubGlobal(
       'fetch',
@@ -308,7 +308,7 @@ describe('GET / error paths', () => {
     expect(res.body[0].basePrice).toBe(500)
   })
 
-  it('returns 502 when upstream.json() throws on GET /', async () => {
+  it('devuelve 502 cuando upstream.json() lanza un error en GET /', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({

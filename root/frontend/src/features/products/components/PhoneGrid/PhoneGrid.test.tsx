@@ -25,22 +25,22 @@ const renderGrid = (props: Partial<React.ComponentProps<typeof PhoneGrid>> = {})
   )
 
 describe('PhoneGrid', () => {
-  it('has the "Products list" accessible label', () => {
+  it('tiene la etiqueta accesible "Lista de productos"', () => {
     renderGrid()
     expect(screen.getByRole('list', { name: 'Lista de productos' })).toBeInTheDocument()
   })
 
-  it('renders one list item per product', () => {
+  it('renderiza un elemento de lista por producto', () => {
     renderGrid({ products: [makeProduct('A'), makeProduct('B'), makeProduct('C')] })
     expect(screen.getAllByRole('listitem')).toHaveLength(3)
   })
 
-  it('renders an empty list when products array is empty', () => {
+  it('renderiza una lista vacía cuando el array de productos está vacío', () => {
     renderGrid({ products: [] })
     expect(screen.queryAllByRole('listitem')).toHaveLength(0)
   })
 
-  it('renders each product name', () => {
+  it('renderiza el nombre de cada producto', () => {
     renderGrid({ products: [makeProduct('SAM-1'), makeProduct('APPLE-1')] })
     expect(screen.getByText('Phone SAM-1')).toBeInTheDocument()
     expect(screen.getByText('Phone APPLE-1')).toBeInTheDocument()

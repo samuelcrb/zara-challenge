@@ -68,7 +68,7 @@ const renderList = (hookOverrides: Partial<ReturnType<typeof useProducts>> = {})
 
 // ─── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('PhoneList page', () => {
+describe('página PhoneList', () => {
   beforeEach(() => {
     onLoadingChange.mockReset()
     clearProductCache()
@@ -76,32 +76,32 @@ describe('PhoneList page', () => {
 
   // ─── onLoadingChange ──────────────────────────────────────────────────────────
 
-  it('calls onLoadingChange(true) when isLoading is true', () => {
+  it('llama a onLoadingChange(true) cuando isLoading es true', () => {
     renderList({ isLoading: true })
     expect(onLoadingChange).toHaveBeenCalledWith(true)
   })
 
-  it('calls onLoadingChange(false) when isLoading is false', () => {
+  it('llama a onLoadingChange(false) cuando isLoading es false', () => {
     renderList({ isLoading: false })
     expect(onLoadingChange).toHaveBeenCalledWith(false)
   })
 
   // ─── Estado de error ──────────────────────────────────────────────────────────
 
-  it('shows the error message inside an alert when error is set', () => {
+  it('muestra el mensaje de error dentro de una alerta cuando error está definido', () => {
     renderList({ error: 'Something went wrong' })
     const alert = screen.getByRole('alert')
     expect(alert).toHaveTextContent('Something went wrong')
   })
 
-  it('does not render the search bar when there is an error', () => {
+  it('no renderiza la barra de búsqueda cuando hay un error', () => {
     renderList({ error: 'Oops' })
     expect(screen.queryByRole('searchbox')).not.toBeInTheDocument()
   })
 
   // ─── Contenido ────────────────────────────────────────────────────────────────
 
-  it('renders the search bar once content is revealed', async () => {
+  it('renderiza la barra de búsqueda una vez revelado el contenido', async () => {
     // fetchId=1 activa la revelación del contenido; direction='backward' lo muestra al instante
     renderList({ isLoading: false, products: [], fetchId: 1 })
     // La revelación del contenido requiere que pase CONTENT_REVEAL_DELAY; usar backward
@@ -118,7 +118,7 @@ describe('PhoneList page', () => {
     expect(screen.getByRole('searchbox')).toBeInTheDocument()
   })
 
-  it('renders the products list with correct items', async () => {
+  it('renderiza la lista de productos con los artículos correctos', async () => {
     const products = [makeProduct('A'), makeProduct('B')]
     vi.mocked(useProducts).mockReturnValue({ ...defaultHook(), products })
     render(
@@ -131,7 +131,7 @@ describe('PhoneList page', () => {
     expect(screen.getByRole('list', { name: 'Lista de productos' })).toBeInTheDocument()
   })
 
-  it('shows the result count from the search bar', () => {
+  it('muestra el recuento de resultados de la barra de búsqueda', () => {
     const products = [makeProduct('X'), makeProduct('Y'), makeProduct('Z')]
     vi.mocked(useProducts).mockReturnValue({ ...defaultHook(), products })
     render(
@@ -147,7 +147,7 @@ describe('PhoneList page', () => {
 
 // ─── Filtro por color ──────────────────────────────────────────────────────────
 
-describe('PhoneList — color filter', () => {
+describe('PhoneList — filtro por color', () => {
   beforeEach(() => {
     onLoadingChange.mockReset()
     clearProductCache()
@@ -165,12 +165,12 @@ describe('PhoneList — color filter', () => {
     )
   }
 
-  it('shows FILTRAR button initially', () => {
+  it('muestra el botón FILTRAR inicialmente', () => {
     renderWithProducts([])
     expect(screen.getByText('FILTRAR')).toBeInTheDocument()
   })
 
-  it('opens the color panel when clicking FILTRAR', async () => {
+  it('abre el panel de colores al hacer clic en FILTRAR', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -178,7 +178,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByLabelText('Azul')).toBeInTheDocument()
   })
 
-  it('closes the panel and updates the label after selecting a color', async () => {
+  it('cierra el panel y actualiza la etiqueta tras seleccionar un color', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -187,7 +187,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByText('FILTRAR (1)')).toBeInTheDocument()
   })
 
-  it('shows the clear button after selecting a color', async () => {
+  it('muestra el botón de limpiar tras seleccionar un color', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -195,7 +195,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByText('✕')).toBeInTheDocument()
   })
 
-  it('increments the count when a second color is selected', async () => {
+  it('incrementa el contador al seleccionar un segundo color', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -205,7 +205,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByText('FILTRAR (2)')).toBeInTheDocument()
   })
 
-  it('deselects a color when clicking it again', async () => {
+  it('deselecciona un color al hacer clic de nuevo', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -216,7 +216,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.queryByText('✕')).not.toBeInTheDocument()
   })
 
-  it('clears all selected colors when clicking ✕', async () => {
+  it('limpia todos los colores seleccionados al hacer clic en ✕', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -226,7 +226,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.queryByText('✕')).not.toBeInTheDocument()
   })
 
-  it('does not open the panel when clicking ✕', async () => {
+  it('no abre el panel al hacer clic en ✕', async () => {
     const user = userEvent.setup()
     renderWithProducts([])
     await user.click(screen.getByText('FILTRAR'))
@@ -235,7 +235,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.queryByText('CERRAR')).not.toBeInTheDocument()
   })
 
-  it('filters the result count by selected color', async () => {
+  it('filtra el recuento de resultados por el color seleccionado', async () => {
     const user = userEvent.setup()
     // OPP-A18 → solo azul, XMI-13TPro → solo negro
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
@@ -245,7 +245,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByText('1 resultado')).toBeInTheDocument()
   })
 
-  it('restores the full count after clearing the color filter', async () => {
+  it('restaura el recuento completo tras limpiar el filtro de color', async () => {
     const user = userEvent.setup()
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro')])
     await user.click(screen.getByText('FILTRAR'))
@@ -254,7 +254,7 @@ describe('PhoneList — color filter', () => {
     expect(screen.getByText('2 resultados')).toBeInTheDocument()
   })
 
-  it('counts products matching any of the selected colors', async () => {
+  it('cuenta los productos que coinciden con alguno de los colores seleccionados', async () => {
     const user = userEvent.setup()
     // OPP-A18 → azul, XMI-13TPro → negro, OPP-R11F → azul+verde
     renderWithProducts([makeProduct('OPP-A18'), makeProduct('XMI-13TPro'), makeProduct('OPP-R11F')])

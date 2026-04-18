@@ -78,7 +78,7 @@ describe('useProductDetail', () => {
 
   // ─── Estado inicial ──────────────────────────────────────────────────────
 
-  it('has the correct initial state before fetch resolves', () => {
+  it('tiene el estado inicial correcto antes de que se resuelva la petición', () => {
     mockGetProductById.mockReturnValue(new Promise(() => { })) // nunca resuelve
 
     const { result } = renderHook(() => useProductDetail())
@@ -93,7 +93,7 @@ describe('useProductDetail', () => {
 
   // ─── Petición exitosa ────────────────────────────────────────────────────
 
-  it('sets product and turns off loading on success', async () => {
+  it('establece product y desactiva la carga al tener éxito', async () => {
     const product = makeProductDetail()
     mockGetProductById.mockResolvedValue(product)
 
@@ -105,7 +105,7 @@ describe('useProductDetail', () => {
     expect(result.current.error).toBeNull()
   })
 
-  it('calls getProductById with the id from the URL', async () => {
+  it('llama a getProductById con el id de la URL', async () => {
     renderHook(() => useProductDetail())
 
     await waitFor(() => expect(mockGetProductById).toHaveBeenCalledWith('APPLE-1'))
@@ -113,7 +113,7 @@ describe('useProductDetail', () => {
 
   // ─── Valores derivados ───────────────────────────────────────────────────
 
-  it('currentPrice defaults to basePrice when no storage is selected', async () => {
+  it('currentPrice toma el valor de basePrice cuando no hay almacenamiento seleccionado', async () => {
     mockGetProductById.mockResolvedValue(makeProductDetail({ basePrice: 999 }))
 
     const { result } = renderHook(() => useProductDetail())
@@ -123,7 +123,7 @@ describe('useProductDetail', () => {
     expect(result.current.currentPrice).toBe(999)
   })
 
-  it('currentImageUrl defaults to the first color imageUrl when no color is selected', async () => {
+  it('currentImageUrl toma la imageUrl del primer color cuando no hay color seleccionado', async () => {
     const { result } = renderHook(() => useProductDetail())
 
     await waitFor(() => expect(result.current.isLoading).toBe(false))
@@ -133,7 +133,7 @@ describe('useProductDetail', () => {
 
   // ─── Selección de color ──────────────────────────────────────────────────
 
-  it('updates selectedColor and currentImageUrl when handleColorSelect is called', async () => {
+  it('actualiza selectedColor y currentImageUrl cuando se llama a handleColorSelect', async () => {
     const white = makeColor({ name: 'White', hexCode: '#FFFFFF', imageUrl: 'https://example.com/white.jpg' })
 
     const { result } = renderHook(() => useProductDetail())
@@ -147,7 +147,7 @@ describe('useProductDetail', () => {
 
   // ─── Selección de almacenamiento ─────────────────────────────────────────
 
-  it('updates selectedStorage and currentPrice when handleStorageSelect is called', async () => {
+  it('actualiza selectedStorage y currentPrice cuando se llama a handleStorageSelect', async () => {
     const storage256 = makeStorage({ capacity: '256GB', price: 1099 })
 
     const { result } = renderHook(() => useProductDetail())
@@ -161,7 +161,7 @@ describe('useProductDetail', () => {
 
   // ─── canAddToCart ────────────────────────────────────────────────────────
 
-  it('canAddToCart is false when only color is selected', async () => {
+  it('canAddToCart es false cuando solo hay color seleccionado', async () => {
     const { result } = renderHook(() => useProductDetail())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -170,7 +170,7 @@ describe('useProductDetail', () => {
     expect(result.current.canAddToCart).toBe(false)
   })
 
-  it('canAddToCart is false when only storage is selected', async () => {
+  it('canAddToCart es false cuando solo hay almacenamiento seleccionado', async () => {
     const { result } = renderHook(() => useProductDetail())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -179,7 +179,7 @@ describe('useProductDetail', () => {
     expect(result.current.canAddToCart).toBe(false)
   })
 
-  it('canAddToCart is true when both color and storage are selected', async () => {
+  it('canAddToCart es true cuando hay color y almacenamiento seleccionados', async () => {
     const { result } = renderHook(() => useProductDetail())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -193,7 +193,7 @@ describe('useProductDetail', () => {
 
   // ─── Cambio de id ────────────────────────────────────────────────────────
 
-  it('resets selectedColor and selectedStorage when id changes', async () => {
+  it('restablece selectedColor y selectedStorage cuando cambia el id', async () => {
     const { result, rerender } = renderHook(() => useProductDetail())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -215,7 +215,7 @@ describe('useProductDetail', () => {
     })
   })
 
-  it('fetches the new product when id changes', async () => {
+  it('obtiene el nuevo producto cuando cambia el id', async () => {
     const { result, rerender } = renderHook(() => useProductDetail())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -229,7 +229,7 @@ describe('useProductDetail', () => {
 
   // ─── Gestión de errores ──────────────────────────────────────────────────
 
-  it('sets the error message on API failure', async () => {
+  it('establece el mensaje de error al fallar la API', async () => {
     mockGetProductById.mockRejectedValue(new Error('Not found'))
 
     const { result } = renderHook(() => useProductDetail())
@@ -240,7 +240,7 @@ describe('useProductDetail', () => {
     expect(result.current.product).toBeNull()
   })
 
-  it('sets fallback message for non-Error throws', async () => {
+  it('establece el mensaje de reserva para errores que no son instancias de Error', async () => {
     mockGetProductById.mockRejectedValue('unexpected')
 
     const { result } = renderHook(() => useProductDetail())
@@ -252,7 +252,7 @@ describe('useProductDetail', () => {
 
   // ─── Sin id ──────────────────────────────────────────────────────────────
 
-  it('does not call the API when id is undefined', () => {
+  it('no llama a la API cuando id es undefined', () => {
     mockUseParams.mockReturnValue({})
 
     renderHook(() => useProductDetail())

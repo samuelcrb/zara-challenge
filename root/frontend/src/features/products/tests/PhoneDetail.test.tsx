@@ -110,7 +110,7 @@ const renderDetail = (hookOverrides: Partial<ReturnType<typeof useProductDetail>
 
 // ─── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('PhoneDetail page', () => {
+describe('página PhoneDetail', () => {
   beforeEach(() => {
     mockNavigate.mockReset()
     mockHandleColorSelect.mockReset()
@@ -120,29 +120,29 @@ describe('PhoneDetail page', () => {
 
   // ─── Estados de carga / error ────────────────────────────────────────────────
 
-  it('renders nothing when isLoading is true', () => {
+  it('no renderiza nada cuando isLoading es true', () => {
     const { container } = renderDetail({ isLoading: true, product: null })
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('renders the error message when error is set', () => {
+  it('renderiza el mensaje de error cuando error está definido', () => {
     renderDetail({ isLoading: false, product: null, error: 'Product not found' })
     expect(screen.getByText('Product not found')).toBeInTheDocument()
   })
 
   // ─── Información del producto ────────────────────────────────────────────────
 
-  it('renders the product brand and name as a heading', () => {
+  it('renderiza la marca y el nombre del producto como encabezado', () => {
     renderDetail()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Apple iPhone 15')
   })
 
-  it('shows "From X EUR" label when no storage is selected', () => {
+  it('muestra la etiqueta "Desde X EUR" cuando no hay almacenamiento seleccionado', () => {
     renderDetail({ selectedStorage: null, currentPrice: 999 })
     expect(screen.getByText('Desde 999,00 EUR')).toBeInTheDocument()
   })
 
-  it('shows "X EUR" label when storage is selected', () => {
+  it('muestra la etiqueta "X EUR" cuando hay almacenamiento seleccionado', () => {
     renderDetail({
       selectedStorage: makeStorage({ capacity: '128GB', price: 999 }),
       currentPrice: 999,
@@ -151,25 +151,25 @@ describe('PhoneDetail page', () => {
     expect(screen.queryByText(/From/)).not.toBeInTheDocument()
   })
 
-  it('shows decimal price with 2 decimal places', () => {
+  it('muestra el precio decimal con 2 decimales', () => {
     renderDetail({ selectedStorage: null, currentPrice: 99.9 })
     expect(screen.getByText('Desde 99,90 EUR')).toBeInTheDocument()
   })
 
   // ─── Especificaciones ────────────────────────────────────────────────────────
 
-  it('renders the SPECIFICATIONS heading', () => {
+  it('renderiza el encabezado ESPECIFICACIONES', () => {
     renderDetail()
     expect(screen.getByRole('heading', { name: 'ESPECIFICACIONES' })).toBeInTheDocument()
   })
 
-  it('renders all spec rows', () => {
+  it('renderiza todas las filas de especificaciones', () => {
     renderDetail()
     const specs = ['Pantalla', 'Resolución', 'Procesador', 'Cámara principal', 'Cámara frontal', 'Batería', 'Sistema operativo', 'Tasa de refresco']
     specs.forEach(label => expect(screen.getByText(label)).toBeInTheDocument())
   })
 
-  it('renders brand and name rows in the specs table', () => {
+  it('renderiza las filas de marca y nombre en la tabla de especificaciones', () => {
     renderDetail()
     // Marca y Nombre también son filas de especificaciones
     expect(screen.getByText('Marca')).toBeInTheDocument()
@@ -178,13 +178,13 @@ describe('PhoneDetail page', () => {
 
   // ─── Opciones de almacenamiento ──────────────────────────────────────────────
 
-  it('renders a button for each storage option', () => {
+  it('renderiza un botón por cada opción de almacenamiento', () => {
     renderDetail()
     expect(screen.getByRole('button', { name: '128GB' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '256GB' })).toBeInTheDocument()
   })
 
-  it('calls handleStorageSelect when a storage option is clicked', async () => {
+  it('llama a handleStorageSelect al hacer clic en una opción de almacenamiento', async () => {
     const { user } = renderDetail()
     await user.click(screen.getByRole('button', { name: '128GB' }))
     expect(mockHandleStorageSelect).toHaveBeenCalledWith(
@@ -194,13 +194,13 @@ describe('PhoneDetail page', () => {
 
   // ─── Opciones de color ────────────────────────────────────────────────────────
 
-  it('renders a button for each color option', () => {
+  it('renderiza un botón por cada opción de color', () => {
     renderDetail()
     expect(screen.getByRole('button', { name: 'Black' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'White' })).toBeInTheDocument()
   })
 
-  it('calls handleColorSelect when a color swatch is clicked', async () => {
+  it('llama a handleColorSelect al hacer clic en una muestra de color', async () => {
     const { user } = renderDetail()
     await user.click(screen.getByRole('button', { name: 'Black' }))
     expect(mockHandleColorSelect).toHaveBeenCalledWith(
@@ -210,17 +210,17 @@ describe('PhoneDetail page', () => {
 
   // ─── Añadir al carrito ────────────────────────────────────────────────────────
 
-  it('renders the ADD TO CART button disabled when canAddToCart is false', () => {
+  it('renderiza el botón AÑADIR AL CARRITO deshabilitado cuando canAddToCart es false', () => {
     renderDetail({ canAddToCart: false })
     expect(screen.getByRole('button', { name: 'AÑADIR AL CARRITO' })).toBeDisabled()
   })
 
-  it('renders the ADD TO CART button enabled when canAddToCart is true', () => {
+  it('renderiza el botón AÑADIR AL CARRITO habilitado cuando canAddToCart es true', () => {
     renderDetail({ canAddToCart: true })
     expect(screen.getByRole('button', { name: 'AÑADIR AL CARRITO' })).toBeEnabled()
   })
 
-  it('navigates to /cart after clicking ADD TO CART', async () => {
+  it('navega a /cart tras hacer clic en AÑADIR AL CARRITO', async () => {
     const { user } = renderDetail({
       canAddToCart: true,
       selectedColor: makeColor(),
@@ -232,7 +232,7 @@ describe('PhoneDetail page', () => {
 
   // ─── Botón de volver ──────────────────────────────────────────────────────────
 
-  it('calls navigate(-1) when the BACK button is clicked', async () => {
+  it('llama a navigate(-1) al hacer clic en el botón ATRÁS', async () => {
     const { user } = renderDetail()
     await user.click(screen.getByRole('button', { name: /ATRÁS/i }))
     expect(mockNavigate).toHaveBeenCalledWith(-1)
@@ -240,7 +240,7 @@ describe('PhoneDetail page', () => {
 
   // ─── Artículos similares ──────────────────────────────────────────────────────
 
-  it('renders the SIMILAR PRODUCTS section when similarProducts is non-empty', () => {
+  it('renderiza la sección ARTÍCULOS SIMILARES cuando similarProducts no está vacío', () => {
     const similar: ProductDetail['similarProducts'] = [
       { id: 'SAM-1', brand: 'Samsung', name: 'Galaxy S24', basePrice: 899, imageUrl: 'https://example.com/s24.jpg', renderKey: 'SAM-1-0' },
     ]
@@ -248,14 +248,14 @@ describe('PhoneDetail page', () => {
     expect(screen.getByRole('heading', { name: 'ARTÍCULOS SIMILARES' })).toBeInTheDocument()
   })
 
-  it('does not render the SIMILAR PRODUCTS section when similarProducts is empty', () => {
+  it('no renderiza la sección ARTÍCULOS SIMILARES cuando similarProducts está vacío', () => {
     renderDetail({ product: makeDetail({ similarProducts: [] }) })
     expect(screen.queryByRole('heading', { name: 'ARTÍCULOS SIMILARES' })).not.toBeInTheDocument()
   })
 
   // ─── Producto no encontrado ───────────────────────────────────────────────────
 
-  it('renders nothing when product is null and not loading', () => {
+  it('no renderiza nada cuando product es null y no está cargando', () => {
     const { container } = renderDetail({ product: null, error: null, isLoading: false })
     expect(container).toBeEmptyDOMElement()
   })

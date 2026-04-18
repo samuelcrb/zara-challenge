@@ -39,17 +39,17 @@ const renderRoutes = (initialPath: string) =>
   )
 
 describe('AnimatedRoutes', () => {
-  it('renders PhoneList at /', () => {
+  it('renderiza PhoneList en /', () => {
     renderRoutes('/')
     expect(screen.getByText('PhoneList')).toBeInTheDocument()
   })
 
-  it('renders PhoneDetail at /product/:id', () => {
+  it('renderiza PhoneDetail en /product/:id', () => {
     renderRoutes('/product/ABC-1')
     expect(screen.getByText('PhoneDetail')).toBeInTheDocument()
   })
 
-  it('renders Cart at /cart', () => {
+  it('renderiza Cart en /cart', () => {
     renderRoutes('/cart')
     expect(screen.getByText('Cart')).toBeInTheDocument()
   })

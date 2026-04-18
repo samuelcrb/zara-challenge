@@ -24,56 +24,50 @@ const renderNavbar = (
     </CartProvider>,
   )
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <CartProvider>
-    <MemoryRouter>{children}</MemoryRouter>
-  </CartProvider>
-)
-
 describe('Navbar', () => {
-  it('renders the Zara logo', () => {
+  it('renderiza el logotipo de Zara', () => {
     renderNavbar()
     expect(screen.getByAltText('Zara')).toBeInTheDocument()
   })
 
-  it('renders the cart link with 0 items when cart is empty', () => {
+  it('renderiza el enlace al carrito con 0 artículos cuando el carrito está vacío', () => {
     renderNavbar()
     expect(screen.getByLabelText('Carrito, 0 artículos')).toBeInTheDocument()
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
-  it('does not render the cart link on the /cart page', () => {
+  it('no renderiza el enlace al carrito en la página /cart', () => {
     renderNavbar({}, '/cart')
     expect(screen.queryByRole('link', { name: /Carrito/ })).not.toBeInTheDocument()
   })
 
-  it('applies the bordered class when showBorder is true', () => {
+  it('aplica la clase bordered cuando showBorder es true', () => {
     renderNavbar({ showBorder: true })
     const header = screen.getByRole('banner')
     expect(header.className).toMatch(/bordered/)
   })
 
-  it('applies the bordered class when on the /cart page', () => {
+  it('aplica la clase bordered cuando está en la página /cart', () => {
     renderNavbar({}, '/cart')
     const header = screen.getByRole('banner')
     expect(header.className).toMatch(/bordered/)
   })
 
-  it('shows the loading bar when barPhase is not idle', () => {
+  it('muestra la barra de carga cuando barPhase no es idle', () => {
     vi.mocked(useLoadingBar).mockReturnValue({ barPhase: 'loading', barWidth: 40 })
     renderNavbar({ isLoading: true })
     const bar = document.querySelector('[style*="width: 40%"]')
     expect(bar).toBeInTheDocument()
   })
 
-  it('hides the loading bar when barPhase is idle', () => {
+  it('oculta la barra de carga cuando barPhase es idle', () => {
     vi.mocked(useLoadingBar).mockReturnValue({ barPhase: 'idle', barWidth: 0 })
     renderNavbar()
     const bar = document.querySelector('[style*="width: 0%"]')
     expect(bar).not.toBeInTheDocument()
   })
 
-  it('calls onCartClick and prevents navigation when provided', async () => {
+  it('llama a onCartClick e impide la navegación cuando se proporciona', async () => {
     const onCartClick = vi.fn()
     const user = userEvent.setup()
     renderNavbar({ onCartClick })
@@ -81,7 +75,7 @@ describe('Navbar', () => {
     expect(onCartClick).toHaveBeenCalled()
   })
 
-  it('uses the inactive cart icon when the cart is empty', () => {
+  it('usa el icono de carrito inactivo cuando el carrito está vacío', () => {
     renderNavbar()
     // El ícono del carrito tiene aria-hidden="true" y alt=""
     const cartImg = document.querySelector('img[aria-hidden="true"]')

@@ -17,44 +17,44 @@ const setup = (overrides: Partial<React.ComponentProps<typeof SearchBar>> = {}) 
   return { ...utils, onChange, user }
 }
 
-describe('SearchBar component', () => {
+describe('componente SearchBar', () => {
   // ─── Renderizado ───────────────────────────────────────────────────────────
 
-  it('renders the search input with correct placeholder', () => {
+  it('renderiza el campo de búsqueda con el placeholder correcto', () => {
     setup()
     expect(screen.getByPlaceholderText('Busca un smartphone...')).toBeInTheDocument()
   })
 
-  it('renders 1 "result" (singular) when resultsCount is 1', () => {
+  it('renderiza 1 "resultado" (singular) cuando resultsCount es 1', () => {
     setup({ resultsCount: 1 })
     expect(screen.getByText('1 resultado')).toBeInTheDocument()
   })
 
-  it('renders N "results" (plural) when resultsCount is 0', () => {
+  it('renderiza N "resultados" (plural) cuando resultsCount es 0', () => {
     setup({ resultsCount: 0 })
     expect(screen.getByText('0 resultados')).toBeInTheDocument()
   })
 
-  it('renders N "results" (plural) when resultsCount is many', () => {
+  it('renderiza N "resultados" (plural) cuando resultsCount es mayor que 1', () => {
     setup({ resultsCount: 42 })
     expect(screen.getByText('42 resultados')).toBeInTheDocument()
   })
 
   // ─── Botón de limpiar ──────────────────────────────────────────────────────
 
-  it('does not show the clear button when value is empty', () => {
+  it('no muestra el botón de borrar cuando el valor está vacío', () => {
     setup({ value: '' })
     expect(screen.queryByLabelText('Borrar búsqueda')).not.toBeInTheDocument()
   })
 
-  it('shows the clear button when value is non-empty', () => {
+  it('muestra el botón de borrar cuando el valor no está vacío', () => {
     setup({ value: 'Samsung' })
     expect(screen.getByLabelText('Borrar búsqueda')).toBeInTheDocument()
   })
 
   // ─── Interacciones ─────────────────────────────────────────────────────────
 
-  it('calls onChange with a sanitized value when the user types', async () => {
+  it('llama a onChange con un valor saneado cuando el usuario escribe', async () => {
     const { user, onChange } = setup()
     const input = screen.getByRole('searchbox')
     // Input controlado: cada tecla dispara onChange con sanitizeSearch(char).
@@ -63,7 +63,7 @@ describe('SearchBar component', () => {
     expect(onChange).toHaveBeenCalledWith('S')
   })
 
-  it('strips disallowed characters through sanitizeSearch', async () => {
+  it('elimina caracteres no permitidos mediante sanitizeSearch', async () => {
     const { user, onChange } = setup()
     const input = screen.getByRole('searchbox')
     await user.type(input, '<')
@@ -71,20 +71,20 @@ describe('SearchBar component', () => {
     expect(onChange).toHaveBeenLastCalledWith('')
   })
 
-  it('calls onChange with empty string when clear button is clicked', async () => {
+  it('llama a onChange con cadena vacía al hacer clic en el botón de borrar', async () => {
     const { user, onChange } = setup({ value: 'Samsung' })
     await user.click(screen.getByLabelText('Borrar búsqueda'))
     expect(onChange).toHaveBeenCalledWith('')
   })
 
-  it('calls the optional onClear callback when clear button is clicked', async () => {
+  it('llama al callback onClear opcional al hacer clic en el botón de borrar', async () => {
     const onClear = vi.fn()
     const { user } = setup({ value: 'Samsung', onClear })
     await user.click(screen.getByLabelText('Borrar búsqueda'))
     expect(onClear).toHaveBeenCalled()
   })
 
-  it('focuses the input after clicking clear', async () => {
+  it('enfoca el campo tras hacer clic en borrar', async () => {
     const { user } = setup({ value: 'Samsung' })
     const input = screen.getByRole('searchbox')
     await user.click(screen.getByLabelText('Borrar búsqueda'))

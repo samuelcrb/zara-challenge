@@ -66,23 +66,23 @@ beforeEach(() => {
   localStorage.clear()
 })
 
-describe('Cart page', () => {
+describe('página Cart', () => {
   // ─── Estado vacío ────────────────────────────────────────────────────────────
 
-  it('shows CART (0) in the title when the cart is empty', () => {
+  it('muestra CARRITO (0) en el título cuando el carrito está vacío', () => {
     renderCart()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('CARRITO')
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
-  it('renders no list items when the cart is empty', () => {
+  it('no renderiza elementos de lista cuando el carrito está vacío', () => {
     renderCart()
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
   })
 
   // ─── Carrito con artículos ────────────────────────────────────────────────────
 
-  it('renders each cart item with name, storage | color and price', () => {
+  it('renderiza cada artículo del carrito con nombre, almacenamiento | color y precio', () => {
     renderCart([mockItem])
     const listItem = screen.getByRole('listitem')
     expect(within(listItem).getByText('iPhone 15')).toBeInTheDocument()
@@ -91,12 +91,12 @@ describe('Cart page', () => {
     expect(within(listItem).getByText('999,00 EUR')).toBeInTheDocument()
   })
 
-  it('renders two rows when the same product is added twice', () => {
+  it('renderiza dos filas cuando se añade el mismo producto dos veces', () => {
     renderCart([mockItem, mockItem])
     expect(screen.getAllByRole('listitem')).toHaveLength(2)
   })
 
-  it('shows the total price', () => {
+  it('muestra el precio total', () => {
     renderCart([mockItem, { ...mockItem, storage: '256GB', price: 1099 }])
     // Ambos artículos: 999 + 1099 = 2098
     expect(screen.getAllByText(/2\.098,00 EUR/).length).toBeGreaterThan(0)
@@ -104,19 +104,19 @@ describe('Cart page', () => {
 
   // ─── Navegación ───────────────────────────────────────────────────────────────
 
-  it('renders the CONTINUE SHOPPING button', () => {
+  it('renderiza el botón SEGUIR COMPRANDO', () => {
     renderCart()
     expect(screen.getByRole('button', { name: 'SEGUIR COMPRANDO' })).toBeInTheDocument()
   })
 
   // ─── Eliminar artículo ────────────────────────────────────────────────────────
 
-  it('renders an "Eliminar" button for each item', () => {
+  it('renderiza un botón "Eliminar" por cada artículo', () => {
     renderCart([mockItem])
     expect(screen.getByRole('button', { name: 'Eliminar' })).toBeInTheDocument()
   })
 
-  it('applies the fading class on the item immediately after clicking Eliminar', async () => {
+  it('aplica la clase de desvanecimiento al artículo inmediatamente después de hacer clic en Eliminar', async () => {
     const user = userEvent.setup()
     renderCart([mockItem])
     await user.click(screen.getByRole('button', { name: 'Eliminar' }))
@@ -125,7 +125,7 @@ describe('Cart page', () => {
     expect(item.className).toMatch(/itemFading/)
   })
 
-  it('renders the PAGAR button when there are items', () => {
+  it('renderiza el botón PAGAR cuando hay artículos', () => {
     renderCart([mockItem])
     expect(screen.getByRole('button', { name: 'PAGAR' })).toBeInTheDocument()
   })

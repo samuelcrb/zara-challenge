@@ -41,13 +41,13 @@ const MINIMAL_PNG = Buffer.from(
 afterEach(() => vi.unstubAllGlobals())
 
 describe('GET /', () => {
-  it('returns 400 when url param is missing', async () => {
+  it('devuelve 400 cuando falta el parámetro url', async () => {
     const res = await supertest(app).get('/')
     expect(res.status).toBe(400)
     expect(res.body.error).toBeDefined()
   })
 
-  it('returns 500 when upstream image fetch fails', async () => {
+  it('devuelve 500 cuando falla la descarga de la imagen upstream', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({ ok: false, status: 503 }),
@@ -57,7 +57,7 @@ describe('GET /', () => {
     expect(res.body.error).toBeDefined()
   })
 
-  it('returns webp buffer with correct headers on success', async () => {
+  it('devuelve el buffer webp con las cabeceras correctas en caso de éxito', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({

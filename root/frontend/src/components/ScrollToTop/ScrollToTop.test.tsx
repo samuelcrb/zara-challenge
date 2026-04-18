@@ -19,12 +19,12 @@ const AppWithNav = () => (
 )
 
 describe('ScrollToTop', () => {
-  it('calls window.scrollTo(0, 0) on mount', () => {
+  it('llama a window.scrollTo(0, 0) al montar', () => {
     render(<AppWithNav />)
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0)
   })
 
-  it('calls window.scrollTo(0, 0) again when the pathname changes', async () => {
+  it('llama a window.scrollTo(0, 0) de nuevo cuando cambia el pathname', async () => {
     const { getByText } = render(<AppWithNav />)
     vi.mocked(window.scrollTo).mockClear()
     await act(async () => { getByText('go').click() })

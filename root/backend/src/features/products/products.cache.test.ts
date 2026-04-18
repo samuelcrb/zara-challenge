@@ -4,17 +4,17 @@ import { getCachedProducts, setCachedProducts, clearProductsCache } from './prod
 beforeEach(() => clearProductsCache())
 
 describe('getCachedProducts', () => {
-  it('returns undefined for unknown key', () => {
+  it('devuelve undefined para una clave desconocida', () => {
     expect(getCachedProducts('missing')).toBeUndefined()
   })
 
-  it('returns stored data while within TTL', () => {
+  it('devuelve los datos almacenados mientras no expire el TTL', () => {
     const data = [{ id: '1', imageUrl: 'http://img.com/1.jpg' }]
     setCachedProducts('key', data)
     expect(getCachedProducts('key')).toEqual(data)
   })
 
-  it('returns undefined and evicts entry after TTL expires', () => {
+  it('devuelve undefined y elimina la entrada tras expirar el TTL', () => {
     vi.useFakeTimers()
     setCachedProducts('key', [{ id: '1' }])
 

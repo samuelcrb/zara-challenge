@@ -17,19 +17,19 @@ describe('getImageUrl', () => {
     vi.resetModules()
   })
 
-  it('builds a proxy URL that routes through the BFF', () => {
+  it('construye una URL de proxy que redirige a través del BFF', () => {
     expect(getImageUrl('https://example.com/photo.jpg')).toBe(
       'http://localhost:3000/image?url=https%3A%2F%2Fexample.com%2Fphoto.jpg',
     )
   })
 
-  it('URL-encodes special characters in the source URL', () => {
+  it('codifica en URL los caracteres especiales de la URL de origen', () => {
     const source = 'https://cdn.example.com/img/phone model.jpg'
     const result = getImageUrl(source)
     expect(result).toContain(encodeURIComponent(source))
   })
 
-  it('upgrades http source URLs to https before encoding', () => {
+  it('convierte las URLs de origen http a https antes de codificar', () => {
     const result = getImageUrl('http://cdn.example.com/photo.jpg')
     expect(result).toBe(
       'http://localhost:3000/image?url=https%3A%2F%2Fcdn.example.com%2Fphoto.jpg',
@@ -74,12 +74,12 @@ describe('preloadImages', () => {
     vi.unstubAllGlobals()
   })
 
-  it('resolves immediately with an empty array when given no URLs', async () => {
+  it('resuelve de inmediato con un array vacío cuando no se pasan URLs', async () => {
     const result = await preloadImages([])
     expect(result).toEqual([])
   })
 
-  it('resolves when all images fire onload', async () => {
+  it('resuelve cuando todas las imágenes disparan onload', async () => {
     const result = await preloadImages([
       'https://example.com/a.jpg',
       'https://example.com/b.jpg',
@@ -87,13 +87,13 @@ describe('preloadImages', () => {
     expect(result).toHaveLength(2)
   })
 
-  it('resolves even when images fire onerror (broken images must not block)', async () => {
+  it('resuelve incluso cuando las imágenes disparan onerror (las imágenes rotas no deben bloquear)', async () => {
     vi.stubGlobal('Image', FailingImage)
     const result = await preloadImages(['https://example.com/broken.jpg'])
     expect(result).toHaveLength(1)
   })
 
-  it('resolves after every image has settled (load + error mix)', async () => {
+  it('resuelve cuando todas las imágenes se han establecido (mezcla de carga y error)', async () => {
     let callCount = 0
     class MixedImage {
       onload: (() => void) | null = null

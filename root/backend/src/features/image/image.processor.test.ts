@@ -49,12 +49,12 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('processImage', () => {
-  it('fetches, processes and returns a buffer', async () => {
+  it('descarga, procesa y devuelve un buffer', async () => {
     const result = await processImage('https://example.com/phone.jpg')
     expect(result).toBeInstanceOf(Buffer)
   })
 
-  it('returns the cached buffer on the second call without fetching again', async () => {
+  it('devuelve el buffer en caché en la segunda llamada sin volver a descargar', async () => {
     const url = 'https://example.com/cached.jpg'
     const first = await processImage(url)
     const fetchMock = vi.mocked(fetch)
@@ -65,14 +65,14 @@ describe('processImage', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('throws when the upstream fetch returns a non-ok response', async () => {
+  it('lanza un error cuando la descarga upstream devuelve una respuesta no válida', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }))
     await expect(processImage('https://example.com/bad.jpg')).rejects.toThrow()
   })
 })
 
 describe('preloadImages', () => {
-  it('processes each URL and adds it to the cache', async () => {
+  it('procesa cada URL y la añade a la caché', async () => {
     const url = 'https://example.com/preload.jpg'
     preloadImages([url])
     await vi.waitFor(() => {
@@ -80,7 +80,7 @@ describe('preloadImages', () => {
     })
   })
 
-  it('skips URLs that are already cached', async () => {
+  it('omite las URLs que ya están en caché', async () => {
     const url = 'https://example.com/already.jpg'
     await processImage(url) // put in cache
     const fetchMock = vi.mocked(fetch)
@@ -91,7 +91,7 @@ describe('preloadImages', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('does nothing when the list is empty', () => {
+  it('no hace nada cuando la lista está vacía', () => {
     const fetchMock = vi.mocked(fetch)
     fetchMock.mockClear()
     preloadImages([])
